@@ -24,6 +24,13 @@ int main() {
   dim.nsg  = qp_size.nsg;
   dim.create_hpipm();
 
+  const auto err_msg = dim.checkSize();
+  if (!err_msg.empty()) {
+    for (const auto& e : err_msg) {
+      std::cout << e << std::endl;
+    }
+  }
+
   QPData qp_data;
   hpipm::ocp_qp qp;
   for (int i=0; i<dim.N; ++i) {

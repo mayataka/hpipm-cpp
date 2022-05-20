@@ -19,11 +19,13 @@ struct QPSize {
 
 
 struct QPData {
-  Eigen::MatrixXd A = (Eigen::MatrixXd(2, 2) << 1.0, 1.0, 0.0, 1.0).finished();
+  Eigen::MatrixXd A = (Eigen::MatrixXd(2, 2) << 1.0, 1.0, 
+                                                0.0, 1.0).finished();
   Eigen::MatrixXd B = (Eigen::MatrixXd(2, 1) << 0.0, 1.0).finished();
   Eigen::VectorXd b = (Eigen::VectorXd(2) << 0.0, 0.0).finished();
 
-  Eigen::MatrixXd Q = (Eigen::MatrixXd(2, 2) << 1.0, 0.0, 0.0, 1.0).finished();
+  Eigen::MatrixXd Q = (Eigen::MatrixXd(2, 2) << 1.0, 0.0, 
+                                                0.0, 1.0).finished();
   Eigen::MatrixXd R = (Eigen::MatrixXd(1, 1) << 1.0).finished();
   Eigen::MatrixXd S = (Eigen::MatrixXd(2, 1) << 0.0, 0.0).finished();
   Eigen::VectorXd q = (Eigen::VectorXd(2) << 1.0, 1.0).finished();

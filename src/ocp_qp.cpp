@@ -49,31 +49,31 @@ void ocp_qp::create_hpipm(ocp_qp_dim& dim) {
   lls_ptr_.clear();
   lus_ptr_.clear();
 
-  A_ptr_.reserve(dim.N);
-  B_ptr_.reserve(dim.N);
-  b_ptr_.reserve(dim.N);
-  Q_ptr_.reserve(dim.N+1);
-  S_ptr_.reserve(dim.N+1);
-  R_ptr_.reserve(dim.N+1);
-  q_ptr_.reserve(dim.N+1);
-  r_ptr_.reserve(dim.N+1);
-  idxbx_ptr_.reserve(dim.N+1);
-  lbx_ptr_.reserve(dim.N+1);
-  ubx_ptr_.reserve(dim.N+1);
-  idxbu_ptr_.reserve(dim.N+1);
-  lbu_ptr_.reserve(dim.N+1);
-  ubu_ptr_.reserve(dim.N+1);
-  C_ptr_.reserve(dim.N+1);
-  D_ptr_.reserve(dim.N+1);
-  lg_ptr_.reserve(dim.N+1);
-  ug_ptr_.reserve(dim.N+1);
-  Zl_ptr_.reserve(dim.N+1);
-  Zu_ptr_.reserve(dim.N+1);
-  zl_ptr_.reserve(dim.N+1);
-  zu_ptr_.reserve(dim.N+1);
-  idxs_ptr_.reserve(dim.N+1);
-  lls_ptr_.reserve(dim.N+1);
-  lus_ptr_.reserve(dim.N+1);
+  A_ptr_.resize(dim.N);
+  B_ptr_.resize(dim.N);
+  b_ptr_.resize(dim.N);
+  Q_ptr_.resize(dim.N+1);
+  S_ptr_.resize(dim.N+1);
+  R_ptr_.resize(dim.N+1);
+  q_ptr_.resize(dim.N+1);
+  r_ptr_.resize(dim.N+1);
+  idxbx_ptr_.resize(dim.N+1);
+  lbx_ptr_.resize(dim.N+1);
+  ubx_ptr_.resize(dim.N+1);
+  idxbu_ptr_.resize(dim.N+1);
+  lbu_ptr_.resize(dim.N+1);
+  ubu_ptr_.resize(dim.N+1);
+  C_ptr_.resize(dim.N+1);
+  D_ptr_.resize(dim.N+1);
+  lg_ptr_.resize(dim.N+1);
+  ug_ptr_.resize(dim.N+1);
+  Zl_ptr_.resize(dim.N+1);
+  Zu_ptr_.resize(dim.N+1);
+  zl_ptr_.resize(dim.N+1);
+  zu_ptr_.resize(dim.N+1);
+  idxs_ptr_.resize(dim.N+1);
+  lls_ptr_.resize(dim.N+1);
+  lus_ptr_.resize(dim.N+1);
 
   // dynamics
   for (int i=0; i<dim.N; ++i) {
@@ -89,15 +89,45 @@ void ocp_qp::create_hpipm(ocp_qp_dim& dim) {
     q_ptr_[i] = q[i].data();
     r_ptr_[i] = r[i].data();
   }
-  // box constraints
+  // box constraints on state
+  if (idxbx.empty() || lbx.empty() || ubx.empty()) {
+    idxbx.clear();
+    lbx.clear();
+    ubx.clear();
+    idxbx.resize(dim.N+1);
+    lbx.resize(dim.N+1);
+    ubx.resize(dim.N+1);
+  }
   for (int i=0; i<=dim.N; ++i) {
     idxbx_ptr_[i] = idxbx[i].data();
     lbx_ptr_[i] = lbx[i].data();
     ubx_ptr_[i] = ubx[i].data();
+  }
+  // box constraints on control input
+  if (idxbu.empty() || lbu.empty() || ubu.empty()) {
+    idxbu.clear();
+    lbu.clear();
+    ubu.clear();
+    idxbu.resize(dim.N+1);
+    lbu.resize(dim.N+1);
+    ubu.resize(dim.N+1);
+  }
+  for (int i=0; i<=dim.N; ++i) {
+    idxbu_ptr_[i] = idxbu[i].data();
     lbu_ptr_[i] = lbu[i].data();
     ubu_ptr_[i] = ubu[i].data();
   }
   // constraints
+  if (C.empty() || D.empty() || lg.empty() || ug.empty()) {
+    C.clear();
+    D.clear();
+    lg.clear();
+    ug.clear();
+    C.resize(dim.N+1);
+    D.resize(dim.N+1);
+    lg.resize(dim.N+1);
+    ug.resize(dim.N+1);
+  }
   for (int i=0; i<=dim.N; ++i) {
     C_ptr_[i] = C[i].data();
     D_ptr_[i] = D[i].data();
@@ -105,6 +135,16 @@ void ocp_qp::create_hpipm(ocp_qp_dim& dim) {
     ug_ptr_[i] = ug[i].data();
   }
   // soft constraints
+  if (Zl.empty() || Zu.empty() || zl.empty() || zu.empty()) {
+    Zl.clear();
+    Zu.clear();
+    zl.clear();
+    zu.clear();
+    Zl.resize(dim.N+1);
+    Zu.resize(dim.N+1);
+    zl.resize(dim.N+1);
+    zu.resize(dim.N+1);
+  }
   for (int i=0; i<=dim.N; ++i) {
     Zl_ptr_[i] = Zu[i].data();
     Zu_ptr_[i] = Zu[i].data();
@@ -112,6 +152,14 @@ void ocp_qp::create_hpipm(ocp_qp_dim& dim) {
     zu_ptr_[i] = zu[i].data();
   }
   // TODO: what is this??
+  if (idxs.empty() || lls.empty() || lus.empty()) {
+    idxs.clear();
+    lls.clear();
+    lus.clear();
+    idxs.resize(dim.N+1);
+    lls.resize(dim.N+1);
+    lus.resize(dim.N+1);
+  }
   for (int i=0; i<=dim.N; ++i) {
     idxs_ptr_[i] = idxs[i].data();
     lls_ptr_[i] = lls[i].data();

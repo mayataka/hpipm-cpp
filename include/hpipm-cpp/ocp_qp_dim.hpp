@@ -19,7 +19,7 @@ public:
 
   std::vector<std::string> checkSize() const;
 
-  void create_hpipm();
+  void create_hpipm_data();
 
   d_ocp_qp_dim* to_hpipm() { return &ocp_qp_dim_hpipm_; }
 

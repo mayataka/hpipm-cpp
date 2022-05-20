@@ -36,7 +36,7 @@ ocp_qp_ipm::~ocp_qp_ipm() {
 }
 
 
-void ocp_qp_ipm::create_hpipm(ocp_qp_dim& dim, ocp_qp_ipm_arg& ipm_arg) {
+void ocp_qp_ipm::create_hpipm_data(ocp_qp_dim& dim, ocp_qp_ipm_arg& ipm_arg) {
   const hpipm_size_t new_memsize = d_ocp_qp_ipm_ws_memsize(dim.to_hpipm(), 
   														                             ipm_arg.to_hpipm());
   if (memory_ && new_memsize >= memsize_) {

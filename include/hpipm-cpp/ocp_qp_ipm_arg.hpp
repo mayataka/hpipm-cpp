@@ -28,7 +28,7 @@ public:
 
   ~ocp_qp_ipm_arg();
 
-  void create_hpipm(ocp_qp_dim& dim);
+  void create_hpipm_data(ocp_qp_dim& dim);
 
   d_ocp_qp_ipm_arg* to_hpipm() { return &ocp_qp_ipm_arg_hpipm_; }
 

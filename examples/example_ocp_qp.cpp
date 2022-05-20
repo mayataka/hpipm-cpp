@@ -30,7 +30,7 @@ int main() {
     }
     return 1;
   }
-  dim.create_hpipm();
+  dim.create_hpipm_data();
 
   QPData qp_data;
   hpipm::ocp_qp qp;
@@ -66,7 +66,7 @@ int main() {
     }
     return 1;
   }
-  qp.create_hpipm(dim);
+  qp.create_hpipm_data(dim);
 
   IPMArg ipm_arg;
   hpipm::ocp_qp_ipm_arg arg;
@@ -83,7 +83,7 @@ int main() {
   arg.pred_corr = ipm_arg.pred_corr;
   arg.ric_alg = ipm_arg.ric_alg;
   arg.split_step = ipm_arg.split_step;
-  arg.create_hpipm(dim);
+  arg.create_hpipm_data(dim);
 
   hpipm::ocp_qp_sol sol;
   const auto sol_err_msg = sol.checkSize(dim);
@@ -93,10 +93,10 @@ int main() {
     }
     return 1;
   }
-  sol.create_hpipm(dim);
+  sol.create_hpipm_data(dim);
 
   hpipm::ocp_qp_ipm ipm;
-  ipm.create_hpipm(dim, arg);
+  ipm.create_hpipm_data(dim, arg);
   const auto res = ipm.solve(qp, sol, arg);
   std::cout << "QP result: " << res << std::endl;
 

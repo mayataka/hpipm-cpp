@@ -23,7 +23,7 @@ public:
 
   std::vector<std::string> checkSize(const ocp_qp_dim& dim) const;
 
-  void create_hpipm(ocp_qp_dim& dim);
+  void create_hpipm_data(ocp_qp_dim& dim);
 
   d_ocp_qp_sol* to_hpipm() { return &ocp_qp_sol_hpipm_; }
 

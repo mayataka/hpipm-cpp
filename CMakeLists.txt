@@ -18,6 +18,7 @@ include(ExternalProject)
 
 # build blasfeo
 set(BLASFEO_SRC_DIR ${PROJECT_SOURCE_DIR}/external/blasfeo)
+# set(BLASFEO_DEST_DIR ${CMAKE_INSTALL_PREFIX})
 set(BLASFEO_DEST_DIR ${PROJECT_SOURCE_DIR}/external/blasfeo_install)
 set(BLASFEO_HEADERS_INSTALLATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include/hpipm-cpp/blasfeo/include)
 
@@ -45,6 +46,7 @@ set_target_properties(
 
 # build hpipm
 set(HPIPM_SRC_DIR ${PROJECT_SOURCE_DIR}/external/hpipm)
+# set(HPIPM_DEST_DIR ${CMAKE_INSTALL_PREFIX})
 set(HPIPM_DEST_DIR ${PROJECT_SOURCE_DIR}/external/hpipm_install)
 set(HPIPM_HEADERS_INSTALLATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include/hpipm-cpp/hpipm/include)
 
@@ -92,8 +94,8 @@ target_link_libraries(
   hpipm-cpp-hpipm 
 )
 link_directories(
-  ${PROJECT_SOURCE_DIR}/external/blasfeo_install/lib/
-  ${PROJECT_SOURCE_DIR}/external/hpipm_install/lib/
+  ${BLASFEO_DEST_DIR}/lib
+  ${HPIPM_DEST_DIR}/lib
 )
 target_include_directories(
   ${PROJECT_NAME} 

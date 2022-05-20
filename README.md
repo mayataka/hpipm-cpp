@@ -76,23 +76,23 @@ hpipm::ocp_qp_dim dim;
 dim.N = ... // set dims
 dim.nx.push_back(...)  // set dims
 ... 
-dim.create_hpipm_data(); // this creates hpipm's QP-dim object.
+dim.createHpipmData(); // this creates hpipm's QP-dim object.
 
 hpipm::ocp_qp qp; 
 qp.A.push_back(Eigen::MatrixXd::...) // set QP datas by Eigen objects
 ... 
-qp.create_hpipm_data(dim); // this creates hpipm's QP-data object.
+qp.createHpipmData(dim); // this creates hpipm's QP-data object.
 
 hpipm::ipm_arg ipm_arg; 
 ipm_arg.ipm_arg.mode = ... // set the IPM solver settings
 ... 
-ipm_arg.create_hpipm_data(dim); // this creates hpipm's the IPM solver-settings object.
+ipm_arg.createHpipmData(dim); // this creates hpipm's the IPM solver-settings object.
 
 hpipm::ocp_qp_sol sol;
-sol.create_hpipm_data(dim); // this creates hpipm's QP-solution object.
+sol.createHpipmData(dim); // this creates hpipm's QP-solution object.
 
 hpipm::ocp_qp_ipm ipm;
-ipm.create_hpipm_data(dim, arg); // this creates hpipm's IPM-solver object.
+ipm.createHpipmData(dim, arg); // this creates hpipm's IPM-solver object.
 const auto res = ipm.solve(qp, sol, arg); // solve the QP
 
 sol.from_hpipm(dim); // retrieve the QP-solution as Eigen's object from hpipm's object.

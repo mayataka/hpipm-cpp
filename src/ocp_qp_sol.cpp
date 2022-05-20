@@ -29,10 +29,10 @@ std::vector<std::string> ocp_qp_sol::checkSize(const ocp_qp_dim& dim) const {
     }
   }
   if (!u.empty()) {
-    if (u.size() != dim.N+1) {
-      err_mgs.push_back("ocp_qp_sol.u.size() must be the same as N+1 or 0!");
+    if (u.size() != dim.N) {
+      err_mgs.push_back("ocp_qp_sol.u.size() must be the same as N or 0!");
     }
-    for (int i=0; i<=dim.N; ++i) {
+    for (int i=0; i<dim.N; ++i) {
       if (u[i].size() != dim.nu[i]) 
         err_mgs.push_back("ocp_qp_sol.u[" + std::to_string(i) + "].size() must be the same as ocp_qp_dim.nu[" + std::to_string(i) + "]!");
     }
@@ -41,7 +41,7 @@ std::vector<std::string> ocp_qp_sol::checkSize(const ocp_qp_dim& dim) const {
 }
 
 
-void ocp_qp_sol::create_hpipm_data(ocp_qp_dim& dim) {
+void ocp_qp_sol::createHpipmData(ocp_qp_dim& dim) {
   const hpipm_size_t new_memsize  = d_ocp_qp_sol_memsize(dim.to_hpipm());
   if (memory_ && new_memsize >= memsize_) {
     free(memory_);
@@ -57,8 +57,8 @@ void ocp_qp_sol::create_hpipm_data(ocp_qp_dim& dim) {
       d_ocp_qp_sol_set_x(i, x[i].data(), &ocp_qp_sol_hpipm_);
     }
   }
-  if (u.size() == dim.N+1) {
-    for (int i=0; i<=dim.N; ++i) {
+  if (u.size() == dim.N) {
+    for (int i=0; i<dim.N; ++i) {
       d_ocp_qp_sol_set_u(i, u[i].data(), &ocp_qp_sol_hpipm_);
     }
   }
@@ -67,9 +67,9 @@ void ocp_qp_sol::create_hpipm_data(ocp_qp_dim& dim) {
 
 void ocp_qp_sol::from_hpipm(const ocp_qp_dim& dim) {
   x.resize(dim.N+1);
-  u.resize(dim.N+1);
-  pi.resize(dim.N+1);
-  for (int i=0; i<=dim.N; ++i) {
+  u.resize(dim.N);
+  pi.resize(dim.N);
+  for (int i=0; i<dim.N; ++i) {
     x[i].setZero(dim.nx[i]);
     u[i].setZero(dim.nu[i]);
     pi[i].setZero(dim.nx[i]);
@@ -77,6 +77,8 @@ void ocp_qp_sol::from_hpipm(const ocp_qp_dim& dim) {
     d_ocp_qp_sol_get_u(i, &ocp_qp_sol_hpipm_, u[i].data());
     d_ocp_qp_sol_get_pi(i, &ocp_qp_sol_hpipm_, pi[i].data());
   }
+  x[dim.N].setZero(dim.nx[dim.N]);
+  d_ocp_qp_sol_get_x(dim.N, &ocp_qp_sol_hpipm_, x[dim.N].data());
 }
 
 } // namespace hpipm

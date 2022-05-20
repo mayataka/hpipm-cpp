@@ -29,7 +29,6 @@ public:
 
   const d_ocp_qp* to_hpipm() const { return &ocp_qp_hpipm_; }
 
-  Eigen::VectorXd x0; // initial state. if this is set to appropriate size, then x[0] = x0 is imposed as equality constraint.
   std::vector<Eigen::MatrixXd> A;  // x_next = Ax+Bu+b
   std::vector<Eigen::MatrixXd> B;
   std::vector<Eigen::VectorXd> b;
@@ -57,8 +56,6 @@ public:
   std::vector<Eigen::VectorXd> lus; // TODO: what is this?
 
 private:
-  std::vector<int> hidxe_;
-
   std::vector<double*> A_ptr_; 
   std::vector<double*> B_ptr_;
   std::vector<double*> b_ptr_;

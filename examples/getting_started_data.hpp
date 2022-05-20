@@ -31,8 +31,10 @@ struct QPData {
   Eigen::VectorXd q = (Eigen::VectorXd(2) << 1.0, 1.0).finished();
   Eigen::VectorXd r = (Eigen::VectorXd(1) << 0.0).finished();
 
-  Eigen::VectorXd lbx0 = (Eigen::VectorXd(2) << 1.0, 1.0).finished();
-  Eigen::VectorXd ubx0 = (Eigen::VectorXd(2) << 1.0, 1.0).finished();
+  Eigen::VectorXd x0 = (Eigen::VectorXd(2) << 1.0, 1.0).finished();
+
+  Eigen::VectorXd lbx0 = x0;
+  Eigen::VectorXd ubx0 = x0;
   std::vector<int> idxbx0 = {0, 1};
 
   Eigen::VectorXd lbx;

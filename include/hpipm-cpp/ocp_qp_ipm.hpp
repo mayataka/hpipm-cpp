@@ -37,7 +37,7 @@ public:
 
   ~ocp_qp_ipm();
 
-  void create_hpipm_data(ocp_qp_dim& dim, ocp_qp_ipm_arg& ipm_arg);
+  void createHpipmData(ocp_qp_dim& dim, ocp_qp_ipm_arg& ipm_arg);
 
   HpipmStatus solve(ocp_qp& qp, ocp_qp_sol& qp_sol, ocp_qp_ipm_arg& ipm_arg);
 

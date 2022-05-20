@@ -13,7 +13,7 @@ ocp_qp_ipm_arg::~ocp_qp_ipm_arg() {
 }
 
 
-void ocp_qp_ipm_arg::create_hpipm_data(ocp_qp_dim& dim) {
+void ocp_qp_ipm_arg::createHpipmData(ocp_qp_dim& dim) {
   const hpipm_size_t new_memsize  = d_ocp_qp_ipm_arg_memsize(dim.to_hpipm());
   if (memory_ && new_memsize >= memsize_) {
     free(memory_);

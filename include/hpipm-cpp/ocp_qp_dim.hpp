@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <optional>
 
 extern "C" {
 #include "hpipm_d_ocp_qp_dim.h"
@@ -18,7 +17,7 @@ public:
 
   ~ocp_qp_dim();
 
-  std::optional<std::string> checkSize() const;
+  std::vector<std::string> checkSize() const;
 
   void create_hpipm();
 
@@ -26,7 +25,7 @@ public:
 
   const d_ocp_qp_dim* to_hpipm() const { return &ocp_qp_dim_hpipm_; }
 
-  static ocp_qp_dim_wrapper from_hpipm(const d_ocp_qp_dim* ocp_qp_dim_hpipm);
+  static ocp_qp_dim from_hpipm(const d_ocp_qp_dim* ocp_qp_dim_hpipm);
 
   int N; // horizon length
   std::vector<int> nx;   // dimension of x

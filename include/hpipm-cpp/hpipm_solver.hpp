@@ -3,13 +3,8 @@
 
 #include <vector>
 #include <string>
-#include <optional>
 
 #include "Eigen/Core"
-
-extern "C" {
-#include "hpipm_d_ocp_qp_imp.h"
-}
 
 #include "hpipm-cpp/ocp_qp_dim.hpp"
 #include "hpipm-cpp/ocp_qp_sol.hpp"

@@ -31,15 +31,19 @@ add_library(
 target_link_libraries(
   ${PROJECT_NAME} 
   PUBLIC
+  -${PROJECT_SOURCE_DIR}/external/balasfeo/lib/libblasfeo.so
+  -${PROJECT_SOURCE_DIR}/external/hpipm/lib/libhpipm.so
 )
 target_include_directories(
   ${PROJECT_NAME} 
   PUBLIC
   ${EIGEN3_INCLUDE_DIR}
-  $<BUILD_INTERFACE:${external}/balasfeo/include>
-  $<BUILD_INTERFACE:${external}/hpipm/include>
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/hpipm-cpp/blasfeo/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/hpipm-cpp/hpipm/include>
   $<INSTALL_INTERFACE:include>
+  $<INSTALL_INTERFACE:include/hpipm-cpp/blasfeo/include>
+  $<INSTALL_INTERFACE:include/hpipm-cpp/hpipm/include>
 )
 if (OPTIMIZE_FOR_NATIVE)
   target_compile_options(

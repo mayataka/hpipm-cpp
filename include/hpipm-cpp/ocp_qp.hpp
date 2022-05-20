@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <optional>
 
 #include "Eigen/Core"
 
@@ -22,7 +21,7 @@ public:
 
   ~ocp_qp();
 
-  std::optional<std::string> checkSize() const;
+  std::vector<std::string> checkSize() const;
 
   void create_hpipm(ocp_qp_dim& dim);
 

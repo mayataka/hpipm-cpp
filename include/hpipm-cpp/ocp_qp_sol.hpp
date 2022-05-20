@@ -31,6 +31,19 @@ public:
 
   std::vector<Eigen::VectorXd> x;
   std::vector<Eigen::VectorXd> u;
+  std::vector<Eigen::VectorXd> pi; // the Lagrange multiplier w.r.t. the state equation
+
+  // TODO: treat the following variables
+  // std::vector<Eigen::VectorXd> sl; // slack lower 
+  // std::vector<Eigen::VectorXd> su; // slack upper 
+  // std::vector<Eigen::VectorXd> lam_lb; // the Lagrange multiplier w.r.t. the lower box constraint 
+  // std::vector<Eigen::VectorXd> lam_ub; // the Lagrange multiplier w.r.t. the upper box constraint
+  // std::vector<Eigen::VectorXd> lam_lg; // the Lagrange multiplier w.r.t. the lower constraint
+  // std::vector<Eigen::VectorXd> lam_ug; // the Lagrange multiplier w.r.t. the upper constraint
+  // std::vector<Eigen::VectorXd> lam_ls; // the Lagrange multiplier w.r.t. the lower soft constraint
+  // std::vector<Eigen::VectorXd> lam_us; // the Lagrange multiplier w.r.t. the upper soft constraint
+
+  void s_qp_sol_get_all(struct s_ocp_qp_sol *qp_sol, float **u, float **x, float **ls, float **us, float **pi, float **lam_lb, float **lam_ub, float **lam_lg, float **lam_ug, float **lam_ls, float **lam_us);
 
 private:
   d_ocp_qp_sol ocp_qp_sol_hpipm_;

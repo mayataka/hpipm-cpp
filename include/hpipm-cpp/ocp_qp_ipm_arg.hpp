@@ -34,7 +34,7 @@ public:
 
   const d_ocp_qp_ipm_arg* to_hpipm() const { return &ocp_qp_ipm_arg_hpipm_; }
 
-  void from_hpipm(const ocp_qp_dim_wrapper& dim);
+  void from_hpipm(const ocp_qp_dim& dim);
 
   HpipmMode mode = HpipmMode::Speed; 
 

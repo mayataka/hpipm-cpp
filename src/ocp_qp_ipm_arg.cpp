@@ -13,9 +13,9 @@ ocp_qp_ipm_arg::~ocp_qp_ipm_arg() {
 }
 
 
-void ocp_qp_ipm_arg::create_hpipm(ocp_qp_dim_wrapper& dim) {
+void ocp_qp_ipm_arg::create_hpipm(ocp_qp_dim& dim) {
   const hpipm_size_t new_memsize  = d_ocp_qp_ipm_arg_memsize(dim.to_hpipm());
-  if (memory_ && new_memmemsize_size >= memsize_) {
+  if (memory_ && new_memsize >= memsize_) {
     free(memory_);
     memory_ = nullptr;
   }
@@ -24,7 +24,7 @@ void ocp_qp_ipm_arg::create_hpipm(ocp_qp_dim_wrapper& dim) {
     memory_ = malloc(memsize_);
     d_ocp_qp_ipm_arg_create(dim.to_hpipm(), &ocp_qp_ipm_arg_hpipm_, memory_);
   }
-  d_ocp_qp_ipm_arg_set_default(static_cast<int>(mode), &ocp_qp_ipm_arg_hpipm_);
+  d_ocp_qp_ipm_arg_set_default(static_cast<hpipm_mode>(mode), &ocp_qp_ipm_arg_hpipm_);
   d_ocp_qp_ipm_arg_set_mu0(&mu0, &ocp_qp_ipm_arg_hpipm_);
   d_ocp_qp_ipm_arg_set_iter_max(&iter_max, &ocp_qp_ipm_arg_hpipm_);
   d_ocp_qp_ipm_arg_set_alpha_min(&alpha_min, &ocp_qp_ipm_arg_hpipm_);

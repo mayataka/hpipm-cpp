@@ -76,48 +76,46 @@ void ocp_qp::create_hpipm(ocp_qp_dim& dim) {
   lus_ptr_.reserve(dim.N+1);
 
   // dynamics
-  b_[0].noalias() += A_[0] * x0;
-  A_[0].setZero();
-  for (int i=0; i<N_; ++i) {
-    A_ptr_[i] = A_[i].data();
-    B_ptr_[i] = B_[i].data();
-    b_ptr_[i] = b_[i].data();
+  for (int i=0; i<dim.N; ++i) {
+    A_ptr_[i] = A[i].data();
+    B_ptr_[i] = B[i].data();
+    b_ptr_[i] = b[i].data();
   }
   // costs
-  for (int i=0; i<=N_; ++i) {
-    Q_ptr_[i] = Q_[i].data();
-    S_ptr_[i] = S_[i].data();
-    R_ptr_[i] = R_[i].data();
-    q_ptr_[i] = q_[i].data();
-    r_ptr_[i] = r_[i].data();
+  for (int i=0; i<=dim.N; ++i) {
+    Q_ptr_[i] = Q[i].data();
+    S_ptr_[i] = S[i].data();
+    R_ptr_[i] = R[i].data();
+    q_ptr_[i] = q[i].data();
+    r_ptr_[i] = r[i].data();
   }
   // box constraints
-  for (int i=0; i<=N_; ++i) {
-    idxbx_ptr_[i] = idxbx_[i].data();
-    lbx_ptr_[i] = lbx_[i].data();
-    ubx_ptr_[i] = ubx_[i].data();
-    lbu_ptr_[i] = lbu_[i].data();
-    ubu_ptr_[i] = ubu_[i].data();
+  for (int i=0; i<=dim.N; ++i) {
+    idxbx_ptr_[i] = idxbx[i].data();
+    lbx_ptr_[i] = lbx[i].data();
+    ubx_ptr_[i] = ubx[i].data();
+    lbu_ptr_[i] = lbu[i].data();
+    ubu_ptr_[i] = ubu[i].data();
   }
   // constraints
-  for (int i=0; i<=N_; ++i) {
-    C_ptr_[i] = C_[i].data();
-    D_ptr_[i] = D_[i].data();
-    lg_ptr_[i] = lg_[i].data();
-    ug_ptr_[i] = ug_[i].data();
+  for (int i=0; i<=dim.N; ++i) {
+    C_ptr_[i] = C[i].data();
+    D_ptr_[i] = D[i].data();
+    lg_ptr_[i] = lg[i].data();
+    ug_ptr_[i] = ug[i].data();
   }
   // soft constraints
-  for (int i=0; i<=N_; ++i) {
-    Zl_ptr_[i] = Zu_[i].data();
-    Zu_ptr_[i] = Zu_[i].data();
-    zl_ptr_[i] = zl_[i].data();
-    zu_ptr_[i] = zu_[i].data();
+  for (int i=0; i<=dim.N; ++i) {
+    Zl_ptr_[i] = Zu[i].data();
+    Zu_ptr_[i] = Zu[i].data();
+    zl_ptr_[i] = zl[i].data();
+    zu_ptr_[i] = zu[i].data();
   }
   // TODO: what is this??
-  for (int i=0; i<=N_; ++i) {
-    idxs_ptr_[i] = idxs_[i].data();
-    lls_ptr_[i] = lls_[i].data();
-    lus_ptr_[i] = lus_[i].data();
+  for (int i=0; i<=dim.N; ++i) {
+    idxs_ptr_[i] = idxs[i].data();
+    lls_ptr_[i] = lls[i].data();
+    lus_ptr_[i] = lus[i].data();
   }
   d_ocp_qp_set_all(A_ptr_.data(), B_ptr_.data(), b_ptr_.data(), 
                    Q_ptr_.data(), S_ptr_.data(), R_ptr_.data(), q_ptr_.data(), r_ptr_.data(), 

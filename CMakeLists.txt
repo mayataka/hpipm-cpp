@@ -12,7 +12,64 @@ option(BUILD_TESTS "Build unit tests" OFF)
 #############################
 ## Build blasfeo and hpipm ##
 #############################
-add_subdirectory(external)
+# add_subdirectory(external)
+include(FetchContent)
+include(ExternalProject)
+
+# build blasfeo
+set(BLASFEO_SRC_DIR ${PROJECT_SOURCE_DIR}/external/blasfeo)
+set(BLASFEO_DEST_DIR ${PROJECT_SOURCE_DIR}/external/blasfeo_install)
+set(BLASFEO_HEADERS_INSTALLATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include/hpipm-cpp/blasfeo/include)
+
+FetchContent_GetProperties(blasfeo)
+if(NOT inekf_POPULATED)
+  FetchContent_Populate(
+    blasfeo
+    GIT_REPOSITORY https://github.com/giaf/blasfeo.git 
+    GIT_TAG        master
+    GIT_SHALLOW    TRUE
+    SOURCE_DIR ${BLASFEO_SRC_DIR})
+endif()
+ExternalProject_Add(
+  blasfeo
+  SOURCE_DIR ${BLASFEO_SRC_DIR}
+  BUILD_IN_SOURCE TRUE
+  INSTALL_DIR ${BLASFEO_DEST_DIR}
+  CONFIGURE_COMMAND ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${BLASFEO_DEST_DIR} -DBLASFEO_HEADERS_INSTALLATION_DIRECTORY=${BLASFEO_HEADERS_INSTALLATION_DIRECTORY} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILD_SHARED_LIBS=ON -DBLASFEO_EXAMPLES=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DLA=HIGH_PERFORMANCE 
+)
+add_library(hpipm-cpp-blasfeo SHARED IMPORTED)
+set_target_properties(
+  hpipm-cpp-blasfeo PROPERTIES 
+  IMPORTED_LOCATION ${BLASFEO_DEST_DIR}/lib/libblasfeo.so
+)
+
+# build hpipm
+set(HPIPM_SRC_DIR ${PROJECT_SOURCE_DIR}/external/hpipm)
+set(HPIPM_DEST_DIR ${PROJECT_SOURCE_DIR}/external/hpipm_install)
+set(HPIPM_HEADERS_INSTALLATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include/hpipm-cpp/hpipm/include)
+
+FetchContent_GetProperties(hpipm)
+if(NOT inekf_POPULATED)
+  FetchContent_Populate(
+    hpipm
+    GIT_REPOSITORY https://github.com/giaf/hpipm.git 
+    GIT_TAG        master
+    GIT_SHALLOW    TRUE
+    SOURCE_DIR ${HPIPM_SRC_DIR})
+endif()
+ExternalProject_Add(
+  hpipm
+  SOURCE_DIR ${HPIPM_SRC_DIR}
+  BUILD_IN_SOURCE TRUE
+  INSTALL_DIR ${HPIPM_DEST_DIR}
+  CONFIGURE_COMMAND ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=${HPIPM_DEST_DIR} -DHPIPM_HEADERS_INSTALLATION_DIRECTORY=${HPIPM_HEADERS_INSTALLATION_DIRECTORY} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DBLASFEO_PATH=${BLASFEO_DEST_DIR} -DBLASFEO_INCLUDE_DIR=${BLASFEO_HEADERS_INSTALLATION_DIRECTORY} 
+)
+add_dependencies(hpipm blasfeo)
+add_library(hpipm-cpp-hpipm SHARED IMPORTED)
+set_target_properties(
+  hpipm-cpp-hpipm PROPERTIES 
+  IMPORTED_LOCATION ${HPIPM_DEST_DIR}/lib/libhpipm.so
+)
 
 #####################
 ## Build hpipm-cpp ##
@@ -31,8 +88,12 @@ add_library(
 target_link_libraries(
   ${PROJECT_NAME} 
   PUBLIC
-  -${PROJECT_SOURCE_DIR}/external/balasfeo/lib/libblasfeo.so
-  -${PROJECT_SOURCE_DIR}/external/hpipm/lib/libhpipm.so
+  hpipm-cpp-blasfeo
+  hpipm-cpp-hpipm 
+)
+link_directories(
+  ${PROJECT_SOURCE_DIR}/external/blasfeo_install/lib/
+  ${PROJECT_SOURCE_DIR}/external/hpipm_install/lib/
 )
 target_include_directories(
   ${PROJECT_NAME} 
@@ -57,8 +118,6 @@ add_dependencies(
   blasfeo 
   hpipm
 )
-
-
 
 #############
 ## Install ##

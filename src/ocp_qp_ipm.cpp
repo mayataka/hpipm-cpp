@@ -22,7 +22,7 @@ void ocp_qp_ipm::create_hpipm(ocp_qp_dim& dim, ocp_qp_ipm_arg& ipm_arg) {
   }
   memsize_ = std::max(memsize_, new_memsize);
   if (!memory_) {
-    memory_ = malloc(memsize);
+    memory_ = malloc(memsize_);
     d_ocp_qp_ipm_ws_create(dim.to_hpipm(), ipm_arg.to_hpipm(), 
                            &ocp_qp_ipm_ws_hpipm_, memory_);
   }
@@ -30,7 +30,7 @@ void ocp_qp_ipm::create_hpipm(ocp_qp_dim& dim, ocp_qp_ipm_arg& ipm_arg) {
 
 
 HpipmStatus ocp_qp_ipm::solve(ocp_qp& qp, ocp_qp_sol& qp_sol, 
-                              ocp_qp_ipm_arg& imp_arg) {
+                              ocp_qp_ipm_arg& ipm_arg) {
   d_ocp_qp_ipm_solve(qp.to_hpipm(), qp_sol.to_hpipm(), ipm_arg.to_hpipm(), 
                      &ocp_qp_ipm_ws_hpipm_);
   int hpipm_status;

@@ -21,6 +21,8 @@ public:
 
   ~ocp_qp_sol();
 
+  std::vector<std::string> checkSize(const ocp_qp_dim& dim) const;
+
   void create_hpipm(ocp_qp_dim& dim);
 
   d_ocp_qp_sol* to_hpipm() { return &ocp_qp_sol_hpipm_; }
@@ -33,7 +35,7 @@ public:
   std::vector<Eigen::VectorXd> u;
   std::vector<Eigen::VectorXd> pi; // the Lagrange multiplier w.r.t. the state equation
 
-  // TODO: treat the following variables
+  // TODO: get the following variables from hpipm
   // std::vector<Eigen::VectorXd> sl; // slack lower 
   // std::vector<Eigen::VectorXd> su; // slack upper 
   // std::vector<Eigen::VectorXd> lam_lb; // the Lagrange multiplier w.r.t. the lower box constraint 
@@ -42,8 +44,6 @@ public:
   // std::vector<Eigen::VectorXd> lam_ug; // the Lagrange multiplier w.r.t. the upper constraint
   // std::vector<Eigen::VectorXd> lam_ls; // the Lagrange multiplier w.r.t. the lower soft constraint
   // std::vector<Eigen::VectorXd> lam_us; // the Lagrange multiplier w.r.t. the upper soft constraint
-
-  void s_qp_sol_get_all(struct s_ocp_qp_sol *qp_sol, float **u, float **x, float **ls, float **us, float **pi, float **lam_lb, float **lam_ub, float **lam_lg, float **lam_ug, float **lam_ls, float **lam_us);
 
 private:
   d_ocp_qp_sol ocp_qp_sol_hpipm_;

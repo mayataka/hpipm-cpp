@@ -16,70 +16,70 @@ ocp_qp_dim::~ocp_qp_dim() {
 std::vector<std::string> ocp_qp_dim::checkSize() const {
   std::vector<std::string> err_mgs;
   if (N <= 0) {
-    err_mgs.push_back("N must be positive!: N is " + std::to_string(N));
+    err_mgs.push_back("ocp_qp_dim.N must be positive!: input value is " + std::to_string(N));
   }
   if (nx.size() != N+1) {
-    err_mgs.push_back("nx.size() must be the same as N+1!: nx.size() is " + std::to_string(nx.size()));
+    err_mgs.push_back("ocp_qp_dim.nx.size() must be the same as N+1!: input value is " + std::to_string(nx.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (nx[i] < 0) err_mgs.push_back("nx[" + std::to_string(i) + "] must be non-negative!");
+      if (nx[i] < 0) err_mgs.push_back("ocp_qp_dim.nx[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   if (nu.size() != N+1) {
-    err_mgs.push_back("nu.size() must be the same as N+1!: nu.size() is " + std::to_string(nu.size()));
+    err_mgs.push_back("ocp_qp_dim.nu.size() must be the same as N+1!: input value is " + std::to_string(nu.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (nu[i] < 0) err_mgs.push_back("nu[" + std::to_string(i) + "] must be non-negative!");
+      if (nu[i] < 0) err_mgs.push_back("ocp_qp_dim.nu[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   if (nbx.size() != N+1) {
-    err_mgs.push_back("nbx.size() must be the same as N+1!: nbx.size() is " + std::to_string(nbx.size()));
+    err_mgs.push_back("ocp_qp_dim.nbx.size() must be the same as N+1!: input value is " + std::to_string(nbx.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (nbx[i] < 0) err_mgs.push_back("nbx[" + std::to_string(i) + "] must be non-negative!");
+      if (nbx[i] < 0) err_mgs.push_back("ocp_qp_dim.nbx[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   if (nbu.size() != N+1) {
-    err_mgs.push_back("nbu.size() must be the same as N+1!: nbu.size() is " + std::to_string(nbu.size()));
+    err_mgs.push_back("ocp_qp_dim.nbu.size() must be the same as N+1!: input value is " + std::to_string(nbu.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (nbu[i] < 0) err_mgs.push_back("nbu[" + std::to_string(i) + "] must be non-negative!");
+      if (nbu[i] < 0) err_mgs.push_back("ocp_qp_dim.nbu[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   if (ng.size() != N+1) {
-    err_mgs.push_back("ng.size() must be the same as N+1!: ng.size() is " + std::to_string(ng.size()));
+    err_mgs.push_back("ocp_qp_dim.ng.size() must be the same as N+1!: input value is " + std::to_string(ng.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (ng[i] < 0) err_mgs.push_back("ng[" + std::to_string(i) + "] must be non-negative!");
+      if (ng[i] < 0) err_mgs.push_back("ocp_qp_dim.ng[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   if (nsbx.size() != N+1) {
-    err_mgs.push_back("nsbx.size() must be the same as N+1!: nsbx.size() is " + std::to_string(nsbx.size()));
+    err_mgs.push_back("ocp_qp_dim.nsbx.size() must be the same as N+1!: input value is " + std::to_string(nsbx.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (nsbx[i] < 0) err_mgs.push_back("nsbx[" + std::to_string(i) + "] must be non-negative!");
+      if (nsbx[i] < 0) err_mgs.push_back("ocp_qp_dim.nsbx[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   if (nsbu.size() != N+1) {
-    err_mgs.push_back("nsbu.size() must be the same as N+1!: nsbu.size() is " + std::to_string(nsbu.size()));
+    err_mgs.push_back("ocp_qp_dim.nsbu.size() must be the same as N+1!: input value is " + std::to_string(nsbu.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (nsbu[i] < 0) err_mgs.push_back("nsbu[" + std::to_string(i) + "] must be non-negative!");
+      if (nsbu[i] < 0) err_mgs.push_back("ocp_qp_dim.nsbu[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   if (nsg.size() != N+1) {
-    err_mgs.push_back("nsg.size() must be the same as N+1!: nsg.size() is " + std::to_string(nsg.size()));
+    err_mgs.push_back("ocp_qp_dim.nsg.size() must be the same as N+1!: input value is " + std::to_string(nsg.size()));
   }
   else {
     for (int i=0; i<=N; ++i) {
-      if (nsg[i] < 0) err_mgs.push_back("nsg[" + std::to_string(i) + "] must be non-negative!");
+      if (nsg[i] < 0) err_mgs.push_back("ocp_qp_dim.nsg[" + std::to_string(i) + "] must be non-negative!");
     }
   }
   return err_mgs;

@@ -21,6 +21,8 @@ public:
 
   ~ocp_qp();
 
+  std::vector<std::string> checkSize(const ocp_qp_dim& dim) const;
+
   void create_hpipm(ocp_qp_dim& dim);
 
   d_ocp_qp* to_hpipm() { return &ocp_qp_hpipm_; }

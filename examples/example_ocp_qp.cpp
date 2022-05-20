@@ -24,9 +24,9 @@ int main() {
   dim.nsg  = qp_size.nsg;
   dim.create_hpipm();
 
-  const auto err_msg = dim.checkSize();
-  if (!err_msg.empty()) {
-    for (const auto& e : err_msg) {
+  const auto dim_err_msg = dim.checkSize();
+  if (!dim_err_msg.empty()) {
+    for (const auto& e : dim_err_msg) {
       std::cout << e << std::endl;
     }
   }
@@ -54,6 +54,12 @@ int main() {
     qp.ubx.push_back(qp_data.ubx);
   }
   qp.create_hpipm(dim);
+  const auto qp_err_msg = qp.checkSize(dim);
+  if (!qp_err_msg.empty()) {
+    for (const auto& e : qp_err_msg) {
+      std::cout << e << std::endl;
+    }
+  }
 
   IPMArg ipm_arg;
   hpipm::ocp_qp_ipm_arg arg;
@@ -74,6 +80,12 @@ int main() {
 
   hpipm::ocp_qp_sol sol;
   sol.create_hpipm(dim);
+  const auto sol_err_msg = sol.checkSize(dim);
+  if (!sol_err_msg.empty()) {
+    for (const auto& e : sol_err_msg) {
+      std::cout << e << std::endl;
+    }
+  }
 
   hpipm::ocp_qp_ipm ipm;
   ipm.create_hpipm(dim, arg);
@@ -81,10 +93,18 @@ int main() {
   std::cout << "QP result: " << static_cast<int>(res) << std::endl;
 
   sol.from_hpipm(dim);
-  std::cout << "OCP QP solution: " << std::endl;
+
+  std::cout << "OCP QP primal solution: " << std::endl;
   for (int i=0; i<=dim.N; ++i) {
     std::cout << "x[" << i << "]: " << sol.x[i].transpose() << std::endl;
+  }
+  for (int i=0; i<dim.N; ++i) {
     std::cout << "u[" << i << "]: " << sol.u[i].transpose() << std::endl;
+  }
+
+  std::cout << "OCP QP dual solution (Lagrange multipliers): " << std::endl;
+  for (int i=0; i<dim.N; ++i) {
+    std::cout << "pi[" << i << "]: " << sol.pi[i].transpose() << std::endl;
   }
 
   return 0;

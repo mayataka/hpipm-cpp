@@ -12,6 +12,25 @@ ocp_qp::~ocp_qp() {
 }
 
 
+std::vector<std::string> ocp_qp::checkSize(const ocp_qp_dim& dim) const {
+  std::vector<std::string> err_mgs = dim.checkSize();
+  if (!err_mgs.empty()) {
+    err_mgs.push_back("Call ocp_qp.checkSize() with correct ocp_qp_dim! Please check the above errors.");
+    return err_mgs;
+  }
+  if (A.size() != dim.N) {
+    err_mgs.push_back("ocp_qp.A.size() must be the same as N!");
+  }
+  for (int i=0; i<dim.N; ++i) {
+    if (A[i].rows() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.A[" + std::to_string(i) + "].rows() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+    if (A[i].cols() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.A[" + std::to_string(i) + "].cols() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+  }
+  return err_mgs;
+}
+
+
 void ocp_qp::create_hpipm(ocp_qp_dim& dim) {
   const hpipm_size_t new_memsize = d_ocp_qp_memsize(dim.to_hpipm());
   if (memory_ && new_memsize >= memsize_) {

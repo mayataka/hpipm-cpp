@@ -19,7 +19,7 @@ blasfeo can be installed by the following commands (they are almost same as the 
 ```
 git clone https://github.com/giaf/blasfeo
 cd blasfeo 
-mkdir build && build
+mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBLASFEO_EXAMPLES=OFF 
 make -j4
 sudo make install -j
@@ -31,7 +31,7 @@ hpipm can be installed by the following commands (they are almost same as the `i
 ```
 git clone https://github.com/giaf/hpipm
 cd hpipm
-mkdir build && build
+mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF
 make -j4
 sudo make install -j
@@ -42,7 +42,7 @@ echo export LD_LIBRARY_PATH=/opt/hpipm/lib:$LD_LIBRARY_PATH >> ~/.bashrc
 ```
 git clone https://github.com/mayataka/hpipm-cpp
 cd hpipm-cpp
-mkdir build && build
+mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release 
 make -j4
 sudo make install -j

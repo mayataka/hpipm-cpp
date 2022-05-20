@@ -1,6 +1,6 @@
 git clone https://github.com/giaf/hpipm
 cd hpipm
-mkdir build && build
+mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF
 make -j4
 sudo make install -j

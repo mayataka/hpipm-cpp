@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "Eigen/Core"
 
@@ -25,6 +26,10 @@ enum class HpipmStatus {
   NaNDetected = 3,
   UnknownFailure = 4,
 };
+
+std::string to_string(const HpipmStatus& hpipm_status);
+
+std::ostream& operator<<(std::ostream& os, const HpipmStatus& hpipm_status);
 
 class ocp_qp_ipm {
 public:

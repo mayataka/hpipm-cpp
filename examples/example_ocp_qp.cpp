@@ -90,7 +90,7 @@ int main() {
   hpipm::ocp_qp_ipm ipm;
   ipm.create_hpipm(dim, arg);
   const auto res = ipm.solve(qp, sol, arg);
-  std::cout << "QP result: " << static_cast<int>(res) << std::endl;
+  std::cout << "QP result: " << res << std::endl;
 
   sol.from_hpipm(dim);
 

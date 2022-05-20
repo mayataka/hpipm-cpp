@@ -5,6 +5,7 @@
 
 #include "getting_started_data.hpp"
 
+#include <iostream>
 #include <vector>
 #include "Eigen/Core"
 
@@ -31,13 +32,53 @@ int main() {
     qp.b.push_back(qp_data.b);
   }
   for (int i=0; i<=dim.N; ++i) {
-    qp.Q.push_back(qp_data.q);
+    qp.Q.push_back(qp_data.Q);
     qp.R.push_back(qp_data.R);
     qp.S.push_back(qp_data.S);
     qp.q.push_back(qp_data.q);
     qp.r.push_back(qp_data.r);
   }
   qp.idxbx.push_back(qp_data.idxbx0);
+  qp.lbx.push_back(qp_data.lbx0);
+  qp.ubx.push_back(qp_data.ubx0);
+  for (int i=1; i<=dim.N; ++i) {
+    qp.idxbx.push_back(qp_data.idxbx);
+    qp.lbx.push_back(qp_data.lbx);
+    qp.ubx.push_back(qp_data.ubx);
+  }
+  qp.create_hpipm(dim);
+
+  IPMArg ipm_arg;
+  hpipm::ocp_qp_ipm_arg arg;
+  arg.mode = static_cast<hpipm::HpipmMode>(ipm_arg.mode);
+  arg.iter_max = ipm_arg.iter_max;
+  arg.alpha_min = ipm_arg.alpha_min;
+  arg.mu0 = ipm_arg.mu0;
+  arg.tol_stat = ipm_arg.tol_stat;
+  arg.tol_eq = ipm_arg.tol_eq;
+  arg.tol_ineq = ipm_arg.tol_ineq;
+  arg.tol_comp = ipm_arg.tol_comp;
+  arg.reg_prim = ipm_arg.reg_prim;
+  arg.warm_start = ipm_arg.warm_start;
+  arg.pred_corr = ipm_arg.pred_corr;
+  arg.ric_alg = ipm_arg.ric_alg;
+  arg.split_step = ipm_arg.split_step;
+  arg.create_hpipm(dim);
+
+  hpipm::ocp_qp_sol sol;
+  sol.create_hpipm(dim);
+
+  hpipm::ocp_qp_ipm ipm;
+  ipm.create_hpipm(dim, arg);
+  const auto res = ipm.solve(qp, sol, arg);
+  std::cout << "QP result: " << static_cast<int>(res) << std::endl;
+
+  sol.from_hpipm(dim);
+  std::cout << "OCP QP solution: " << std::endl;
+  for (int i=0; i<=dim.N; ++i) {
+    std::cout << "x[" << i << "]: " << sol.x[i].transpose() << std::endl;
+    std::cout << "u[" << i << "]: " << sol.u[i].transpose() << std::endl;
+  }
 
   return 0;
 }

@@ -115,5 +115,9 @@ int main() {
     std::cout << "pi[" << i << "]: " << sol.pi[i].transpose() << std::endl;
   }
 
+  // TODO: this causes segfault
+  // const auto stat = ipm.getStat();
+  // std::cout << stat << std::endl;
+
   return 0;
 }

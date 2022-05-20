@@ -15,6 +15,7 @@ extern "C" {
 #include "hpipm-cpp/ocp_qp_sol.hpp"
 #include "hpipm-cpp/ocp_qp.hpp"
 #include "hpipm-cpp/ocp_qp_ipm_arg.hpp"
+#include "hpipm-cpp/ocp_qp_ipm_stat.hpp"
 
 
 namespace hpipm {
@@ -41,9 +42,12 @@ public:
 
   HpipmStatus solve(ocp_qp& qp, ocp_qp_sol& qp_sol, ocp_qp_ipm_arg& ipm_arg);
 
+  ocp_qp_ipm_stat getStat();
+
 private:
   struct d_ocp_qp_ipm_ws ocp_qp_ipm_ws_hpipm_;
   void *memory_ = nullptr;
+  double *stat_;
   hpipm_size_t memsize_ = 0;
 };
 

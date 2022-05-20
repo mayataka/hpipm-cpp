@@ -18,6 +18,7 @@ std::vector<std::string> ocp_qp::checkSize(const ocp_qp_dim& dim) const {
     err_mgs.push_back("Call ocp_qp.checkSize() with correct ocp_qp_dim! Please check the above errors.");
     return err_mgs;
   }
+  // dynamics
   if (A.size() != dim.N) {
     err_mgs.push_back("ocp_qp.A.size() must be the same as N!");
   }
@@ -27,6 +28,71 @@ std::vector<std::string> ocp_qp::checkSize(const ocp_qp_dim& dim) const {
     if (A[i].cols() != dim.nx[i]) 
       err_mgs.push_back("ocp_qp.A[" + std::to_string(i) + "].cols() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
   }
+  if (B.size() != dim.N) {
+    err_mgs.push_back("ocp_qp.B.size() must be the same as N!");
+  }
+  for (int i=0; i<dim.N; ++i) {
+    if (B[i].rows() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.A[" + std::to_string(i) + "].rows() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+    if (B[i].cols() != dim.nu[i]) 
+      err_mgs.push_back("ocp_qp.B[" + std::to_string(i) + "].cols() must be the same as ocp_qp_dim.nu[" + std::to_string(i) + "]!");
+  }
+  if (b.size() != dim.N) {
+    err_mgs.push_back("ocp_qp.b.size() must be the same as N!");
+  }
+  for (int i=0; i<dim.N; ++i) {
+    if (b[i].size() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.b[" + std::to_string(i) + "].size() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+    if (b[i].cols() != 1) 
+      err_mgs.push_back("ocp_qp.b[" + std::to_string(i) + "] must be vector!");
+  }
+  // costs 
+  if (Q.size() != dim.N+1) {
+    err_mgs.push_back("ocp_qp.Q.size() must be the same as N+1!");
+  }
+  for (int i=0; i<=dim.N; ++i) {
+    if (Q[i].rows() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.Q[" + std::to_string(i) + "].rows() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+    if (Q[i].cols() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.Q[" + std::to_string(i) + "].cols() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+  }
+  if (S.size() != dim.N) {
+    err_mgs.push_back("ocp_qp.S.size() must be the same as N!");
+  }
+  for (int i=0; i<dim.N; ++i) {
+    if (S[i].rows() != dim.nu[i]) 
+      err_mgs.push_back("ocp_qp.S[" + std::to_string(i) + "].rows() must be the same as ocp_qp_dim.nu[" + std::to_string(i) + "]!");
+    if (S[i].cols() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.S[" + std::to_string(i) + "].cols() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+  }
+  if (R.size() != dim.N) {
+    err_mgs.push_back("ocp_qp.R.size() must be the same as N!");
+  }
+  for (int i=0; i<dim.N; ++i) {
+    if (R[i].rows() != dim.nu[i]) 
+      err_mgs.push_back("ocp_qp.R[" + std::to_string(i) + "].rows() must be the same as ocp_qp_dim.nu[" + std::to_string(i) + "]!");
+    if (R[i].cols() != dim.nu[i]) 
+      err_mgs.push_back("ocp_qp.R[" + std::to_string(i) + "].cols() must be the same as ocp_qp_dim.nu[" + std::to_string(i) + "]!");
+  }
+  if (q.size() != dim.N+1) {
+    err_mgs.push_back("ocp_qp.q.size() must be the same as N+1!");
+  }
+  for (int i=0; i<=dim.N; ++i) {
+    if (q[i].size() != dim.nx[i]) 
+      err_mgs.push_back("ocp_qp.q[" + std::to_string(i) + "].size() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
+    if (q[i].cols() != 1) 
+      err_mgs.push_back("ocp_qp.q[" + std::to_string(i) + "] must be vector!");
+  }
+  if (r.size() != dim.N) {
+    err_mgs.push_back("ocp_qp.r.size() must be the same as N!");
+  }
+  for (int i=0; i<dim.N; ++i) {
+    if (r[i].size() != dim.nu[i]) 
+      err_mgs.push_back("ocp_qp.r[" + std::to_string(i) + "].size() must be the same as ocp_qp_dim.nu[" + std::to_string(i) + "]!");
+    if (r[i].cols() != 1) 
+      err_mgs.push_back("ocp_qp.r[" + std::to_string(i) + "] must be vector!");
+  }
+
   return err_mgs;
 }
 
@@ -101,13 +167,15 @@ void ocp_qp::create_hpipm(ocp_qp_dim& dim) {
     b_ptr_[i] = b[i].data();
   }
   // costs
-  for (int i=0; i<=dim.N; ++i) {
+  for (int i=0; i<dim.N; ++i) {
     Q_ptr_[i] = Q[i].data();
     S_ptr_[i] = S[i].data();
     R_ptr_[i] = R[i].data();
     q_ptr_[i] = q[i].data();
     r_ptr_[i] = r[i].data();
   }
+  Q_ptr_[dim.N] = Q[dim.N].data();
+  q_ptr_[dim.N] = q[dim.N].data();
   // box constraints on state
   if (idxbx.empty() || lbx.empty() || ubx.empty()) {
     idxbx.clear();

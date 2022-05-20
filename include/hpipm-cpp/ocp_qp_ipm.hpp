@@ -42,7 +42,7 @@ public:
   HpipmStatus solve(ocp_qp& qp, ocp_qp_sol& qp_sol, ocp_qp_ipm_arg& ipm_arg);
 
 private:
-	struct d_ocp_qp_ipm_ws ocp_qp_ipm_ws_hpipm_;
+  struct d_ocp_qp_ipm_ws ocp_qp_ipm_ws_hpipm_;
   void *memory_ = nullptr;
   hpipm_size_t memsize_ = 0;
 };

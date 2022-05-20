@@ -27,7 +27,7 @@ struct QPData {
   Eigen::MatrixXd Q = (Eigen::MatrixXd(2, 2) << 1.0, 0.0, 
                                                 0.0, 1.0).finished();
   Eigen::MatrixXd R = (Eigen::MatrixXd(1, 1) << 1.0).finished();
-  Eigen::MatrixXd S = (Eigen::MatrixXd(2, 1) << 0.0, 0.0).finished();
+  Eigen::MatrixXd S = (Eigen::MatrixXd(1, 2) << 0.0, 0.0).finished();
   Eigen::VectorXd q = (Eigen::VectorXd(2) << 1.0, 1.0).finished();
   Eigen::VectorXd r = (Eigen::VectorXd(1) << 0.0).finished();
 

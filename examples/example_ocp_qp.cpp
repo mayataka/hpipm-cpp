@@ -22,29 +22,35 @@ int main() {
   dim.nsbx = qp_size.nsbx;
   dim.nsbu = qp_size.nsbu;
   dim.nsg  = qp_size.nsg;
-  dim.create_hpipm();
 
   const auto dim_err_msg = dim.checkSize();
   if (!dim_err_msg.empty()) {
     for (const auto& e : dim_err_msg) {
       std::cout << e << std::endl;
     }
+    return 1;
   }
+  dim.create_hpipm();
 
   QPData qp_data;
   hpipm::ocp_qp qp;
+  // dynamics
   for (int i=0; i<dim.N; ++i) {
     qp.A.push_back(qp_data.A);
     qp.B.push_back(qp_data.B);
     qp.b.push_back(qp_data.b);
   }
-  for (int i=0; i<=dim.N; ++i) {
+  // cost
+  for (int i=0; i<dim.N; ++i) {
     qp.Q.push_back(qp_data.Q);
     qp.R.push_back(qp_data.R);
     qp.S.push_back(qp_data.S);
     qp.q.push_back(qp_data.q);
     qp.r.push_back(qp_data.r);
   }
+  qp.Q.push_back(qp_data.Q);
+  qp.q.push_back(qp_data.q);
+  // constraints
   qp.idxbx.push_back(qp_data.idxbx0);
   qp.lbx.push_back(qp_data.lbx0);
   qp.ubx.push_back(qp_data.ubx0);
@@ -53,13 +59,14 @@ int main() {
     qp.lbx.push_back(qp_data.lbx);
     qp.ubx.push_back(qp_data.ubx);
   }
-  qp.create_hpipm(dim);
   const auto qp_err_msg = qp.checkSize(dim);
   if (!qp_err_msg.empty()) {
     for (const auto& e : qp_err_msg) {
       std::cout << e << std::endl;
     }
+    return 1;
   }
+  qp.create_hpipm(dim);
 
   IPMArg ipm_arg;
   hpipm::ocp_qp_ipm_arg arg;
@@ -79,13 +86,14 @@ int main() {
   arg.create_hpipm(dim);
 
   hpipm::ocp_qp_sol sol;
-  sol.create_hpipm(dim);
   const auto sol_err_msg = sol.checkSize(dim);
   if (!sol_err_msg.empty()) {
     for (const auto& e : sol_err_msg) {
       std::cout << e << std::endl;
     }
+    return 1;
   }
+  sol.create_hpipm(dim);
 
   hpipm::ocp_qp_ipm ipm;
   ipm.create_hpipm(dim, arg);

@@ -33,9 +33,9 @@ public:
   std::vector<int> nbx;  // number of box inequality constraints on x
   std::vector<int> nbu;  // number of box inequality constraints on u
   std::vector<int> ng;   // number of inequality constraints
-  std::vector<int> nsbx; // number of soft box inequality constraints on x in nbx_
-  std::vector<int> nsbu; // number of soft box inequality constraints on u in nbu_
-  std::vector<int> nsg;  // number of soft inequality constraints in ng_ 
+  std::vector<int> nsbx; // number of soft box inequality constraints on x in nbx
+  std::vector<int> nsbu; // number of soft box inequality constraints on u in nbu
+  std::vector<int> nsg;  // number of soft inequality constraints in ng
 
 private:
   d_ocp_qp_dim ocp_qp_dim_hpipm_;

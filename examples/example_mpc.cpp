@@ -112,10 +112,10 @@ int main() {
   arg.iter_max = 30;
   arg.alpha_min = 1e-8;
   arg.mu0 = 1e2;
-  arg.tol_stat = 1e-4;
-  arg.tol_eq = 1e-5;
-  arg.tol_ineq = 1e-5;
-  arg.tol_comp = 1e-5;
+  arg.tol_stat = 1e-04;
+  arg.tol_eq = 1e-04;
+  arg.tol_ineq = 1e-04;
+  arg.tol_comp = 1e-04;
   arg.reg_prim = 1e-12;
   arg.warm_start = 1;
   arg.pred_corr = 1;
@@ -140,6 +140,10 @@ int main() {
   Eigen::VectorXd x(12);
   x << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
 
+  // const int num_tests = 100;
+  // const auto begin = std::chrono::high_resolution_clock::now();
+  // for (int test=0; test<num_tests; ++test) {
+
   const int sim_steps = 50;
   for (int t=0; t<sim_steps; ++t) {
     std::cout << "t: " << t << ", x: " << x.transpose() << std::endl;
@@ -150,6 +154,11 @@ int main() {
     u0 = sol.u[0];
     x = A * x + B * u0 + b;
   }
+
+  }
+  // const auto end = std::chrono::high_resolution_clock::now();
+  // const auto timing = std::chrono::duration<double, std::milli>(end - begin);
+  // std::cout << "CPU time: " << timing.count() << " [ms]" << std::endl;
 
   std::cout << "t: " << sim_steps << ", x: " << x.transpose() << std::endl;
   return 0;

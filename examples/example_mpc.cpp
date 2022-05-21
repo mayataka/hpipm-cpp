@@ -1,5 +1,6 @@
 #include "hpipm-cpp/hpipm-cpp.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <vector>
 #include "Eigen/Core"
@@ -86,7 +87,8 @@ int main() {
   qp.lbx.push_back(qp.x0);
   qp.ubx.push_back(qp.x0);
   for (int i=1; i<=dim.N; ++i) {
-    constexpr double soft_inf = 1.0e10;
+    // constexpr double soft_inf = 1.0e10;
+    constexpr double soft_inf = 1.0e03;
     qp.idxbx.push_back({0, 1, 5});
     qp.lbx.push_back((Eigen::VectorXd(3) << -M_PI/6.0, -M_PI/6.0, -1.0).finished());
     qp.ubx.push_back((Eigen::VectorXd(3) << M_PI/6.0, M_PI/6.0, soft_inf).finished());
@@ -109,15 +111,15 @@ int main() {
   hpipm::OcpQpIpmSolverSettings arg;
   arg.iter_max = 30;
   arg.alpha_min = 1e-8;
-  arg.mu0 = 1e4;
+  arg.mu0 = 1e2;
   arg.tol_stat = 1e-4;
   arg.tol_eq = 1e-5;
   arg.tol_ineq = 1e-5;
   arg.tol_comp = 1e-5;
   arg.reg_prim = 1e-12;
-  arg.warm_start = 0;
+  arg.warm_start = 1;
   arg.pred_corr = 1;
-  arg.ric_alg = 1;
+  arg.ric_alg = 0;
   arg.split_step = 1;
   arg.createHpipmData(dim);
 
@@ -137,6 +139,7 @@ int main() {
   Eigen::VectorXd u0(4);
   Eigen::VectorXd x(12);
   x << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+
   const int sim_steps = 50;
   for (int t=0; t<sim_steps; ++t) {
     std::cout << "t: " << t << ", x: " << x.transpose() << std::endl;
@@ -147,7 +150,7 @@ int main() {
     u0 = sol.u[0];
     x = A * x + B * u0 + b;
   }
-  std::cout << "t: " << sim_steps << ", x: " << x.transpose() << std::endl;
 
+  std::cout << "t: " << sim_steps << ", x: " << x.transpose() << std::endl;
   return 0;
 }

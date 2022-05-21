@@ -65,7 +65,7 @@ void OcpQpSolution::createHpipmData(OcpQpDim& dim) {
 }
 
 
-void OcpQpSolution::from_hpipm(const OcpQpDim& dim) {
+void OcpQpSolution::getSolutionFromHpipm(const OcpQpDim& dim) {
   x.resize(dim.N+1);
   u.resize(dim.N);
   pi.resize(dim.N);

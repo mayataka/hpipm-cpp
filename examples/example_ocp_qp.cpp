@@ -97,7 +97,7 @@ int main() {
   const auto res = solver.solve(qp, sol, arg);
   std::cout << "QP result: " << res << std::endl;
 
-  sol.from_hpipm(dim);
+  sol.getSolutionFromHpipm(dim);
 
   std::cout << "OCP QP primal solution: " << std::endl;
   for (int i=0; i<=dim.N; ++i) {

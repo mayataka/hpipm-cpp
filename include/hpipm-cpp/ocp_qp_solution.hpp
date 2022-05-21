@@ -29,7 +29,7 @@ public:
 
   const d_ocp_qp_sol* to_hpipm() const { return &ocp_qp_sol_hpipm_; }
 
-  void from_hpipm(const OcpQpDim& dim);
+  void getSolutionFromHpipm(const OcpQpDim& dim);
 
   std::vector<Eigen::VectorXd> x;
   std::vector<Eigen::VectorXd> u;

@@ -92,7 +92,7 @@ hpipm::OcpQpSolver solver;
 solver.createHpipmData(dim, arg); // this creates hpipm's IPM-solver object.
 const auto res = solver.solve(qp, sol, arg); // solve the QP
 
-sol.from_hpipm(dim); // retrieve the QP-solution as Eigen's object from hpipm's object.
+sol.getSolutionFromHpipm(dim); // retrieve the QP-solution as Eigen's object from hpipm's object.
 for (int i=0; i<=dim.N; ++i) {
   std::cout << "x[" << i << "]: " << sol.x[i].transpose() << std::endl;  
 }

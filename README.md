@@ -67,37 +67,36 @@ target_link_libraries(
 ```
 and write the source files as 
 ```
-#include "hpipm-cpp/ocp_qp_dim.hpp"
-#include "hpipm-cpp/ocp_qp.hpp"
-#include "hpipm-cpp/ocp_qp_ipm_arg.hpp"
-#include "hpipm-cpp/ocp_qp_ipm.hpp"
+#include "hpipm-cpp/hpipm-cpp.hpp"
 
-hpipm::ocp_qp_dim dim;
+hpipm::OcpQpDim dim;
 dim.N = ... // set dims
 dim.nx.push_back(...)  // set dims
 ... 
 dim.createHpipmData(); // this creates hpipm's QP-dim object.
 
-hpipm::ocp_qp qp; 
+hpipm::OcpQp qp; 
 qp.A.push_back(Eigen::MatrixXd::...) // set QP datas by Eigen objects
 ... 
 qp.createHpipmData(dim); // this creates hpipm's QP-data object.
 
-hpipm::ipm_arg ipm_arg; 
+hpipm::OcpQpIpmSolverSettings ipm_arg; 
 ipm_arg.ipm_arg.mode = ... // set the IPM solver settings
 ... 
 ipm_arg.createHpipmData(dim); // this creates hpipm's the IPM solver-settings object.
 
-hpipm::ocp_qp_sol sol;
+hpipm::OcpQpSolution sol;
 sol.createHpipmData(dim); // this creates hpipm's QP-solution object.
 
-hpipm::ocp_qp_ipm ipm;
-ipm.createHpipmData(dim, arg); // this creates hpipm's IPM-solver object.
-const auto res = ipm.solve(qp, sol, arg); // solve the QP
+hpipm::OcpQpSolver solver;
+solver.createHpipmData(dim, arg); // this creates hpipm's IPM-solver object.
+const auto res = solver.solve(qp, sol, arg); // solve the QP
 
 sol.from_hpipm(dim); // retrieve the QP-solution as Eigen's object from hpipm's object.
 for (int i=0; i<=dim.N; ++i) {
   std::cout << "x[" << i << "]: " << sol.x[i].transpose() << std::endl;  
-  std::cout << "u[" << i << "]: " << sol.u[i].transpose() << std::endl;
+}
+for (int i=0; i<dim.N; ++i) {
+  std::cout << "u[" << i << "]: " << sol.u[i].transpose() << std::endl;  
 }
 ```

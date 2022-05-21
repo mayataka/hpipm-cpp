@@ -70,7 +70,7 @@ int main() {
   R.setZero(); R.diagonal() << 0.1, 0.1, 0.1, 0.1;
   Eigen::VectorXd x_ref(12);
   x_ref <<  0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0;
-  const Eigen::VectorXd q = Q * x_ref;
+  const Eigen::VectorXd q = - Q* x_ref;
   const Eigen::VectorXd r = Eigen::VectorXd::Zero(4);
   for (int i=0; i<dim.N; ++i) {
     qp.Q.push_back(Q);

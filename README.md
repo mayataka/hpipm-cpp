@@ -100,3 +100,6 @@ for (int i=0; i<dim.N; ++i) {
   std::cout << "u[" << i << "]: " << sol.u[i].transpose() << std::endl;  
 }
 ```
+
+For detailed formulations, please see the [documentation of hpipm](https://github.com/giaf/hpipm/blob/master/doc/guide.pdf).
+The data objects of hpipm::QcpQp follows the convention of that documentation. 

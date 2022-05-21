@@ -43,7 +43,7 @@ std::vector<std::string> OcpQpSolution::checkSize(const OcpQpDim& dim) const {
 
 void OcpQpSolution::createHpipmData(OcpQpDim& dim) {
   const hpipm_size_t new_memsize  = d_ocp_qp_sol_memsize(dim.to_hpipm());
-  if (memory_ && new_memsize >= memsize_) {
+  if (memory_ && new_memsize > memsize_) {
     free(memory_);
     memory_ = nullptr;
   }

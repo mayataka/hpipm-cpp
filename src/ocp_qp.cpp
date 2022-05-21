@@ -205,7 +205,7 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
 
 void OcpQp::createHpipmData(OcpQpDim& dim) {
   const hpipm_size_t new_memsize = d_ocp_qp_memsize(dim.to_hpipm());
-  if (memory_ && new_memsize >= memsize_) {
+  if (memory_ && new_memsize > memsize_) {
     free(memory_);
     memory_ = nullptr;
   }

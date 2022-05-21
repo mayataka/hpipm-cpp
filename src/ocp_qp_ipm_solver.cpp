@@ -40,7 +40,7 @@ void OcpQpIpmSolver::createHpipmData(OcpQpDim& dim,
                                      OcpQpIpmSolverSettings& ipm_arg) {
   const hpipm_size_t new_memsize = d_ocp_qp_ipm_ws_memsize(dim.to_hpipm(), 
   														                             ipm_arg.to_hpipm());
-  if (memory_ && new_memsize >= memsize_) {
+  if (memory_ && new_memsize > memsize_) {
     free(memory_);
     memory_ = nullptr;
   }

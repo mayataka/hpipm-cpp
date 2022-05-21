@@ -26,11 +26,11 @@ std::vector<std::string> OcpQpDim::checkSize() const {
       if (nx[i] < 0) err_mgs.push_back("OcpQpDim.nx[" + std::to_string(i) + "] must be non-negative!");
     }
   }
-  if (nu.size() != N+1) {
-    err_mgs.push_back("OcpQpDim.nu.size() must be the same as N+1!: input value is " + std::to_string(nu.size()));
+  if (nu.size() != N) {
+    err_mgs.push_back("OcpQpDim.nu.size() must be the same as N!: input value is " + std::to_string(nu.size()));
   }
   else {
-    for (int i=0; i<=N; ++i) {
+    for (int i=0; i<N; ++i) {
       if (nu[i] < 0) err_mgs.push_back("OcpQpDim.nu[" + std::to_string(i) + "] must be non-negative!");
     }
   }
@@ -42,11 +42,11 @@ std::vector<std::string> OcpQpDim::checkSize() const {
       if (nbx[i] < 0) err_mgs.push_back("OcpQpDim.nbx[" + std::to_string(i) + "] must be non-negative!");
     }
   }
-  if (nbu.size() != N+1) {
-    err_mgs.push_back("OcpQpDim.nbu.size() must be the same as N+1!: input value is " + std::to_string(nbu.size()));
+  if (nbu.size() != N) {
+    err_mgs.push_back("OcpQpDim.nbu.size() must be the same as N!: input value is " + std::to_string(nbu.size()));
   }
   else {
-    for (int i=0; i<=N; ++i) {
+    for (int i=0; i<N; ++i) {
       if (nbu[i] < 0) err_mgs.push_back("OcpQpDim.nbu[" + std::to_string(i) + "] must be non-negative!");
     }
   }
@@ -66,11 +66,11 @@ std::vector<std::string> OcpQpDim::checkSize() const {
       if (nsbx[i] < 0) err_mgs.push_back("OcpQpDim.nsbx[" + std::to_string(i) + "] must be non-negative!");
     }
   }
-  if (nsbu.size() != N+1) {
-    err_mgs.push_back("OcpQpDim.nsbu.size() must be the same as N+1!: input value is " + std::to_string(nsbu.size()));
+  if (nsbu.size() != N) {
+    err_mgs.push_back("OcpQpDim.nsbu.size() must be the same as N!: input value is " + std::to_string(nsbu.size()));
   }
   else {
-    for (int i=0; i<=N; ++i) {
+    for (int i=0; i<N; ++i) {
       if (nsbu[i] < 0) err_mgs.push_back("OcpQpDim.nsbu[" + std::to_string(i) + "] must be non-negative!");
     }
   }

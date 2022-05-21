@@ -4,15 +4,15 @@
 
 struct QPSize {
   int N = 5; // horizon lenght
-  std::vector<int> nu = {1, 1, 1, 1, 1, 0};  // number of input
+  std::vector<int> nu = {1, 1, 1, 1, 1};  // number of input
   std::vector<int> nx = {2, 2, 2, 2, 2, 2};  // number of states 
-  std::vector<int> nbu = {0, 0, 0, 0, 0, 0}; // number of box constraints on input
+  std::vector<int> nbu = {0, 0, 0, 0, 0}; // number of box constraints on input
   std::vector<int> nbx = {2, 0, 0, 0, 0, 0}; // number of box constraints on states
   std::vector<int> ng = {0, 0, 0, 0, 0, 0};  // number of general constraints
   std::vector<int> nsbx = {0, 0, 0, 0, 0, 0}; // number of softed constraints on state box constraints
-  std::vector<int> nsbu = {0, 0, 0, 0, 0, 0}; // number of softed constraints on input box constraints
+  std::vector<int> nsbu = {0, 0, 0, 0, 0}; // number of softed constraints on input box constraints
   std::vector<int> nsg = {0, 0, 0, 0, 0, 0};  // number of softed constraints on general constraints
-  std::vector<int> nbue = {0, 0, 0, 0, 0, 0}; // number of input box constraints considered as equality
+  std::vector<int> nbue = {0, 0, 0, 0, 0}; // number of input box constraints considered as equality
   std::vector<int> nbxe = {0, 0, 0, 0, 0, 0}; // number of states box constraints considered as equality
   // std::vector<int> nge = {0, 0, 0, 0, 0, 0};  // number of general constraints considered as equality
 };

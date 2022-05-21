@@ -11,14 +11,12 @@ int main() {
   dim.N    = 20;
   dim.nx   = std::vector<int>(dim.N+1, 12);
   dim.nu   = std::vector<int>(dim.N, 4);
-  dim.nu.push_back(0);
   dim.nbx  = std::vector<int>(dim.N+1, 3);
   dim.nbx[0] = 12;
   dim.nbu  = std::vector<int>(dim.N, 4);
-  dim.nbu.push_back(0);
   dim.ng   = std::vector<int>(dim.N+1, 0);
   dim.nsbx = std::vector<int>(dim.N+1, 0);
-  dim.nsbu = std::vector<int>(dim.N+1, 0);
+  dim.nsbu = std::vector<int>(dim.N, 0);
   dim.nsg  = std::vector<int>(dim.N+1, 0);
   const auto dim_err_msg = dim.checkSize();
   if (!dim_err_msg.empty()) {
@@ -135,8 +133,6 @@ int main() {
 
   hpipm::OcpQpIpmSolver solver;
   solver.createHpipmData(dim, arg);
-  const auto res = solver.solve(qp, sol, arg);
-  std::cout << "QP result: " << res << std::endl;
 
   Eigen::VectorXd u0(4);
   Eigen::VectorXd x(12);

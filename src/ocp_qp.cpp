@@ -122,8 +122,8 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
   else {
     if (C.size() != dim.N+1) err_mgs.push_back("ocp_qp.C.size() must be ocp_qp_dim.N+1 or 0!");
     if (D.size() != dim.N) err_mgs.push_back("ocp_qp.D.size() must be ocp_qp_dim.N or 0!");
-    if (lg.size() != dim.N) err_mgs.push_back("ocp_qp.lg.size() must be ocp_qp_dim.N+1 or 0!");
-    if (ug.size() != dim.N) err_mgs.push_back("ocp_qp.ug.size() must be ocp_qp_dim.N+1 or 0!");
+    if (lg.size() != dim.N+1) err_mgs.push_back("ocp_qp.lg.size() must be ocp_qp_dim.N+1 or 0!");
+    if (ug.size() != dim.N+1) err_mgs.push_back("ocp_qp.ug.size() must be ocp_qp_dim.N+1 or 0!");
     for (int i=0; i<dim.N; ++i) {
       if (C[i].rows() != dim.ng[i]) 
         err_mgs.push_back("ocp_qp.C[" + std::to_string(i) + "].rows() must ocp_qp_dim.ng[" + std::to_string(i) + "]!");

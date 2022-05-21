@@ -3,6 +3,7 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
+
 #include "Eigen/Core"
 
 
@@ -155,7 +156,7 @@ int main() {
     x = A * x + B * u0 + b;
   }
 
-  }
+  // }
   // const auto end = std::chrono::high_resolution_clock::now();
   // const auto timing = std::chrono::duration<double, std::milli>(end - begin);
   // std::cout << "CPU time: " << timing.count() << " [ms]" << std::endl;

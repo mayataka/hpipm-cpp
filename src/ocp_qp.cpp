@@ -96,6 +96,34 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
         err_mgs.push_back("ocp_qp.ubx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
     }
   }
+  if (lbx_mask.size() != 0 && lbx_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.lbx_mask.size() must be ocp_qp_dim.N+1 or 0!");
+  if (ubx_mask.size() != 0 && ubx_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.ubx_mask.size() must be ocp_qp_dim.N+1 or 0!");
+  if (lbx_mask.size() == dim.N+1) {
+    for (int i=1; i<=dim.N; ++i) {
+      if (lbx_mask[i].size() != 0 && lbx_mask[i].size() != dim.nbx[i]) {
+        err_mgs.push_back("ocp_qp.lbx_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
+      }
+      else {
+        for (int j=0; j<dim.nbx[i]; ++j) {
+          if (lbx_mask[i][j] != 1.0 && lbx_mask[i][j] != 0.0) 
+            err_mgs.push_back("ocp_qp.lbx_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
+        }
+      }
+    }
+  }
+  if (ubx_mask.size() == dim.N+1) {
+    for (int i=1; i<=dim.N; ++i) {
+      if (ubx_mask[i].size() != 0 && ubx_mask[i].size() != dim.nbx[i]) {
+        err_mgs.push_back("ocp_qp.ubx_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
+      }
+      else {
+        for (int j=0; j<dim.nbx[i]; ++j) {
+          if (ubx_mask[i][j] != 1.0 && ubx_mask[i][j] != 0.0) 
+            err_mgs.push_back("ocp_qp.ubx_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
+        }
+      }
+    }
+  }
   if (idxbu.empty()) {
     if (!lbu.empty()) err_mgs.push_back("lbu must be empty because idxbu is empty!");
     if (!ubu.empty()) err_mgs.push_back("ubu must be empty because idxbu is empty!");
@@ -111,6 +139,34 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
         err_mgs.push_back("ocp_qp.lbx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
       if (ubu[i].size() != dim.nbu[i]) 
         err_mgs.push_back("ocp_qp.ubx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
+    }
+  }
+  if (lbu_mask.size() != 0 && lbu_mask.size() != dim.N) err_mgs.push_back("ocp_qp.lbu_mask.size() must be ocp_qp_dim.N or 0!");
+  if (ubu_mask.size() != 0 && ubu_mask.size() != dim.N) err_mgs.push_back("ocp_qp.ubu_mask.size() must be ocp_qp_dim.N or 0!");
+  if (lbu_mask.size() == dim.N) {
+    for (int i=0; i<dim.N; ++i) {
+      if (lbu_mask[i].size() != 0 && lbu_mask[i].size() != dim.nbu[i]) {
+        err_mgs.push_back("ocp_qp.lbu_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
+      }
+      else {
+        for (int j=0; j<lbu_mask[i].size(); ++j) {
+          if (lbu_mask[i][j] != 1.0 && lbu_mask[i][j] != 0.0) 
+            err_mgs.push_back("ocp_qp.lbu_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
+        }
+      }
+    }
+  }
+  if (ubu_mask.size() == dim.N) {
+    for (int i=0; i<dim.N; ++i) {
+      if (ubu_mask[i].size() != 0 && ubu_mask[i].size() != dim.nbu[i]) {
+        err_mgs.push_back("ocp_qp.ubu_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
+      }
+      else {
+        for (int j=0; j<ubu_mask[i].size(); ++j) {
+          if (ubu_mask[i][j] != 1.0 && ubu_mask[i][j] != 0.0) 
+            err_mgs.push_back("ocp_qp.lbu_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
+        }
+      }
     }
   }
   // constraints
@@ -155,6 +211,35 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
     if (ug[dim.N].cols() != 1) 
       err_mgs.push_back("ocp_qp.ug[" + std::to_string(dim.N) + "] must be a vector!");
   }
+  if (lg_mask.size() != 0 && lg_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.lg_mask.size() must be ocp_qp_dim.N+1 or 0!");
+  if (ug_mask.size() != 0 && ug_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.ug_mask.size() must be ocp_qp_dim.N+1 or 0!");
+  if (lg_mask.size() == dim.N+1) {
+    for (int i=0; i<=dim.N; ++i) {
+      if (lg_mask[i].size() != 0 && lg_mask[i].size() != dim.ng[i]) {
+        err_mgs.push_back("ocp_qp.lg_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.ng[" + std::to_string(i) + "]!");
+      }
+      else {
+        for (int j=0; j<lg_mask[i].size(); ++j) {
+          if (lg_mask[i][j] != 1.0 && lg_mask[i][j] != 0.0) 
+            err_mgs.push_back("ocp_qp.lg_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
+        }
+      }
+    }
+  }
+  if (ug_mask.size() == dim.N+1) {
+    for (int i=0; i<=dim.N; ++i) {
+      if (ug_mask[i].size() != 0 && ug_mask[i].size() != dim.ng[i]) {
+        err_mgs.push_back("ocp_qp.ug_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.ng[" + std::to_string(i) + "]!");
+      }
+      else {
+        for (int j=0; j<ug_mask[i].size(); ++j) {
+          if (ug_mask[i][j] != 1.0 && ug_mask[i][j] != 0.0) 
+            err_mgs.push_back("ocp_qp.ug_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
+        }
+      }
+    }
+  }
+  // soft constraints
   if (Zl.empty()) {
     if (!Zu.empty()) err_mgs.push_back("Zu must be empty because Zu is empty!");
     if (!zl.empty()) err_mgs.push_back("lg must be empty because zl is empty!");
@@ -225,13 +310,19 @@ void OcpQp::createHpipmData(OcpQpDim& dim) {
   idxbx_ptr_.clear();
   lbx_ptr_.clear();
   ubx_ptr_.clear();
+  lbx_mask_ptr_.clear();
+  ubx_mask_ptr_.clear();
   idxbu_ptr_.clear();
   lbu_ptr_.clear();
   ubu_ptr_.clear();
+  lbu_mask_ptr_.clear();
+  ubu_mask_ptr_.clear();
   C_ptr_.clear();
   D_ptr_.clear();
   lg_ptr_.clear();
   ug_ptr_.clear();
+  lg_mask_ptr_.clear();
+  ug_mask_ptr_.clear();
   Zl_ptr_.clear();
   Zu_ptr_.clear();
   zl_ptr_.clear();
@@ -251,13 +342,19 @@ void OcpQp::createHpipmData(OcpQpDim& dim) {
   idxbx_ptr_.resize(dim.N+1);
   lbx_ptr_.resize(dim.N+1);
   ubx_ptr_.resize(dim.N+1);
+  lbx_mask_ptr_.resize(dim.N+1);
+  ubx_mask_ptr_.resize(dim.N+1);
   idxbu_ptr_.resize(dim.N+1);
   lbu_ptr_.resize(dim.N+1);
   ubu_ptr_.resize(dim.N+1);
+  lbu_mask_ptr_.resize(dim.N+1);
+  ubu_mask_ptr_.resize(dim.N+1);
   C_ptr_.resize(dim.N+1);
   D_ptr_.resize(dim.N+1);
   lg_ptr_.resize(dim.N+1);
   ug_ptr_.resize(dim.N+1);
+  lg_mask_ptr_.resize(dim.N+1);
+  ug_mask_ptr_.resize(dim.N+1);
   Zl_ptr_.resize(dim.N+1);
   Zu_ptr_.resize(dim.N+1);
   zl_ptr_.resize(dim.N+1);
@@ -368,6 +465,7 @@ void OcpQp::createHpipmData(OcpQpDim& dim) {
                    C_ptr_.data(), D_ptr_.data(), lg_ptr_.data(), ug_ptr_.data(), 
                    Zl_ptr_.data(), Zu_ptr_.data(), zl_ptr_.data(), zu_ptr_.data(), 
                    idxs_ptr_.data(), lls_ptr_.data(), lus_ptr_.data(), &ocp_qp_hpipm_);
+  // initial state embedding
   if (x0.size() > 0) {
     hidxe_.clear();
     for (int i=0; i<x0.size(); ++i) {
@@ -376,6 +474,55 @@ void OcpQp::createHpipmData(OcpQpDim& dim) {
     d_ocp_qp_set_lbx(0, x0.data(), &ocp_qp_hpipm_);
     d_ocp_qp_set_ubx(0, x0.data(), &ocp_qp_hpipm_);
     d_ocp_qp_set_idxe(0, hidxe_.data(), &ocp_qp_hpipm_);
+  }
+  // masks
+  if (lbx_mask.size() == dim.N+1) {
+    for (int i=1; i<=dim.N; ++i) {
+      if (lbx_mask[i].size() == dim.nbx[i]) {
+        lbx_mask_ptr_[i] = lbx[i].data();
+        d_ocp_qp_set_lbx_mask(i, lbx_mask_ptr_[i], &ocp_qp_hpipm_);
+      }
+    }
+  }
+  if (ubx_mask.size() == dim.N+1) {
+    for (int i=1; i<=dim.N; ++i) {
+      if (ubx_mask[i].size() == dim.nbx[i]) {
+        ubx_mask_ptr_[i] = ubx[i].data();
+        d_ocp_qp_set_ubx_mask(i, ubx_mask_ptr_[i], &ocp_qp_hpipm_);
+      }
+    }
+  }
+  if (lbu_mask.size() == dim.N) {
+    for (int i=0; i<dim.N; ++i) {
+      if (lbu_mask[i].size() == dim.nbu[i]) {
+        lbu_mask_ptr_[i] = lbu[i].data();
+        d_ocp_qp_set_lbu_mask(i, lbu_mask_ptr_[i], &ocp_qp_hpipm_);
+      }
+    }
+  }
+  if (ubu_mask.size() == dim.N) {
+    for (int i=0; i<dim.N; ++i) {
+      if (ubu_mask[i].size() == dim.nbu[i]) {
+        ubu_mask_ptr_[i] = ubu[i].data();
+        d_ocp_qp_set_ubu_mask(i, ubu_mask_ptr_[i], &ocp_qp_hpipm_);
+      }
+    }
+  }
+  if (lg_mask.size() == dim.N+1) {
+    for (int i=0; i<=dim.N; ++i) {
+      if (lg_mask[i].size() == dim.ng[i]) {
+        lg_mask_ptr_[i] = lg[i].data();
+        d_ocp_qp_set_lg_mask(i, lg_mask_ptr_[i], &ocp_qp_hpipm_);
+      }
+    }
+  }
+  if (ug_mask.size() == dim.N+1) {
+    for (int i=0; i<=dim.N; ++i) {
+      if (ug_mask[i].size() == dim.ng[i]) {
+        ug_mask_ptr_[i] = ug[i].data();
+        d_ocp_qp_set_ug_mask(i, ug_mask_ptr_[i], &ocp_qp_hpipm_);
+      }
+    }
   }
 }
 

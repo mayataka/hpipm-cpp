@@ -41,13 +41,19 @@ public:
   std::vector<std::vector<int>> idxbx; // indices of box constrained x
   std::vector<Eigen::VectorXd> lbx; 
   std::vector<Eigen::VectorXd> ubx; 
+  std::vector<Eigen::VectorXd> lbx_mask; // if this is set, each elemtn has to be 0.0 or 1.0
+  std::vector<Eigen::VectorXd> ubx_mask; // if this is set, each elemtn has to be 0.0 or 1.0
   std::vector<std::vector<int>> idxbu; // indices of box constrained u
   std::vector<Eigen::VectorXd> lbu; 
   std::vector<Eigen::VectorXd> ubu; 
+  std::vector<Eigen::VectorXd> lbu_mask; // if this is set, each elemtn has to be 0.0 or 1.0
+  std::vector<Eigen::VectorXd> ubu_mask; // if this is set, each elemtn has to be 0.0 or 1.0
   std::vector<Eigen::MatrixXd> C; // lg < Cx+Du < ug
   std::vector<Eigen::MatrixXd> D;
   std::vector<Eigen::VectorXd> lg; 
   std::vector<Eigen::VectorXd> ug; 
+  std::vector<Eigen::VectorXd> lg_mask; // if this is set, each elemtn has to be 0.0 or 1.0
+  std::vector<Eigen::VectorXd> ug_mask; // if this is set, each elemtn has to be 0.0 or 1.0
   std::vector<Eigen::MatrixXd> Zl; // penalty on the slacks of upper soft constraints
   std::vector<Eigen::MatrixXd> Zu; // penalty on the slacks of lower soft constraints
   std::vector<Eigen::VectorXd> zl; // lower bounds of the slacks of upper soft constraints
@@ -70,13 +76,19 @@ private:
   std::vector<int*> idxbx_ptr_; 
   std::vector<double*> lbx_ptr_; 
   std::vector<double*> ubx_ptr_; 
+  std::vector<double*> lbx_mask_ptr_; 
+  std::vector<double*> ubx_mask_ptr_; 
   std::vector<int*> idxbu_ptr_; 
   std::vector<double*> lbu_ptr_; 
   std::vector<double*> ubu_ptr_; 
+  std::vector<double*> lbu_mask_ptr_; 
+  std::vector<double*> ubu_mask_ptr_; 
   std::vector<double*> C_ptr_; 
   std::vector<double*> D_ptr_;
   std::vector<double*> lg_ptr_; 
   std::vector<double*> ug_ptr_; 
+  std::vector<double*> lg_mask_ptr_; 
+  std::vector<double*> ug_mask_ptr_; 
   std::vector<double*> Zl_ptr_; 
   std::vector<double*> Zu_ptr_; 
   std::vector<double*> zl_ptr_; 

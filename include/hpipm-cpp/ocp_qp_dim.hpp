@@ -11,11 +11,12 @@ extern "C" {
 
 namespace hpipm {
 
-struct ocp_qp_dim {
+// Dimensions of OCP-QP.
+struct OcpQpDim {
 public:
-  ocp_qp_dim() = default;
+  OcpQpDim() = default;
 
-  ~ocp_qp_dim();
+  ~OcpQpDim();
 
   std::vector<std::string> checkSize() const;
 
@@ -25,7 +26,7 @@ public:
 
   const d_ocp_qp_dim* to_hpipm() const { return &ocp_qp_dim_hpipm_; }
 
-  static ocp_qp_dim from_hpipm(const d_ocp_qp_dim* ocp_qp_dim_hpipm);
+  static OcpQpDim from_hpipm(const d_ocp_qp_dim* ocp_qp_dim_hpipm);
 
   int N; // horizon length
   std::vector<int> nx;   // dimension of x

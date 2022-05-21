@@ -1,5 +1,5 @@
-#ifndef HPIPM_CPP_OCP_QP_SOL_HPP_
-#define HPIPM_CPP_OCP_QP_SOL_HPP_
+#ifndef HPIPM_CPP_OCP_QP_SOLUTION_HPP_
+#define HPIPM_CPP_OCP_QP_SOLUTION_HPP_
 
 #include <vector>
 #include <string>
@@ -15,21 +15,21 @@ extern "C" {
 
 namespace hpipm {
 
-struct ocp_qp_sol {
+struct OcpQpSolution {
 public:
-  ocp_qp_sol() = default;
+  OcpQpSolution() = default;
 
-  ~ocp_qp_sol();
+  ~OcpQpSolution();
 
-  std::vector<std::string> checkSize(const ocp_qp_dim& dim) const;
+  std::vector<std::string> checkSize(const OcpQpDim& dim) const;
 
-  void createHpipmData(ocp_qp_dim& dim);
+  void createHpipmData(OcpQpDim& dim);
 
   d_ocp_qp_sol* to_hpipm() { return &ocp_qp_sol_hpipm_; }
 
   const d_ocp_qp_sol* to_hpipm() const { return &ocp_qp_sol_hpipm_; }
 
-  void from_hpipm(const ocp_qp_dim& dim);
+  void from_hpipm(const OcpQpDim& dim);
 
   std::vector<Eigen::VectorXd> x;
   std::vector<Eigen::VectorXd> u;
@@ -53,4 +53,4 @@ private:
 
 } // namespace hpipm
 
-#endif // HPIPM_CPP_OCP_QP_SOL_HPP_
+#endif // HPIPM_CPP_OCP_QP_SOLUTION_HPP_

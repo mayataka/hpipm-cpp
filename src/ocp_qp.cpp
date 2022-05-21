@@ -6,14 +6,14 @@
 
 namespace hpipm {
 
-ocp_qp::~ocp_qp() {
+OcpQp::~OcpQp() {
   if (memory_) {
     free(memory_);
   }
 }
 
 
-std::vector<std::string> ocp_qp::checkSize(const ocp_qp_dim& dim) const {
+std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
   std::vector<std::string> err_mgs = dim.checkSize();
   if (!err_mgs.empty()) {
     err_mgs.push_back("Call ocp_qp.checkSize() with correct ocp_qp_dim! Please check the above errors.");
@@ -203,7 +203,7 @@ std::vector<std::string> ocp_qp::checkSize(const ocp_qp_dim& dim) const {
 }
 
 
-void ocp_qp::createHpipmData(ocp_qp_dim& dim) {
+void OcpQp::createHpipmData(OcpQpDim& dim) {
   const hpipm_size_t new_memsize = d_ocp_qp_memsize(dim.to_hpipm());
   if (memory_ && new_memsize >= memsize_) {
     free(memory_);

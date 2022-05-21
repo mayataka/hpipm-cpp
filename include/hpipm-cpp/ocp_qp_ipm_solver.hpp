@@ -1,5 +1,5 @@
-#ifndef HPIPM_CPP_OCP_QP_IPM_HPP_
-#define HPIPM_CPP_OCP_QP_IPM_HPP_
+#ifndef HPIPM_CPP_OCP_QP_IPM_SOLVER_HPP_
+#define HPIPM_CPP_OCP_QP_IPM_SOLVER_HPP_
 
 #include <vector>
 #include <string>
@@ -12,10 +12,10 @@ extern "C" {
 }
 
 #include "hpipm-cpp/ocp_qp_dim.hpp"
-#include "hpipm-cpp/ocp_qp_sol.hpp"
 #include "hpipm-cpp/ocp_qp.hpp"
-#include "hpipm-cpp/ocp_qp_ipm_arg.hpp"
-#include "hpipm-cpp/ocp_qp_ipm_stat.hpp"
+#include "hpipm-cpp/ocp_qp_solution.hpp"
+#include "hpipm-cpp/ocp_qp_ipm_solver_settings.hpp"
+#include "hpipm-cpp/ocp_qp_ipm_solver_statistics.hpp"
 
 
 namespace hpipm {
@@ -32,17 +32,19 @@ std::string to_string(const HpipmStatus& hpipm_status);
 
 std::ostream& operator<<(std::ostream& os, const HpipmStatus& hpipm_status);
 
-class ocp_qp_ipm {
+class OcpQpIpmSolver {
 public:
-  ocp_qp_ipm() = default;
+  OcpQpIpmSolver() = default;
 
-  ~ocp_qp_ipm();
+  ~OcpQpIpmSolver();
 
-  void createHpipmData(ocp_qp_dim& dim, ocp_qp_ipm_arg& ipm_arg);
+  void createHpipmData(OcpQpDim& dim, OcpQpIpmSolverSettings& ipm_arg);
 
-  HpipmStatus solve(ocp_qp& qp, ocp_qp_sol& qp_sol, ocp_qp_ipm_arg& ipm_arg);
+  // TODO: add const to qp and ipm_arg?
+  HpipmStatus solve(OcpQp& qp, OcpQpSolution& qp_sol, 
+                    OcpQpIpmSolverSettings& ipm_arg);
 
-  ocp_qp_ipm_stat getStat();
+  OcpQpIpmSolverStatistics getSolverStatistics();
 
 private:
   struct d_ocp_qp_ipm_ws ocp_qp_ipm_ws_hpipm_;
@@ -53,4 +55,4 @@ private:
 
 } // namespace hpipm
 
-#endif // HPIPM_CPP_OCP_QP_IPM_HPP_
+#endif // HPIPM_CPP_OCP_QP_IPM_SOLVER_HPP_

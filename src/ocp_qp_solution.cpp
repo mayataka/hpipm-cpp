@@ -1,4 +1,4 @@
-#include "hpipm-cpp/ocp_qp_sol.hpp"
+#include "hpipm-cpp/ocp_qp_solution.hpp"
 
 #include <algorithm>
 #include <cstdlib>
@@ -6,14 +6,14 @@
 
 namespace hpipm {
 
-ocp_qp_sol::~ocp_qp_sol() {
+OcpQpSolution::~OcpQpSolution() {
   if (memory_) {
     free(memory_);
   }
 }
 
 
-std::vector<std::string> ocp_qp_sol::checkSize(const ocp_qp_dim& dim) const {
+std::vector<std::string> OcpQpSolution::checkSize(const OcpQpDim& dim) const {
   std::vector<std::string> err_mgs = dim.checkSize();
   if (!err_mgs.empty()) {
     err_mgs.push_back("Call ocp_qp_sol.checkSize() with correct ocp_qp_dim! Please check the above errors.");
@@ -41,7 +41,7 @@ std::vector<std::string> ocp_qp_sol::checkSize(const ocp_qp_dim& dim) const {
 }
 
 
-void ocp_qp_sol::createHpipmData(ocp_qp_dim& dim) {
+void OcpQpSolution::createHpipmData(OcpQpDim& dim) {
   const hpipm_size_t new_memsize  = d_ocp_qp_sol_memsize(dim.to_hpipm());
   if (memory_ && new_memsize >= memsize_) {
     free(memory_);
@@ -65,7 +65,7 @@ void ocp_qp_sol::createHpipmData(ocp_qp_dim& dim) {
 }
 
 
-void ocp_qp_sol::from_hpipm(const ocp_qp_dim& dim) {
+void OcpQpSolution::from_hpipm(const OcpQpDim& dim) {
   x.resize(dim.N+1);
   u.resize(dim.N);
   pi.resize(dim.N);

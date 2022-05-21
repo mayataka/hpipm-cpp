@@ -1,5 +1,5 @@
-#ifndef HPIPM_CPP_OCP_QP_IPM_ARG_HPP_
-#define HPIPM_CPP_OCP_QP_IPM_ARG_HPP_
+#ifndef HPIPM_CPP_OCP_QP_IPM_SOLVER_SETTINGS_HPP_
+#define HPIPM_CPP_OCP_QP_IPM_SOLVER_SETTINGS_HPP_
 
 #include <vector>
 #include <string>
@@ -22,19 +22,17 @@ enum class HpipmMode {
   Robust   = hpipm_mode::ROBUST,
 };
 
-struct ocp_qp_ipm_arg {
+struct OcpQpIpmSolverSettings {
 public:
-  ocp_qp_ipm_arg() = default;
+  OcpQpIpmSolverSettings() = default;
 
-  ~ocp_qp_ipm_arg();
+  ~OcpQpIpmSolverSettings();
 
-  void createHpipmData(ocp_qp_dim& dim);
+  void createHpipmData(OcpQpDim& dim);
 
   d_ocp_qp_ipm_arg* to_hpipm() { return &ocp_qp_ipm_arg_hpipm_; }
 
   const d_ocp_qp_ipm_arg* to_hpipm() const { return &ocp_qp_ipm_arg_hpipm_; }
-
-  void from_hpipm(const ocp_qp_dim& dim);
 
   HpipmMode mode = HpipmMode::Speed; 
 
@@ -70,4 +68,4 @@ private:
 
 } // namespace hpipm
 
-#endif // HPIPM_CPP_OCP_QP_IPM_ARG_HPP_
+#endif // HPIPM_CPP_OCP_QP_IPM_SOLVER_SETTINGS_HPP_

@@ -1,12 +1,12 @@
-#include "hpipm-cpp/ocp_qp_ipm_stat.hpp"
+#include "hpipm-cpp/ocp_qp_ipm_solver_statistics.hpp"
 
 #include <iomanip>
 
 
 namespace hpipm {
 
-void ocp_qp_ipm_stat::disp(std::ostream& os) const {
-  os << "================== Hpipm stat: ==================" << std::endl;
+void OcpQpIpmSolverStatistics::disp(std::ostream& os) const {
+  os << "================== Hpipm Solver Statistics ==================" << std::endl;
   os << "ipm iter: " << iter << std::endl;
   os << std::setprecision(5) << std::scientific;
   os << "max_res_stat: " << max_res_stat << std::endl;
@@ -56,8 +56,8 @@ void ocp_qp_ipm_stat::disp(std::ostream& os) const {
 }
 
 
-std::ostream& operator<<(std::ostream& os, const ocp_qp_ipm_stat& stat) {
-  stat.disp(os);
+std::ostream& operator<<(std::ostream& os, const OcpQpIpmSolverStatistics& stats) {
+  stats.disp(os);
   return os;
 }
 

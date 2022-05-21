@@ -15,15 +15,15 @@ extern "C" {
 
 namespace hpipm {
 
-struct ocp_qp {
+struct OcpQp {
 public:
-  ocp_qp() = default;
+  OcpQp() = default;
 
-  ~ocp_qp();
+  ~OcpQp();
 
-  std::vector<std::string> checkSize(const ocp_qp_dim& dim) const;
+  std::vector<std::string> checkSize(const OcpQpDim& dim) const;
 
-  void createHpipmData(ocp_qp_dim& dim);
+  void createHpipmData(OcpQpDim& dim);
 
   d_ocp_qp* to_hpipm() { return &ocp_qp_hpipm_; }
 

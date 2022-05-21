@@ -1,4 +1,4 @@
-#include "hpipm-cpp/ocp_qp_ipm_arg.hpp"
+#include "hpipm-cpp/ocp_qp_ipm_solver_settings.hpp"
 
 #include <algorithm>
 #include <cstdlib>
@@ -6,15 +6,15 @@
 
 namespace hpipm {
 
-ocp_qp_ipm_arg::~ocp_qp_ipm_arg() {
+OcpQpIpmSolverSettings::~OcpQpIpmSolverSettings() {
   if (memory_) {
     free(memory_);
   }
 }
 
 
-void ocp_qp_ipm_arg::createHpipmData(ocp_qp_dim& dim) {
-  const hpipm_size_t new_memsize  = d_ocp_qp_ipm_arg_memsize(dim.to_hpipm());
+void OcpQpIpmSolverSettings::createHpipmData(OcpQpDim& dim) {
+  const hpipm_size_t new_memsize = d_ocp_qp_ipm_arg_memsize(dim.to_hpipm());
   if (memory_ && new_memsize >= memsize_) {
     free(memory_);
     memory_ = nullptr;

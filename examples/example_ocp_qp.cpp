@@ -1,7 +1,4 @@
-#include "hpipm-cpp/ocp_qp_dim.hpp"
-#include "hpipm-cpp/ocp_qp.hpp"
-#include "hpipm-cpp/ocp_qp_ipm_arg.hpp"
-#include "hpipm-cpp/ocp_qp_ipm.hpp"
+#include "hpipm-cpp/hpipm-cpp.hpp"
 
 #include "getting_started_data.hpp"
 
@@ -12,7 +9,7 @@
 
 int main() {
   QPSize qp_size;
-  hpipm::ocp_qp_dim dim;
+  hpipm::OcpQpDim dim;
   dim.N    = qp_size.N;
   dim.nx   = qp_size.nx;
   dim.nu   = qp_size.nu;
@@ -33,7 +30,7 @@ int main() {
   dim.createHpipmData();
 
   QPData qp_data;
-  hpipm::ocp_qp qp;
+  hpipm::OcpQp qp;
   // dynamics
   for (int i=0; i<dim.N; ++i) {
     qp.A.push_back(qp_data.A);
@@ -69,7 +66,7 @@ int main() {
   qp.createHpipmData(dim);
 
   IPMArg ipm_arg;
-  hpipm::ocp_qp_ipm_arg arg;
+  hpipm::OcpQpIpmSolverSettings arg;
   arg.mode = static_cast<hpipm::HpipmMode>(ipm_arg.mode);
   arg.iter_max = ipm_arg.iter_max;
   arg.alpha_min = ipm_arg.alpha_min;
@@ -85,7 +82,7 @@ int main() {
   arg.split_step = ipm_arg.split_step;
   arg.createHpipmData(dim);
 
-  hpipm::ocp_qp_sol sol;
+  hpipm::OcpQpSolution sol;
   const auto sol_err_msg = sol.checkSize(dim);
   if (!sol_err_msg.empty()) {
     for (const auto& e : sol_err_msg) {
@@ -95,9 +92,9 @@ int main() {
   }
   sol.createHpipmData(dim);
 
-  hpipm::ocp_qp_ipm ipm;
-  ipm.createHpipmData(dim, arg);
-  const auto res = ipm.solve(qp, sol, arg);
+  hpipm::OcpQpIpmSolver solver;
+  solver.createHpipmData(dim, arg);
+  const auto res = solver.solve(qp, sol, arg);
   std::cout << "QP result: " << res << std::endl;
 
   sol.from_hpipm(dim);
@@ -115,8 +112,8 @@ int main() {
     std::cout << "pi[" << i << "]: " << sol.pi[i].transpose() << std::endl;
   }
 
-  const auto stat = ipm.getStat();
-  std::cout << stat << std::endl;
+  const auto stat = solver.getSolverStatistics();
+  std::cout << stat << std::endl; 
 
   return 0;
 }

@@ -1,18 +1,14 @@
-#ifndef HPIPM_CPP_OCP_QP_IPM_STAT_HPP_
-#define HPIPM_CPP_OCP_QP_IPM_STAT_HPP_
+#ifndef HPIPM_CPP_OCP_QP_IPM_SOLVER_STATISTICS_HPP_
+#define HPIPM_CPP_OCP_QP_IPM_SOLVER_STATISTICS_HPP_
 
 #include <vector>
 #include <string>
 #include <iostream>
 
-extern "C" {
-#include "hpipm_d_ocp_qp_ipm.h"
-}
-
 
 namespace hpipm {
 
-struct ocp_qp_ipm_stat {
+struct OcpQpIpmSolverStatistics {
   int iter = 0;
   double max_res_stat = 0.0;
   double max_res_eq = 0.0;
@@ -41,8 +37,8 @@ struct ocp_qp_ipm_stat {
   void disp(std::ostream& os) const;
 };
 
-std::ostream& operator<<(std::ostream& os, const ocp_qp_ipm_stat& stat);
+std::ostream& operator<<(std::ostream& os, const OcpQpIpmSolverStatistics& stats);
 
 } // namespace hpipm
 
-#endif // HPIPM_CPP_OCP_QP_IPM_STAT_HPP_
+#endif // HPIPM_CPP_OCP_QP_IPM_SOLVER_STATISTICS_HPP_

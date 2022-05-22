@@ -14,11 +14,15 @@ namespace hpipm {
 // Dimensions of OCP-QP.
 struct OcpQpDim {
 public:
+  OcpQpDim(const int N);
+
   OcpQpDim() = default;
 
   ~OcpQpDim();
 
   std::vector<std::string> checkSize() const;
+
+  void resize(const int N);
 
   void createHpipmData();
 

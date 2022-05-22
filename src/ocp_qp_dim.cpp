@@ -6,6 +6,11 @@
 
 namespace hpipm {
 
+OcpQpDim::OcpQpDim(const int N) {
+  resize(N);
+}
+
+
 OcpQpDim::~OcpQpDim() {
   if (memory_) {
     free(memory_);
@@ -38,7 +43,8 @@ std::vector<std::string> OcpQpDim::checkSize() const {
     err_mgs.push_back("OcpQpDim.nbx.size() must be the same as N+1!: input value is " + std::to_string(nbx.size()));
   }
   else {
-    for (int i=0; i<=N; ++i) {
+    if (nbx[0] != nx[0]) err_mgs.push_back("OcpQpDim.nbx[0] must be the same as nx[0]!");
+    for (int i=1; i<=N; ++i) {
       if (nbx[i] < 0) err_mgs.push_back("OcpQpDim.nbx[" + std::to_string(i) + "] must be non-negative!");
     }
   }
@@ -83,6 +89,27 @@ std::vector<std::string> OcpQpDim::checkSize() const {
     }
   }
   return err_mgs;
+}
+
+
+void OcpQpDim::resize(const int _N) {
+  N = _N; 
+  nx.resize(N+1);
+  nu.resize(N);
+  nbx.resize(N+1);
+  nbu.resize(N);
+  ng.resize(N+1);
+  nsbx.resize(N+1);
+  nsbu.resize(N);
+  nsg.resize(N+1);
+  std::fill(nx.begin(), nx.end(), 0);
+  std::fill(nu.begin(), nu.end(), 0);
+  std::fill(nbx.begin(), nbx.end(), 0);
+  std::fill(nbu.begin(), nbu.end(), 0);
+  std::fill(ng.begin(), ng.end(), 0);
+  std::fill(nsbx.begin(), nsbx.end(), 0);
+  std::fill(nsbu.begin(), nsbu.end(), 0);
+  std::fill(nsg.begin(), nsg.end(), 0);
 }
 
 

@@ -17,11 +17,15 @@ namespace hpipm {
 
 struct OcpQpSolution {
 public:
+  OcpQpSolution(const OcpQpDim& dim);
+
   OcpQpSolution() = default;
 
   ~OcpQpSolution();
 
   std::vector<std::string> checkSize(const OcpQpDim& dim) const;
+
+  void resize(const OcpQpDim& dim);
 
   void createHpipmData(OcpQpDim& dim);
 

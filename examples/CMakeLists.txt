@@ -23,5 +23,4 @@ macro(add_example EXAMPLE)
 endmacro()
 
 add_example(example_ocp_qp)
-add_example(example_ocp_qp_x0emb)
 add_example(example_mpc)

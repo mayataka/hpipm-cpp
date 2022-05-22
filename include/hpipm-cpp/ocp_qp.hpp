@@ -17,11 +17,15 @@ namespace hpipm {
 
 struct OcpQp {
 public:
+  OcpQp(const OcpQpDim& dim);
+
   OcpQp() = default;
 
   ~OcpQp();
 
   std::vector<std::string> checkSize(const OcpQpDim& dim) const;
+
+  void resize(const OcpQpDim& dim);
 
   void createHpipmData(OcpQpDim& dim);
 
@@ -29,7 +33,7 @@ public:
 
   const d_ocp_qp* to_hpipm() const { return &ocp_qp_hpipm_; }
 
-  Eigen::VectorXd x0; // initial state. if this is set to appropriate size, then x[0] = x0 is imposed as equality constraint.
+  Eigen::VectorXd x0; // initial state. 
   std::vector<Eigen::MatrixXd> A;  // x_next = Ax+Bu+b
   std::vector<Eigen::MatrixXd> B;
   std::vector<Eigen::VectorXd> b;

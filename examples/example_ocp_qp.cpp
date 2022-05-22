@@ -31,6 +31,8 @@ int main() {
 
   QPData qp_data;
   hpipm::OcpQp qp;
+  // initial state
+  qp.x0 = qp_data.x0;
   // dynamics
   for (int i=0; i<dim.N; ++i) {
     qp.A.push_back(qp_data.A);

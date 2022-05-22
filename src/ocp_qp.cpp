@@ -6,6 +6,11 @@
 
 namespace hpipm {
 
+OcpQp::OcpQp(const OcpQpDim& dim) {
+  resize(dim);
+}
+
+
 OcpQp::~OcpQp() {
   if (memory_) {
     free(memory_);
@@ -20,10 +25,7 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
     return err_mgs;
   }
   // initial state
-  if (x0.size() > 0) {
-    if (x0.size() != dim.nx[0]) err_mgs.push_back("ocp_qp.x0.size() must be ocp_qp_dim.nx[0] or 0!");
-    if (x0.size() != dim.nbx[0]) err_mgs.push_back("ocp_qp.x0.size() must be ocp_qp_dim.nbx[0] or 0!");
-  }
+  if (x0.size() != dim.nx[0]) err_mgs.push_back("ocp_qp.x0.size() must be ocp_qp_dim.nx[0]!");
   // dynamics
   if (A.size() != dim.N) err_mgs.push_back("ocp_qp.A.size() must be ocp_qp_dim.N!");
   if (B.size() != dim.N) err_mgs.push_back("ocp_qp.B.size() must be ocp_qp_dim.N!");
@@ -288,6 +290,98 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
 }
 
 
+void OcpQp::resize(const OcpQpDim& dim) {
+  x0.resize(dim.nx[0]); 
+  // dynamics
+  A.resize(dim.N);
+  B.resize(dim.N);
+  b.resize(dim.N);
+  for (int i=0; i<dim.N; ++i) {
+    A[i].resize(dim.nx[i], dim.nx[i]);
+    B[i].resize(dim.nx[i], dim.nu[i]);
+    b[i].resize(dim.nx[i]);
+  }
+  // cost
+  Q.resize(dim.N+1);
+  S.resize(dim.N);
+  R.resize(dim.N);
+  q.resize(dim.N+1);
+  r.resize(dim.N);
+  for (int i=0; i<dim.N; ++i) {
+    Q[i].resize(dim.nx[i], dim.nx[i]);
+    S[i].resize(dim.nu[i], dim.nx[i]);
+    R[i].resize(dim.nu[i], dim.nu[i]);
+    q[i].resize(dim.nx[i]);
+    r[i].resize(dim.nu[i]);
+  }
+  Q[dim.N].resize(dim.nx[dim.N], dim.nx[dim.N]);
+  q[dim.N].resize(dim.nx[dim.N]);
+  // constraints
+  idxbx.resize(dim.N+1);
+  lbx.resize(dim.N+1);
+  ubx.resize(dim.N+1);
+  lbx_mask.resize(dim.N+1);
+  ubx_mask.resize(dim.N+1);
+  for (int i=0; i<dim.N+1; ++i) {
+    idxbx[i].resize(dim.nbx[i]);
+    lbx[i].resize(dim.nbx[i]);
+    ubx[i].resize(dim.nbx[i]);
+    lbx_mask[i].resize(0);
+    ubx_mask[i].resize(0);
+  }
+  idxbu.resize(dim.N);
+  lbu.resize(dim.N);
+  ubu.resize(dim.N);
+  lbu_mask.resize(dim.N);
+  ubu_mask.resize(dim.N);
+  for (int i=0; i<dim.N; ++i) {
+    idxbu[i].resize(dim.nbu[i]);
+    lbu[i].resize(dim.nbu[i]);
+    ubu[i].resize(dim.nbu[i]);
+    lbu_mask[i].resize(0);
+    ubu_mask[i].resize(0);
+  }
+  C.resize(dim.N+1);
+  D.resize(dim.N);
+  lg.resize(dim.N+1);
+  ug.resize(dim.N+1);
+  lg_mask.resize(dim.N+1);
+  ug_mask.resize(dim.N+1);
+  for (int i=0; i<dim.N; ++i) {
+    C[i].resize(dim.ng[i], dim.nx[i]);
+    D[i].resize(dim.ng[i], dim.nx[i]);
+    lbx[i].resize(dim.ng[i]);
+    ubx[i].resize(dim.ng[i]);
+    lbx_mask[i].resize(0);
+    ubx_mask[i].resize(0);
+  }
+  C[dim.N].resize(dim.ng[dim.N], dim.nx[dim.N]);
+  lbx[dim.N].resize(dim.ng[dim.N]);
+  ubx[dim.N].resize(dim.ng[dim.N]);
+  lbx_mask[dim.N].resize(0);
+  ubx_mask[dim.N].resize(0);
+  // soft constraints
+  Zl.resize(dim.N+1);
+  Zu.resize(dim.N+1);
+  zl.resize(dim.N+1);
+  zu.resize(dim.N+1);
+  for (int i=0; i<=dim.N; ++i) {
+    Zl[i].resize(dim.nsg[i], dim.nsg[i]);
+    Zu[i].resize(dim.nsg[i], dim.nsg[i]);
+    zl[i].resize(dim.nsg[i]);
+    zu[i].resize(dim.nsg[i]);
+  }
+  idxs.resize(dim.N+1);
+  lls.resize(dim.N+1);
+  lus.resize(dim.N+1);
+  for (int i=0; i<=dim.N; ++i) {
+    idxs[i].resize(dim.nsbx[i]);
+    lls[i].resize(dim.nsbx[i]);
+    lus[i].resize(dim.nsbx[i]);
+  }
+}
+
+
 void OcpQp::createHpipmData(OcpQpDim& dim) {
   const hpipm_size_t new_memsize = d_ocp_qp_memsize(dim.to_hpipm());
   if (memory_ && new_memsize > memsize_) {
@@ -466,15 +560,13 @@ void OcpQp::createHpipmData(OcpQpDim& dim) {
                    Zl_ptr_.data(), Zu_ptr_.data(), zl_ptr_.data(), zu_ptr_.data(), 
                    idxs_ptr_.data(), lls_ptr_.data(), lus_ptr_.data(), &ocp_qp_hpipm_);
   // initial state embedding
-  if (x0.size() > 0) {
-    hidxe_.clear();
-    for (int i=0; i<x0.size(); ++i) {
-      hidxe_.push_back(i);
-    }
-    d_ocp_qp_set_lbx(0, x0.data(), &ocp_qp_hpipm_);
-    d_ocp_qp_set_ubx(0, x0.data(), &ocp_qp_hpipm_);
-    d_ocp_qp_set_idxe(0, hidxe_.data(), &ocp_qp_hpipm_);
+  hidxe_.clear();
+  for (int i=0; i<x0.size(); ++i) {
+    hidxe_.push_back(i);
   }
+  d_ocp_qp_set_lbx(0, x0.data(), &ocp_qp_hpipm_);
+  d_ocp_qp_set_ubx(0, x0.data(), &ocp_qp_hpipm_);
+  d_ocp_qp_set_idxe(0, hidxe_.data(), &ocp_qp_hpipm_);
   // masks
   if (lbx_mask.size() == dim.N+1) {
     for (int i=1; i<=dim.N; ++i) {

@@ -6,6 +6,11 @@
 
 namespace hpipm {
 
+OcpQpSolution::OcpQpSolution(const OcpQpDim& dim) {
+  resize(dim);
+}
+
+
 OcpQpSolution::~OcpQpSolution() {
   if (memory_) {
     free(memory_);
@@ -38,6 +43,22 @@ std::vector<std::string> OcpQpSolution::checkSize(const OcpQpDim& dim) const {
     }
   }
   return err_mgs;
+}
+
+
+void OcpQpSolution::resize(const OcpQpDim& dim) {
+  x.resize(dim.N+1);
+  u.resize(dim.N);
+  pi.resize(dim.N);
+  for (int i=0; i<dim.N+1; ++i) {
+    x[i].resize(dim.nx[i]);
+  }
+  for (int i=0; i<dim.N; ++i) {
+    u[i].resize(dim.nu[i]);
+  }
+  for (int i=0; i<dim.N; ++i) {
+    pi[i].resize(dim.nx[i]);
+  }
 }
 
 

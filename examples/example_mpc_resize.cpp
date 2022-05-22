@@ -30,8 +30,8 @@ int main() {
   dim.createHpipmData();
 
   hpipm::OcpQp qp;
+  qp.resize(dim);
   // initial state
-  qp.x0.resize(12);
   qp.x0 << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
   // dynamics
   Eigen::MatrixXd A(12, 12), B(12, 4);
@@ -61,9 +61,9 @@ int main() {
        0.2107,   0.2107,  0.2107, 0.2107;
   const Eigen::VectorXd b = Eigen::VectorXd::Zero(12);
   for (int i=0; i<dim.N; ++i) {
-    qp.A.push_back(A);
-    qp.B.push_back(B);
-    qp.b.push_back(b);
+    qp.A[i] = A;
+    qp.B[i] = B;
+    qp.b[i] = b;
   }
   // cost
   Eigen::MatrixXd Q(12, 12), S(4, 12), R(4, 4);
@@ -75,37 +75,37 @@ int main() {
   const Eigen::VectorXd q = - Q * x_ref;
   const Eigen::VectorXd r = Eigen::VectorXd::Zero(4);
   for (int i=0; i<dim.N; ++i) {
-    qp.Q.push_back(Q);
-    qp.R.push_back(R);
-    qp.S.push_back(S);
-    qp.q.push_back(q);
-    qp.r.push_back(r);
+    qp.Q[i] = Q;
+    qp.R[i] = R;
+    qp.S[i] = S;
+    qp.q[i] = q;
+    qp.r[i] = r;
   }
-  qp.Q.push_back(Q);
-  qp.q.push_back(q);
+  qp.Q[dim.N] = Q;
+  qp.q[dim.N] = q;
   // constraints
   const bool use_mask_for_one_sided_constraints = true;
-  qp.idxbx.push_back({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
-  qp.lbx.push_back(qp.x0);
-  qp.ubx.push_back(qp.x0);
+  qp.idxbx[0] = std::vector<int>({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+  qp.lbx[0] = qp.x0;
+  qp.ubx[0] = qp.x0;
   if (use_mask_for_one_sided_constraints) {
-    qp.ubx_mask.push_back(Eigen::VectorXd()); // there is no mask on initial stage
+    qp.ubx_mask.resize(dim.N+1);
   }
   for (int i=1; i<=dim.N; ++i) {
     constexpr double soft_inf = 1.0e10;
-    qp.idxbx.push_back({0, 1, 5});
-    qp.lbx.push_back((Eigen::VectorXd(3) << -M_PI/6.0, -M_PI/6.0, -1.0).finished());
-    qp.ubx.push_back((Eigen::VectorXd(3) << M_PI/6.0, M_PI/6.0, soft_inf).finished());
+    qp.idxbx[i] = std::vector<int>({0, 1, 5});
+    qp.lbx[i] = (Eigen::VectorXd(3) << -M_PI/6.0, -M_PI/6.0, -1.0).finished();
+    qp.ubx[i] = (Eigen::VectorXd(3) << M_PI/6.0, M_PI/6.0, soft_inf).finished();
     if (use_mask_for_one_sided_constraints) {
-      qp.ubx_mask.push_back((Eigen::VectorXd(3) << 1.0, 1.0, 0.0).finished()); 
       // this mask disables upper bound by ubx[2]
+      qp.ubx_mask[i] = ((Eigen::VectorXd(3) << 1.0, 1.0, 0.0).finished()); 
     }
   }
   for (int i=0; i<dim.N; ++i) {
     constexpr double u0 = 10.5916;
-    qp.idxbu.push_back({0, 1, 2, 3});
-    qp.lbu.push_back((Eigen::VectorXd(4) << 9.6-u0, 9.6-u0, 9.6-u0, 9.6-u0).finished());
-    qp.ubu.push_back((Eigen::VectorXd(4) << 13.0-u0, 13.0-u0, 13.0-u0, 13.0-u0).finished());
+    qp.idxbu[i] = std::vector<int>({0, 1, 2, 3});
+    qp.lbu[i] = (Eigen::VectorXd(4) << 9.6-u0, 9.6-u0, 9.6-u0, 9.6-u0).finished();
+    qp.ubu[i] = (Eigen::VectorXd(4) << 13.0-u0, 13.0-u0, 13.0-u0, 13.0-u0).finished();
   }
   const auto qp_err_msg = qp.checkSize(dim);
   if (!qp_err_msg.empty()) {

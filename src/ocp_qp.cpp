@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cassert>
+#include <iostream>
 
 namespace hpipm {
 
@@ -106,7 +107,7 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
         err_mgs.push_back("ocp_qp.lbx_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
       }
       else {
-        for (int j=0; j<dim.nbx[i]; ++j) {
+        for (int j=0; j<lbx_mask[i].size(); ++j) {
           if (lbx_mask[i][j] != 1.0 && lbx_mask[i][j] != 0.0) 
             err_mgs.push_back("ocp_qp.lbx_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
         }
@@ -119,7 +120,7 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
         err_mgs.push_back("ocp_qp.ubx_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
       }
       else {
-        for (int j=0; j<dim.nbx[i]; ++j) {
+        for (int j=0; j<ubx_mask[i].size(); ++j) {
           if (ubx_mask[i][j] != 1.0 && ubx_mask[i][j] != 0.0) 
             err_mgs.push_back("ocp_qp.ubx_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
         }
@@ -185,19 +186,19 @@ std::vector<std::string> OcpQp::checkSize(const OcpQpDim& dim) const {
     for (int i=0; i<dim.N; ++i) {
       if (C[i].rows() != dim.ng[i]) 
         err_mgs.push_back("ocp_qp.C[" + std::to_string(i) + "].rows() must ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-      if (C[i].cols() != dim.nx[i]) 
+      if (C[i].rows() > 0 && C[i].cols() != dim.nx[i]) 
         err_mgs.push_back("ocp_qp.C[" + std::to_string(i) + "].cols() must ocp_qp_dim.nx[" + std::to_string(i) + "]!");
       if (D[i].rows() != dim.ng[i]) 
         err_mgs.push_back("ocp_qp.D[" + std::to_string(i) + "].rows() must ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-      if (D[i].cols() != dim.nu[i]) 
+      if (D[i].rows() > 0 && D[i].cols() != dim.nu[i]) 
         err_mgs.push_back("ocp_qp.D[" + std::to_string(i) + "].cols() must ocp_qp_dim.nu[" + std::to_string(i) + "]!");
       if (lg[i].size() != dim.ng[i]) 
         err_mgs.push_back("ocp_qp.lg[" + std::to_string(i) + "].size() must ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-      if (lg[i].cols() != 1) 
+      if (lg[i].size() > 0 && lg[i].cols() != 1) 
         err_mgs.push_back("ocp_qp.lg[" + std::to_string(i) + "] must be a vector!");
       if (ug[i].size() != dim.ng[i]) 
         err_mgs.push_back("ocp_qp.ug[" + std::to_string(i) + "].size() must be ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-      if (ug[i].cols() != 1) 
+      if (ug[i].size() > 0 && ug[i].cols() != 1) 
         err_mgs.push_back("ocp_qp.ug[" + std::to_string(i) + "] must be a vector!");
     }
     if (C[dim.N].rows() != dim.ng[dim.N]) 

@@ -10,16 +10,25 @@
 int main() {
   // setup QP
   hpipm::OcpQpDim dim;
-  dim.N    = 20;
-  dim.nx   = std::vector<int>(dim.N+1, 12);
-  dim.nu   = std::vector<int>(dim.N, 4);
-  dim.nbx  = std::vector<int>(dim.N+1, 3);
-  dim.nbx[0] = 12;
-  dim.nbu  = std::vector<int>(dim.N, 4);
-  dim.ng   = std::vector<int>(dim.N+1, 0);
-  dim.nsbx = std::vector<int>(dim.N+1, 0);
-  dim.nsbu = std::vector<int>(dim.N, 0);
-  dim.nsg  = std::vector<int>(dim.N+1, 0);
+  const int N = 20;
+  dim.resize(N);
+  for (int i=0; i<dim.N; ++i) {
+    dim.nx[i]   = 12;
+    dim.nu[i]   = 4;
+    dim.nbx[i]  = 3;
+    dim.nbu[i]  = 4;
+    dim.ng[i]   = 0;
+    dim.nsbx[i] = 0;
+    dim.nsbu[i] = 0;
+    dim.nsg[i]  = 0;
+  }
+  dim.nx[dim.N]   = 12;
+  dim.nbx[dim.N]  = 3;
+  dim.ng[dim.N]   = 0;
+  dim.nsbx[dim.N] = 0;
+  dim.nsg[dim.N]  = 0;
+  // initial state is considered as a constraint
+  dim.nbx[0] = 12; 
   const auto dim_err_msg = dim.checkSize();
   if (!dim_err_msg.empty()) {
     for (const auto& e : dim_err_msg) {

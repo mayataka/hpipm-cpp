@@ -7,8 +7,8 @@
 
 namespace hpipm {
 
-template <typename T>
-void fill_vector(std::vector<T>& vec, const T& value) {
+template <typename T1, typename T2>
+void fill_vector(std::vector<T1>& vec, const T2& value) {
   std::fill(vec.begin(), vec.end(), value);
 }
 

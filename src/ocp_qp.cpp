@@ -351,16 +351,16 @@ void OcpQp::resize(const OcpQpDim& dim) {
   for (int i=0; i<dim.N; ++i) {
     C[i].resize(dim.ng[i], dim.nx[i]);
     D[i].resize(dim.ng[i], dim.nx[i]);
-    lbx[i].resize(dim.ng[i]);
-    ubx[i].resize(dim.ng[i]);
-    lbx_mask[i].resize(0);
-    ubx_mask[i].resize(0);
+    lg[i].resize(dim.ng[i]);
+    ug[i].resize(dim.ng[i]);
+    lg_mask[i].resize(0);
+    ug_mask[i].resize(0);
   }
   C[dim.N].resize(dim.ng[dim.N], dim.nx[dim.N]);
-  lbx[dim.N].resize(dim.ng[dim.N]);
-  ubx[dim.N].resize(dim.ng[dim.N]);
-  lbx_mask[dim.N].resize(0);
-  ubx_mask[dim.N].resize(0);
+  lg[dim.N].resize(dim.ng[dim.N]);
+  ug[dim.N].resize(dim.ng[dim.N]);
+  lg_mask[dim.N].resize(0);
+  ug_mask[dim.N].resize(0);
   // soft constraints
   Zl.resize(dim.N+1);
   Zu.resize(dim.N+1);

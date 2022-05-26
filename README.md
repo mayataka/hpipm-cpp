@@ -4,39 +4,14 @@ A C++ wrapper for [hpipm](https://github.com/giaf/hpipm), a high-performance int
 This wrapper provides an interface of hpipm using STL and Eigen. 
 
 ## Requirements
-1. [Eigen3](https://eigen.tuxfamily.org/index.php?title=Main_Page)
-2. [blasfeo](https://github.com/giaf/blasfeo)
-3. [hpipm](https://github.com/giaf/hpipm)
-
+- [Eigen3](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 
 Eigen3 can be installed by the following command:
 ```
 sudo apt install libeigen3-dev
 ```
 
-
-blasfeo can be installed by the following commands (they are almost same as the `install_blasfeo.sh`):
-```
-git clone https://github.com/giaf/blasfeo
-cd blasfeo 
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBLASFEO_EXAMPLES=OFF 
-make -j4
-sudo make install -j
-echo export LD_LIBRARY_PATH=/opt/blasfeo/lib:$LD_LIBRARY_PATH >> ~/.bashrc
-```
-
-
-hpipm can be installed by the following commands (they are almost same as the `install_hpipm.sh`):
-```
-git clone https://github.com/giaf/hpipm
-cd hpipm
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF
-make -j4
-sudo make install -j
-echo export LD_LIBRARY_PATH=/opt/hpipm/lib:$LD_LIBRARY_PATH >> ~/.bashrc
-```
+Other external libraries, i.e., blasfeo and hpipm are automatically installed with hpipm-cpp.
 
 ## Build hpipm-cpp
 ```

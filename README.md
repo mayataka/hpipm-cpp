@@ -11,7 +11,7 @@ Eigen3 can be installed by the following command:
 sudo apt install libeigen3-dev
 ```
 
-Other external libraries, i.e., blasfeo and hpipm are automatically installed with hpipm-cpp.
+Other external libraries, i.e., [blasfeo](https://github.com/giaf/blasfeo) and [hpipm](https://github.com/giaf/hpipm) are automatically installed with `hpipm-cpp`.
 
 ## Build hpipm-cpp
 ```
@@ -77,4 +77,4 @@ for (int i=0; i<dim.N; ++i) {
 ```
 
 For detailed formulations, please see the [documentation of hpipm](https://github.com/giaf/hpipm/blob/master/doc/guide.pdf).
-The data objects of hpipm::QcpQp follows the convention of that documentation. 
+The data objects of hpipm::QcpQp follow the convention of that documentation. 

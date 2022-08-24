@@ -2,37 +2,38 @@
 #define HPIPM_CPP_OCP_QP_DIM_HPP_
 
 #include <vector>
-#include <string>
 
 extern "C" {
 #include "hpipm_d_ocp_qp_dim.h"
 }
 
+#include "d_ocp_qp_dim_wrapper.hpp"
+
 
 namespace hpipm {
 
 // Dimensions of OCP-QP.
-struct OcpQpDim {
+class OcpQpDim {
 public:
-  OcpQpDim(const int N);
+  OcpQpDim(const unsigned int N);
 
   OcpQpDim() = default;
 
-  ~OcpQpDim();
+  ~OcpQpDim() = default;
 
-  std::vector<std::string> checkSize() const;
+  OcpQpDim(const OcpQpDim&) = default;
 
-  void resize(const int N);
+  OcpQpDim& operator=(const OcpQpDim&) = default;
 
-  void createHpipmData();
+  OcpQpDim(OcpQpDim&&) noexcept = delete;
 
-  d_ocp_qp_dim* to_hpipm() { return &ocp_qp_dim_hpipm_; }
+  OcpQpDim& operator=(OcpQpDim&&) noexcept = delete;
 
-  const d_ocp_qp_dim* to_hpipm() const { return &ocp_qp_dim_hpipm_; }
+  void resize(const unsigned int N);
 
-  static OcpQpDim from_hpipm(const d_ocp_qp_dim* ocp_qp_dim_hpipm);
+  d_ocp_qp_dim_wrapper& getHpipmWrapper();
 
-  int N; // horizon length
+  unsigned int N; // horizon length
   std::vector<int> nx;   // dimension of x
   std::vector<int> nu;   // dimension of u
   std::vector<int> nbx;  // number of box inequality constraints on x
@@ -43,9 +44,7 @@ public:
   std::vector<int> nsg;  // number of soft inequality constraints in ng
 
 private:
-  d_ocp_qp_dim ocp_qp_dim_hpipm_;
-  void *memory_ = nullptr;
-  hpipm_size_t memsize_ = 0;
+  d_ocp_qp_dim_wrapper ocp_qp_dim_wrapper_;
 };
 
 } // namespace hpipm

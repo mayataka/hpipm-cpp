@@ -5,6 +5,28 @@
 
 namespace hpipm {
 
+void OcpQpIpmSolverStatistics::reserve(const size_t size) {
+  alpha_aff.reserve(size);
+  mu_aff.reserve(size);
+  sigma.reserve(size);
+  alpha_prim.reserve(size);
+  alpha_dual.reserve(size);
+  mu.reserve(size);
+  res_stat.reserve(size);
+  res_eq.reserve(size);
+  res_ineq.reserve(size);
+  res_comp.reserve(size);
+  obj.reserve(size);
+  lq_fact.reserve(size);
+  itref_pred.reserve(size);
+  itref_corr.reserve(size);
+  lin_res_stat.reserve(size);
+  lin_res_eq.reserve(size);
+  lin_res_ineq.reserve(size);
+  lin_res_comp.reserve(size);
+}
+
+
 void OcpQpIpmSolverStatistics::disp(std::ostream& os) const {
   os << "================== Hpipm Solver Statistics ==================" << std::endl;
   os << "ipm iter: " << iter << std::endl;

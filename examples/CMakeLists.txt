@@ -24,4 +24,3 @@ endmacro()
 
 add_example(example_ocp_qp)
 add_example(example_mpc)
-add_example(example_mpc_resize)

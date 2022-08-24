@@ -344,6 +344,12 @@ d_ocp_qp_wrapper& OcpQp::getHpipmWrapper() {
     lbx.resize(dim_.N+1);
     ubx.resize(dim_.N+1);
   }
+  idxbx[0].resize(dim_.nx[0]);
+  for (int i=0; i<dim_.nx[0]; ++i) {
+    idxbx[0][i] = i;
+  }
+  lbx[0] = x0;
+  ubx[0] = x0;
   for (int i=0; i<=dim_.N; ++i) {
     idxbx_ptr_[i] = idxbx[i].data();
     lbx_ptr_[i]   = lbx[i].data();

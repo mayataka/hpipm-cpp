@@ -39,10 +39,7 @@ int main() {
   }
   qp.Q[dim.N] = qp_data.Q;
   qp.q[dim.N] = qp_data.q;
-  // constraints
-  qp.idxbx[0] = qp_data.idxbx0;
-  qp.lbx[0]   = qp_data.lbx0;
-  qp.ubx[0]   = qp_data.ubx0;
+  // constraints on the state
   for (int i=1; i<=dim.N; ++i) {
     qp.idxbx[i] = qp_data.idxbx;
     qp.lbx[i]   = qp_data.lbx;

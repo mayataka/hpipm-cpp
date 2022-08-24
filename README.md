@@ -28,11 +28,6 @@ Link hpipm-cpp in the `CMakeLists.txt` as
 ```
 ...
 find_package(hpipm-cpp REQUIRED)
-target_include_directories(
-  YOUR_TARGET
-  PRIVATE
-  ${hpipm-cpp_INCLUDE_DIR}
-)
 target_link_libraries(
   YOUR_TARGET
   PRIVATE
@@ -44,18 +39,17 @@ and write the source files as
 ```
 #include "hpipm-cpp/hpipm-cpp.hpp"
 
-hpipm::OcpQpDim dim;
-dim.N = ... // set dims
-dim.nx.push_back(...)  // set dims
+N = ...; // horion length
+hpipm::OcpQpDim dim(N);
+dim.nx[i] = ...  // set dims
+dim.nu[i] = ...  // set dims
 ... 
-dim.createHpipmData(); // this creates hpipm's QP-dim object.
 
-hpipm::OcpQp qp; 
-qp.A.push_back(Eigen::MatrixXd::...) // set QP datas by Eigen objects
+hpipm::OcpQp qp(dim); 
+qp.A[i] = Eigen::MatrixXd::... // set QP datas by Eigen objects
 ... 
-qp.createHpipmData(dim); // this creates hpipm's QP-data object.
 
-hpipm::OcpQpIpmSolverSettings ipm_arg; 
+hpipm::OcpQpIpmSolverSettings ipm_; 
 ipm_arg.ipm_arg.mode = ... // set the IPM solver settings
 ... 
 ipm_arg.createHpipmData(dim); // this creates hpipm's the IPM solver-settings object.

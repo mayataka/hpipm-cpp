@@ -76,20 +76,13 @@ int main() {
   qp.q[N] = q;
   // constraints
   const bool use_mask_for_one_sided_constraints = true;
-  qp.idxbx[0] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-  qp.lbx[0] = qp.x0;
-  qp.ubx[0] = qp.x0;
-  if (use_mask_for_one_sided_constraints) {
-    qp.ubx_mask[0] = Eigen::VectorXd(); // there is no mask on initial stage
-  }
   for (int i=1; i<=N; ++i) {
     constexpr double soft_inf = 1.0e10;
     qp.idxbx[i] = {0, 1, 5};
     qp.lbx[i] = (Eigen::VectorXd(3) << -M_PI/6.0, -M_PI/6.0, -1.0).finished();
     qp.ubx[i] = (Eigen::VectorXd(3) << M_PI/6.0, M_PI/6.0, soft_inf).finished();
     if (use_mask_for_one_sided_constraints) {
-      qp.ubx_mask[i] = (Eigen::VectorXd(3) << 1.0, 1.0, 0.0).finished(); 
-      // this mask disables upper bound by ubx[2]
+      qp.ubx_mask[i] = (Eigen::VectorXd(3) << 1.0, 1.0, 0.0).finished(); // this mask disables upper bound by ubx[2]
     }
   }
   for (int i=0; i<N; ++i) {

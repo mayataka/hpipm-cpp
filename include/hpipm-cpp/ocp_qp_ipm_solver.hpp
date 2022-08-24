@@ -16,6 +16,7 @@ extern "C" {
 #include "hpipm-cpp/ocp_qp_solution.hpp"
 #include "hpipm-cpp/ocp_qp_ipm_solver_settings.hpp"
 #include "hpipm-cpp/ocp_qp_ipm_solver_statistics.hpp"
+#include "hpipm-cpp/d_ocp_qp_ipm_ws_wrapper.hpp"
 
 
 namespace hpipm {
@@ -34,23 +35,34 @@ std::ostream& operator<<(std::ostream& os, const HpipmStatus& hpipm_status);
 
 class OcpQpIpmSolver {
 public:
+  OcpQpIpmSolver(const OcpQpDim& dim, 
+                 const OcpQpIpmSolverSettings& ipm_solver_settings);
+
   OcpQpIpmSolver() = default;
 
-  ~OcpQpIpmSolver();
+  ~OcpQpIpmSolver() = default;
 
-  void createHpipmData(OcpQpDim& dim, OcpQpIpmSolverSettings& ipm_arg);
+  OcpQpIpmSolver(const OcpQpIpmSolver&) = delete;
 
-  // TODO: add const to qp and ipm_arg?
-  HpipmStatus solve(OcpQp& qp, OcpQpSolution& qp_sol, 
-                    OcpQpIpmSolverSettings& ipm_arg);
+  OcpQpIpmSolver& operator=(const OcpQpIpmSolver&) = delete;
 
-  OcpQpIpmSolverStatistics getSolverStatistics();
+  void resize(const OcpQpDim& dim);
+
+  void setSolverSettings(const OcpQpIpmSolverSettings& ipm_solver_settings);
+
+  HpipmStatus solve(OcpQp& qp, OcpQpSolution& qp_sol);
+
+  const OcpQpDim& dim() const;
+
+  const OcpQpIpmSolverSettings& ipmSolverSettings() const;
+
+  const OcpQpIpmSolverStatistics& getSolverStatistics() const;
 
 private:
-  struct d_ocp_qp_ipm_ws ocp_qp_ipm_ws_hpipm_;
-  void *memory_ = nullptr;
-  double *stat_;
-  hpipm_size_t memsize_ = 0;
+  OcpQpIpmSolverStatistics solver_statistics_;
+  OcpQpDim dim_;
+  OcpQpIpmSolverSettings ipm_solver_settings_;
+  d_ocp_qp_ipm_ws_wrapper ocp_qp_ipm_ws_wrapper_;
 };
 
 } // namespace hpipm

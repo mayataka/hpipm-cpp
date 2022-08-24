@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 #include "Eigen/Core"
 
@@ -11,6 +12,8 @@ extern "C" {
 }
 
 #include "hpipm-cpp/ocp_qp_dim.hpp"
+#include "hpipm-cpp/d_ocp_qp_dim_wrapper.hpp"
+#include "hpipm-cpp/d_ocp_qp_wrapper.hpp"
 
 
 namespace hpipm {
@@ -21,17 +24,19 @@ public:
 
   OcpQp() = default;
 
-  ~OcpQp();
+  ~OcpQp() = default;
 
-  std::vector<std::string> checkSize(const OcpQpDim& dim) const;
+  OcpQp(const OcpQp&) = default;
+
+  OcpQp& operator=(const OcpQp&) = default;
+
+  OcpQp(OcpQp&&) noexcept = delete;
+
+  OcpQp& operator=(OcpQp&&) noexcept = delete;
 
   void resize(const OcpQpDim& dim);
 
-  void createHpipmData(OcpQpDim& dim);
-
-  d_ocp_qp* to_hpipm() { return &ocp_qp_hpipm_; }
-
-  const d_ocp_qp* to_hpipm() const { return &ocp_qp_hpipm_; }
+  d_ocp_qp_wrapper& getHpipmWrapper();
 
   Eigen::VectorXd x0; // initial state. 
   std::vector<Eigen::MatrixXd> A;  // x_next = Ax+Bu+b
@@ -101,9 +106,10 @@ private:
   std::vector<double*> lls_ptr_; 
   std::vector<double*> lus_ptr_; 
 
-  d_ocp_qp ocp_qp_hpipm_;
-  void *memory_ = nullptr;
-  hpipm_size_t memsize_ = 0;
+  OcpQpDim dim_;
+  d_ocp_qp_wrapper ocp_qp_wrapper_;
+
+  void resize();
 };
 
 } // namespace hpipm

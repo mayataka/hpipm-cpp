@@ -34,6 +34,8 @@ struct OcpQpIpmSolverStatistics {
   std::vector<double> lin_res_ineq;
   std::vector<double> lin_res_comp;
 
+  void reserve(const size_t size);
+
   void disp(std::ostream& os) const;
 };
 

@@ -11,6 +11,7 @@ extern "C" {
 }
 
 #include "hpipm-cpp/ocp_qp_dim.hpp"
+#include "hpipm-cpp/d_ocp_qp_sol_wrapper.hpp"
 
 
 namespace hpipm {
@@ -21,19 +22,23 @@ public:
 
   OcpQpSolution() = default;
 
-  ~OcpQpSolution();
+  ~OcpQpSolution() = default;
+
+  OcpQpSolution(const OcpQpSolution&) = default;
+
+  OcpQpSolution& operator=(const OcpQpSolution&) = default;
+
+  OcpQpSolution(OcpQpSolution&&) noexcept = delete;
+
+  OcpQpSolution& operator=(OcpQpSolution&&) noexcept = delete;
 
   std::vector<std::string> checkSize(const OcpQpDim& dim) const;
 
   void resize(const OcpQpDim& dim);
 
-  void createHpipmData(OcpQpDim& dim);
+  d_ocp_qp_sol_wrapper& getHpipmWrapper();
 
-  d_ocp_qp_sol* to_hpipm() { return &ocp_qp_sol_hpipm_; }
-
-  const d_ocp_qp_sol* to_hpipm() const { return &ocp_qp_sol_hpipm_; }
-
-  void getSolutionFromHpipm(const OcpQpDim& dim);
+  void retriveSolution();
 
   std::vector<Eigen::VectorXd> x;
   std::vector<Eigen::VectorXd> u;
@@ -50,9 +55,8 @@ public:
   // std::vector<Eigen::VectorXd> lam_us; // the Lagrange multiplier w.r.t. the upper soft constraint
 
 private:
-  d_ocp_qp_sol ocp_qp_sol_hpipm_;
-  void *memory_ = nullptr;
-  hpipm_size_t memsize_ = 0;
+  OcpQpDim dim_;
+  d_ocp_qp_sol_wrapper ocp_qp_sol_wrapper_;
 };
 
 } // namespace hpipm

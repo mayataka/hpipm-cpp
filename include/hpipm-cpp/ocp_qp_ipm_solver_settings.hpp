@@ -1,16 +1,11 @@
 #ifndef HPIPM_CPP_OCP_QP_IPM_SOLVER_SETTINGS_HPP_
 #define HPIPM_CPP_OCP_QP_IPM_SOLVER_SETTINGS_HPP_
 
-#include <vector>
-#include <string>
-
-#include "Eigen/Core"
-
 extern "C" {
 #include "hpipm_d_ocp_qp_ipm.h"
 }
 
-#include "hpipm-cpp/ocp_qp_dim.hpp"
+#include "hpipm-cpp/d_ocp_qp_ipm_arg_wrapper.hpp"
 
 
 namespace hpipm {
@@ -26,13 +21,17 @@ struct OcpQpIpmSolverSettings {
 public:
   OcpQpIpmSolverSettings() = default;
 
-  ~OcpQpIpmSolverSettings();
+  ~OcpQpIpmSolverSettings() = default;
 
-  void createHpipmData(OcpQpDim& dim);
+  OcpQpIpmSolverSettings(const OcpQpIpmSolverSettings&) = default;
 
-  d_ocp_qp_ipm_arg* to_hpipm() { return &ocp_qp_ipm_arg_hpipm_; }
+  OcpQpIpmSolverSettings& operator=(const OcpQpIpmSolverSettings&) = default;
 
-  const d_ocp_qp_ipm_arg* to_hpipm() const { return &ocp_qp_ipm_arg_hpipm_; }
+  OcpQpIpmSolverSettings(OcpQpIpmSolverSettings&&) noexcept = delete;
+
+  OcpQpIpmSolverSettings& operator=(OcpQpIpmSolverSettings&&) noexcept = delete;
+
+  d_ocp_qp_ipm_arg_wrapper& getHpipmWrapper();
 
   HpipmMode mode = HpipmMode::Speed; 
 
@@ -61,9 +60,7 @@ public:
   int split_step = 0; //  use different step for primal and dual variables or not
 
 private:
-  d_ocp_qp_ipm_arg ocp_qp_ipm_arg_hpipm_;
-  void *memory_ = nullptr;
-  hpipm_size_t memsize_ = 0;
+  d_ocp_qp_ipm_arg_wrapper ocp_qp_ipm_arg_wrapper_;
 };
 
 } // namespace hpipm

@@ -69,6 +69,7 @@ HpipmStatus OcpQpIpmSolver::solve(OcpQp& qp, OcpQpSolution& qp_sol) {
   d_ocp_qp_ipm_get_max_res_ineq(ws_ptr, &solver_statistics_.max_res_ineq);
   d_ocp_qp_ipm_get_max_res_comp(ws_ptr, &solver_statistics_.max_res_comp);
   const int stat_m = 18;
+  solver_statistics_.clear();
   solver_statistics_.reserve(solver_statistics_.iter+2);
   for (int i=0; i<=solver_statistics_.iter+1; ++i) {
     solver_statistics_.alpha_aff.push_back(ws_ptr->stat[stat_m*i+0]);

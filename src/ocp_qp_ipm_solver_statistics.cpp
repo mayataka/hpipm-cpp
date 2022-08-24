@@ -27,6 +27,28 @@ void OcpQpIpmSolverStatistics::reserve(const size_t size) {
 }
 
 
+void OcpQpIpmSolverStatistics::clear() {
+  alpha_aff.clear();
+  mu_aff.clear();
+  sigma.clear();
+  alpha_prim.clear();
+  alpha_dual.clear();
+  mu.clear();
+  res_stat.clear();
+  res_eq.clear();
+  res_ineq.clear();
+  res_comp.clear();
+  obj.clear();
+  lq_fact.clear();
+  itref_pred.clear();
+  itref_corr.clear();
+  lin_res_stat.clear();
+  lin_res_eq.clear();
+  lin_res_ineq.clear();
+  lin_res_comp.clear();
+}
+
+
 void OcpQpIpmSolverStatistics::disp(std::ostream& os) const {
   os << "================== Hpipm Solver Statistics ==================" << std::endl;
   os << "ipm iter: " << iter << std::endl;

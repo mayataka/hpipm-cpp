@@ -36,6 +36,8 @@ struct OcpQpIpmSolverStatistics {
 
   void reserve(const size_t size);
 
+  void clear();
+
   void disp(std::ostream& os) const;
 };
 

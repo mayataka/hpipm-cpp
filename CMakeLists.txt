@@ -23,13 +23,19 @@ set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 # find Eigen
 find_package(Eigen3 REQUIRED)
 
-file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES src/*.cpp)
-file(GLOB_RECURSE ${PROJECT_NAME}_HEADERS include/${PROJECT_NAME}/*.h*)
 add_library(
   ${PROJECT_NAME} 
-  SHARED
-  ${${PROJECT_NAME}_SOURCES} 
-  ${${PROJECT_NAME}_HEADERS}
+  src/d_ocp_qp_dim_wrapper.cpp
+  src/d_ocp_qp_wrapper.cpp
+  src/d_ocp_qp_sol_wrapper.cpp
+  src/d_ocp_qp_ipm_arg_wrapper.cpp
+  src/d_ocp_qp_ipm_ws_wrapper.cpp
+  src/ocp_qp_dim.cpp
+  src/ocp_qp.cpp
+  src/ocp_qp_solution.cpp
+  src/ocp_qp_ipm_solver_settings.cpp
+  src/ocp_qp_ipm_solver_statistics.cpp
+  src/ocp_qp_ipm_solver.cpp
 )
 target_link_libraries(
   ${PROJECT_NAME} 

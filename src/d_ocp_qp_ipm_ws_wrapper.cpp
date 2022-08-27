@@ -49,6 +49,11 @@ const d_ocp_qp_dim_wrapper& d_ocp_qp_ipm_ws_wrapper::dim() const {
 }
 
 
+const d_ocp_qp_ipm_arg_wrapper& d_ocp_qp_ipm_ws_wrapper::ipm_arg() const {
+  return ipm_arg_;
+}
+
+
 void d_ocp_qp_ipm_ws_wrapper::resize(const d_ocp_qp_dim_wrapper& dim, 
                                      const d_ocp_qp_ipm_arg_wrapper& ipm_arg) {
   dim_ = dim;

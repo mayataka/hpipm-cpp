@@ -29,7 +29,8 @@ d_ocp_qp_wrapper::~d_ocp_qp_wrapper() {
 }
 
 
-d_ocp_qp_wrapper::d_ocp_qp_wrapper(const d_ocp_qp_wrapper& other) {
+d_ocp_qp_wrapper::d_ocp_qp_wrapper(const d_ocp_qp_wrapper& other) 
+  : d_ocp_qp_wrapper() {
   copy(other);
 }
 

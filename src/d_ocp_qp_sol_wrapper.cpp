@@ -29,7 +29,8 @@ d_ocp_qp_sol_wrapper::~d_ocp_qp_sol_wrapper() {
 }
 
 
-d_ocp_qp_sol_wrapper::d_ocp_qp_sol_wrapper(const d_ocp_qp_sol_wrapper& other) {
+d_ocp_qp_sol_wrapper::d_ocp_qp_sol_wrapper(const d_ocp_qp_sol_wrapper& other) 
+  : d_ocp_qp_sol_wrapper() {
   copy(other);
 }
 

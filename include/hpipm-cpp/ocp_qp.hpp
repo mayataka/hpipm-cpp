@@ -19,7 +19,7 @@ extern "C" {
 namespace hpipm {
 
 ///
-/// @class OcpQpSolution
+/// @class OcpQp
 /// @brief The OCP-QP problem.
 ///
 struct OcpQp {

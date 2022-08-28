@@ -272,7 +272,7 @@ void OcpQp::resize() {
   ug_mask.resize(dim_.N+1);
   for (int i=0; i<dim_.N; ++i) {
     C[i].resize(dim_.ng[i], dim_.nx[i]);
-    D[i].resize(dim_.ng[i], dim_.nx[i]);
+    D[i].resize(dim_.ng[i], dim_.nu[i]);
     lg[i].resize(dim_.ng[i]);
     ug[i].resize(dim_.ng[i]);
     lg_mask[i].resize(0);
@@ -453,208 +453,111 @@ void OcpQp::checkSize() const {
       throw std::runtime_error("ubu_mask[" + std::to_string(i) + "].size() must be 0 or OcpQpDim::nbu[" + std::to_string(i) + "]");
     }
   }
-
-  // else {
-  //   if (idxbx.size() != dim.N+1) err_mgs.push_back("ocp_qp.idxbx.size() must be ocp_qp_dim.N+1 or 0!");
-  //   if (lbx.size() != dim.N+1) err_mgs.push_back("ocp_qp.lbx.size() must be ocp_qp_dim.N+1 or 0!");
-  //   if (ubx.size() != dim.N+1) err_mgs.push_back("ocp_qp.ubx.size() must be ocp_qp_dim.N+1 or 0!");
-  //   for (int i=0; i<=dim.N; ++i) {
-  //     if (idxbx[i].size() != dim.nbx[i]) 
-  //       err_mgs.push_back("ocp_qp.idxbx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
-  //     if (lbx[i].size() != dim.nbx[i]) 
-  //       err_mgs.push_back("ocp_qp.lbx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
-  //     if (ubx[i].size() != dim.nbx[i]) 
-  //       err_mgs.push_back("ocp_qp.ubx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
-  //   }
-  // }
-  // if (lbx_mask.size() != 0 && lbx_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.lbx_mask.size() must be ocp_qp_dim.N+1 or 0!");
-  // if (ubx_mask.size() != 0 && ubx_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.ubx_mask.size() must be ocp_qp_dim.N+1 or 0!");
-  // if (lbx_mask.size() == dim.N+1) {
-  //   for (int i=1; i<=dim.N; ++i) {
-  //     if (lbx_mask[i].size() != 0 && lbx_mask[i].size() != dim.nbx[i]) {
-  //       err_mgs.push_back("ocp_qp.lbx_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
-  //     }
-  //     else {
-  //       for (int j=0; j<lbx_mask[i].size(); ++j) {
-  //         if (lbx_mask[i][j] != 1.0 && lbx_mask[i][j] != 0.0) 
-  //           err_mgs.push_back("ocp_qp.lbx_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
-  //       }
-  //     }
-  //   }
-  // }
-  // if (ubx_mask.size() == dim.N+1) {
-  //   for (int i=1; i<=dim.N; ++i) {
-  //     if (ubx_mask[i].size() != 0 && ubx_mask[i].size() != dim.nbx[i]) {
-  //       err_mgs.push_back("ocp_qp.ubx_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbx[" + std::to_string(i) + "]!");
-  //     }
-  //     else {
-  //       for (int j=0; j<ubx_mask[i].size(); ++j) {
-  //         if (ubx_mask[i][j] != 1.0 && ubx_mask[i][j] != 0.0) 
-  //           err_mgs.push_back("ocp_qp.ubx_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
-  //       }
-  //     }
-  //   }
-  // }
-  // if (idxbu.empty()) {
-  //   if (!lbu.empty()) err_mgs.push_back("lbu must be empty because idxbu is empty!");
-  //   if (!ubu.empty()) err_mgs.push_back("ubu must be empty because idxbu is empty!");
-  // }
-  // else {
-  //   if (idxbu.size() != dim.N)  err_mgs.push_back("ocp_qp.idxbu.size() must be ocp_qp_dim.N or 0!");
-  //   if (lbu.size() != dim.N) err_mgs.push_back("ocp_qp.lbu.size() must be ocp_qp_dim.N or 0!");
-  //   if (ubu.size() != dim.N) err_mgs.push_back("ocp_qp.ubu.size() must be ocp_qp_dim.N or 0!");
-  //   for (int i=0; i<dim.N; ++i) {
-  //     if (idxbu[i].size() != dim.nbu[i]) 
-  //       err_mgs.push_back("ocp_qp.idxbu[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
-  //     if (lbu[i].size() != dim.nbu[i]) 
-  //       err_mgs.push_back("ocp_qp.lbx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
-  //     if (ubu[i].size() != dim.nbu[i]) 
-  //       err_mgs.push_back("ocp_qp.ubx[" + std::to_string(i) + "].size() must be ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
-  //   }
-  // }
-  // if (lbu_mask.size() != 0 && lbu_mask.size() != dim.N) err_mgs.push_back("ocp_qp.lbu_mask.size() must be ocp_qp_dim.N or 0!");
-  // if (ubu_mask.size() != 0 && ubu_mask.size() != dim.N) err_mgs.push_back("ocp_qp.ubu_mask.size() must be ocp_qp_dim.N or 0!");
-  // if (lbu_mask.size() == dim.N) {
-  //   for (int i=0; i<dim.N; ++i) {
-  //     if (lbu_mask[i].size() != 0 && lbu_mask[i].size() != dim.nbu[i]) {
-  //       err_mgs.push_back("ocp_qp.lbu_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
-  //     }
-  //     else {
-  //       for (int j=0; j<lbu_mask[i].size(); ++j) {
-  //         if (lbu_mask[i][j] != 1.0 && lbu_mask[i][j] != 0.0) 
-  //           err_mgs.push_back("ocp_qp.lbu_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
-  //       }
-  //     }
-  //   }
-  // }
-  // if (ubu_mask.size() == dim.N) {
-  //   for (int i=0; i<dim.N; ++i) {
-  //     if (ubu_mask[i].size() != 0 && ubu_mask[i].size() != dim.nbu[i]) {
-  //       err_mgs.push_back("ocp_qp.ubu_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.nbu[" + std::to_string(i) + "]!");
-  //     }
-  //     else {
-  //       for (int j=0; j<ubu_mask[i].size(); ++j) {
-  //         if (ubu_mask[i][j] != 1.0 && ubu_mask[i][j] != 0.0) 
-  //           err_mgs.push_back("ocp_qp.lbu_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
-  //       }
-  //     }
-  //   }
-  // }
-  // // constraints
-  // if (C.empty()) {
-  //   if (!D.empty()) err_mgs.push_back("D must be empty because C is empty!");
-  //   if (!lg.empty()) err_mgs.push_back("lg must be empty because C is empty!");
-  //   if (!ug.empty()) err_mgs.push_back("ug must be empty because C is empty!");
-  // }
-  // else {
-  //   if (C.size() != dim.N+1) err_mgs.push_back("ocp_qp.C.size() must be ocp_qp_dim.N+1 or 0!");
-  //   if (D.size() != dim.N) err_mgs.push_back("ocp_qp.D.size() must be ocp_qp_dim.N or 0!");
-  //   if (lg.size() != dim.N+1) err_mgs.push_back("ocp_qp.lg.size() must be ocp_qp_dim.N+1 or 0!");
-  //   if (ug.size() != dim.N+1) err_mgs.push_back("ocp_qp.ug.size() must be ocp_qp_dim.N+1 or 0!");
-  //   for (int i=0; i<dim.N; ++i) {
-  //     if (C[i].rows() != dim.ng[i]) 
-  //       err_mgs.push_back("ocp_qp.C[" + std::to_string(i) + "].rows() must ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-  //     if (C[i].rows() > 0 && C[i].cols() != dim.nx[i]) 
-  //       err_mgs.push_back("ocp_qp.C[" + std::to_string(i) + "].cols() must ocp_qp_dim.nx[" + std::to_string(i) + "]!");
-  //     if (D[i].rows() != dim.ng[i]) 
-  //       err_mgs.push_back("ocp_qp.D[" + std::to_string(i) + "].rows() must ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-  //     if (D[i].rows() > 0 && D[i].cols() != dim.nu[i]) 
-  //       err_mgs.push_back("ocp_qp.D[" + std::to_string(i) + "].cols() must ocp_qp_dim.nu[" + std::to_string(i) + "]!");
-  //     if (lg[i].size() != dim.ng[i]) 
-  //       err_mgs.push_back("ocp_qp.lg[" + std::to_string(i) + "].size() must ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-  //     if (lg[i].size() > 0 && lg[i].cols() != 1) 
-  //       err_mgs.push_back("ocp_qp.lg[" + std::to_string(i) + "] must be a vector!");
-  //     if (ug[i].size() != dim.ng[i]) 
-  //       err_mgs.push_back("ocp_qp.ug[" + std::to_string(i) + "].size() must be ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-  //     if (ug[i].size() > 0 && ug[i].cols() != 1) 
-  //       err_mgs.push_back("ocp_qp.ug[" + std::to_string(i) + "] must be a vector!");
-  //   }
-  //   if (C[dim.N].rows() != dim.ng[dim.N]) 
-  //     err_mgs.push_back("ocp_qp.C[" + std::to_string(dim.N) + "].rows() must be ocp_qp_dim.ng[" + std::to_string(dim.N) + "]!");
-  //   if (C[dim.N].cols() != dim.nx[dim.N]) 
-  //     err_mgs.push_back("ocp_qp.C[" + std::to_string(dim.N) + "].cols() must be ocp_qp_dim.nx[" + std::to_string(dim.N) + "]!");
-  //   if (lg[dim.N].size() != dim.ng[dim.N]) 
-  //     err_mgs.push_back("ocp_qp.lg[" + std::to_string(dim.N) + "].size() must be ocp_qp_dim.ng[" + std::to_string(dim.N) + "]!");
-  //   if (lg[dim.N].cols() != 1) 
-  //     err_mgs.push_back("ocp_qp.lg[" + std::to_string(dim.N) + "] must be a vector!");
-  //   if (ug[dim.N].size() != dim.ng[dim.N]) 
-  //     err_mgs.push_back("ocp_qp.ug[" + std::to_string(dim.N) + "].size() must be ocp_qp_dim.ng[" + std::to_string(dim.N) + "]!");
-  //   if (ug[dim.N].cols() != 1) 
-  //     err_mgs.push_back("ocp_qp.ug[" + std::to_string(dim.N) + "] must be a vector!");
-  // }
-  // if (lg_mask.size() != 0 && lg_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.lg_mask.size() must be ocp_qp_dim.N+1 or 0!");
-  // if (ug_mask.size() != 0 && ug_mask.size() != dim.N+1) err_mgs.push_back("ocp_qp.ug_mask.size() must be ocp_qp_dim.N+1 or 0!");
-  // if (lg_mask.size() == dim.N+1) {
-  //   for (int i=0; i<=dim.N; ++i) {
-  //     if (lg_mask[i].size() != 0 && lg_mask[i].size() != dim.ng[i]) {
-  //       err_mgs.push_back("ocp_qp.lg_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-  //     }
-  //     else {
-  //       for (int j=0; j<lg_mask[i].size(); ++j) {
-  //         if (lg_mask[i][j] != 1.0 && lg_mask[i][j] != 0.0) 
-  //           err_mgs.push_back("ocp_qp.lg_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
-  //       }
-  //     }
-  //   }
-  // }
-  // if (ug_mask.size() == dim.N+1) {
-  //   for (int i=0; i<=dim.N; ++i) {
-  //     if (ug_mask[i].size() != 0 && ug_mask[i].size() != dim.ng[i]) {
-  //       err_mgs.push_back("ocp_qp.ug_mask[" + std::to_string(i) + "].size() must be 0 or ocp_qp_dim.ng[" + std::to_string(i) + "]!");
-  //     }
-  //     else {
-  //       for (int j=0; j<ug_mask[i].size(); ++j) {
-  //         if (ug_mask[i][j] != 1.0 && ug_mask[i][j] != 0.0) 
-  //           err_mgs.push_back("ocp_qp.ug_mask[" + std::to_string(i) + "][" + std::to_string(j) + "] must be 1.0 or 0.0!");
-  //       }
-  //     }
-  //   }
-  // }
-  // // soft constraints
-  // if (Zl.empty()) {
-  //   if (!Zu.empty()) err_mgs.push_back("Zu must be empty because Zu is empty!");
-  //   if (!zl.empty()) err_mgs.push_back("lg must be empty because zl is empty!");
-  //   if (!zu.empty()) err_mgs.push_back("lg must be empty because zu is empty!");
-  // }
-  // else {
-  //   for (int i=0; i<=dim.N; ++i) {
-  //     if (Zu[i].rows() != dim.nsg[i]) 
-  //       err_mgs.push_back("ocp_qp.Zu[" + std::to_string(i) + "].rows() must be ocp_qp_dim.nsg[" + std::to_string(i) + "]!");
-  //     if (Zu[i].cols() != dim.nsg[i]) 
-  //       err_mgs.push_back("ocp_qp.Zu[" + std::to_string(i) + "].cols() must be ocp_qp_dim.nsg[" + std::to_string(i) + "]!");
-  //     if (Zl[i].rows() != dim.nsg[i]) 
-  //       err_mgs.push_back("ocp_qp.Zl[" + std::to_string(i) + "].rows() must be ocp_qp_dim.nsg[" + std::to_string(i) + "]!");
-  //     if (Zl[i].cols() != dim.nsg[i]) 
-  //       err_mgs.push_back("ocp_qp.Zl[" + std::to_string(i) + "].cols() must be ocp_qp_dim.nsg[" + std::to_string(i) + "]!");
-  //     if (zu[i].size() != dim.nsg[i]) 
-  //       err_mgs.push_back("ocp_qp.zu[" + std::to_string(i) + "].size() must be ocp_qp_dim.nsg[" + std::to_string(i) + "]!");
-  //     if (zu[i].cols() != 1) 
-  //       err_mgs.push_back("ocp_qp.zu[" + std::to_string(i) + "] must be a vector!");
-  //     if (zl[i].size() != dim.nsg[i]) 
-  //       err_mgs.push_back("ocp_qp.zl[" + std::to_string(i) + "].size() must be ocp_qp_dim.nsg[" + std::to_string(i) + "]!");
-  //     if (zl[i].cols() != 1) 
-  //       err_mgs.push_back("ocp_qp.zl[" + std::to_string(i) + "] must be a vector!");
-  //   }
-  // }
-  // if (idxs.empty()) {
-  //   if (!lls.empty()) err_mgs.push_back("lls must be empty because idxs is empty!");
-  //   if (!lus.empty()) err_mgs.push_back("lus must be empty because idxs is empty!");
-  // }
-  // else {
-  //   for (int i=0; i<=dim.N; ++i) {
-  //     if (idxs.size() != dim.N+1) err_mgs.push_back("ocp_qp.idxs.size() must be ocp_qp_dim.N+1 or 0!");
-  //     if (lls.size() != dim.N+1) err_mgs.push_back("ocp_qp.lls.size() must be ocp_qp_dim.N+1 or 0!");
-  //     if (lus.size() != dim.N+1) err_mgs.push_back("ocp_qp.lus.size() must be ocp_qp_dim.N+1 or 0!");
-  //     for (int i=0; i<=dim.N; ++i) {
-  //       if (idxs[i].size() != dim.nsbx[i]) 
-  //         err_mgs.push_back("ocp_qp.idxs[" + std::to_string(i) + "].size() must be ocp_qp_dim.nsbx[" + std::to_string(i) + "]!");
-  //       if (lls[i].size() != dim.nsbx[i]) 
-  //         err_mgs.push_back("ocp_qp.lls[" + std::to_string(i) + "].size() must be ocp_qp_dim.nsbx[" + std::to_string(i) + "]!");
-  //       if (lus[i].size() != dim.nsbx[i]) 
-  //         err_mgs.push_back("ocp_qp.lus[" + std::to_string(i) + "].size() must be ocp_qp_dim.nsbx[" + std::to_string(i) + "]!");
-  //     }
-  //   }
-  // }
+  // constraints 
+  if (C.size() != dim_.N+1) {
+    throw std::runtime_error("C.size() must be OcpQpDim::N+1");
+  }
+  if (D.size() != dim_.N) {
+    throw std::runtime_error("D.size() must be OcpQpDim::N");
+  }
+  if (lg.size() != dim_.N+1) {
+    throw std::runtime_error("lg.size() must be OcpQpDim::N+1");
+  }
+  if (ug.size() != dim_.N+1) {
+    throw std::runtime_error("ug.size() must be OcpQpDim::N+1");
+  }
+  if (lg_mask.size() != dim_.N+1) {
+    throw std::runtime_error("lg_mask.size() must be OcpQpDim::N+1");
+  }
+  if (ug_mask.size() != dim_.N+1) {
+    throw std::runtime_error("ug_mask.size() must be OcpQpDim::N+1");
+  }
+  for (unsigned int i=0; i<dim_.N; ++i) {
+    if (C[i].rows() != dim_.ng[i]) {
+      throw std::runtime_error("C[" + std::to_string(i) + "].rows() must be OcpQpDim::ng[" + std::to_string(i) + "]");
+    }
+    if (C[i].cols() != dim_.nx[i]) {
+      throw std::runtime_error("C[" + std::to_string(i) + "].cols() must be OcpQpDim::nx[" + std::to_string(i) + "]");
+    }
+    if (D[i].rows() != dim_.ng[i]) {
+      throw std::runtime_error("D[" + std::to_string(i) + "].rows() must be OcpQpDim::ng[" + std::to_string(i) + "]");
+    }
+    if (D[i].cols() != dim_.nu[i]) {
+      throw std::runtime_error("D[" + std::to_string(i) + "].cols() must be OcpQpDim::nu[" + std::to_string(i) + "]");
+    }
+    if (lg[i].size() != dim_.ng[i]) {
+      throw std::runtime_error("lg[" + std::to_string(i) + "].size() must be OcpQpDim::ng[" + std::to_string(i) + "]");
+    }
+    if (ug[i].size() != dim_.ng[i]) {
+      throw std::runtime_error("ug[" + std::to_string(i) + "].size() must be OcpQpDim::ng[" + std::to_string(i) + "]");
+    }
+    if (lg_mask[i].size() != 0 && lg_mask[i].size() != dim_.ng[i]) {
+      throw std::runtime_error("lg_mask[" + std::to_string(i) + "].size() must be 0 or OcpQpDim::ng[" + std::to_string(i) + "]");
+    }
+    if (ug_mask[i].size() != 0 && ug_mask[i].size() != dim_.ng[i]) {
+      throw std::runtime_error("ub_mask[" + std::to_string(i) + "].size() must be 0 or OcpQpDim::ng[" + std::to_string(i) + "]");
+    }
+  }
+  if (C[dim_.N].rows() != dim_.ng[dim_.N]) {
+    throw std::runtime_error("C[" + std::to_string(dim_.N) + "].rows() must be OcpQpDim::ng[" + std::to_string(dim_.N) + "]");
+  }
+  if (C[dim_.N].cols() != dim_.nx[dim_.N]) {
+    throw std::runtime_error("C[" + std::to_string(dim_.N) + "].cols() must be OcpQpDim::nx[" + std::to_string(dim_.N) + "]");
+  }
+  if (lg[dim_.N].size() != dim_.ng[dim_.N]) {
+    throw std::runtime_error("lg[" + std::to_string(dim_.N) + "].size() must be OcpQpDim::ng[" + std::to_string(dim_.N) + "]");
+  }
+  if (ug[dim_.N].size() != dim_.ng[dim_.N]) {
+    throw std::runtime_error("ug[" + std::to_string(dim_.N) + "].size() must be OcpQpDim::ng[" + std::to_string(dim_.N) + "]");
+  }
+  if (lg_mask[dim_.N].size() != 0 && lg_mask[dim_.N].size() != dim_.ng[dim_.N]) {
+    throw std::runtime_error("lb_mask[" + std::to_string(dim_.N) + "].size() must be 0 or OcpQpDim::ng[" + std::to_string(dim_.N) + "]");
+  }
+  if (ug_mask[dim_.N].size() != 0 && ug_mask[dim_.N].size() != dim_.ng[dim_.N]) {
+    throw std::runtime_error("ub_mask[" + std::to_string(dim_.N) + "].size() must be 0 or OcpQpDim::ng[" + std::to_string(dim_.N) + "]");
+  }
+  // soft constraints 
+  if (Zl.size() != dim_.N+1) {
+    throw std::runtime_error("Zl.size() must be OcpQpDim::N+1");
+  }
+  if (Zu.size() != dim_.N+1) {
+    throw std::runtime_error("Zu.size() must be OcpQpDim::N+1");
+  }
+  if (zl.size() != dim_.N+1) {
+    throw std::runtime_error("zl.size() must be OcpQpDim::N+1");
+  }
+  if (zu.size() != dim_.N+1) {
+    throw std::runtime_error("zu.size() must be OcpQpDim::N+1");
+  }
+  for (unsigned int i=0; i<=dim_.N; ++i) {
+    if (Zl[i].rows() != dim_.nsg[i]) {
+      throw std::runtime_error("Zl[" + std::to_string(i) + "].rows() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+    if (Zl[i].cols() != dim_.nsg[i]) {
+      throw std::runtime_error("Zl[" + std::to_string(i) + "].cols() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+    if (Zu[i].rows() != dim_.nsg[i]) {
+      throw std::runtime_error("Zu[" + std::to_string(i) + "].rows() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+    if (Zu[i].cols() != dim_.nsg[i]) {
+      throw std::runtime_error("Zu[" + std::to_string(i) + "].cols() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+    if (zl[i].size() != dim_.nsg[i]) {
+      throw std::runtime_error("zl[" + std::to_string(i) + "].size() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+    if (zu[i].size() != dim_.nsg[i]) {
+      throw std::runtime_error("zu[" + std::to_string(i) + "].size() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+  }
+  if (idxs.size() != dim_.N+1) {
+    throw std::runtime_error("idxs.size() must be OcpQpDim::N+1");
+  }
+  if (lls.size() != dim_.N+1) {
+    throw std::runtime_error("lls.size() must be OcpQpDim::N+1");
+  }
+  if (lus.size() != dim_.N+1) {
+    throw std::runtime_error("lus.size() must be OcpQpDim::N+1");
+  }
 }
 
 } // namespace hpipm

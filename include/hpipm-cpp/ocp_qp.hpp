@@ -207,19 +207,95 @@ public:
   ///
   std::vector<Eigen::VectorXd> ubu_mask;
 
-  std::vector<Eigen::MatrixXd> C; // lg < Cx+Du < ug
+  ///
+  /// @brief Constraint matrix in lg[i] < C[i] x[i] + D[i] u[i] < ug[i].   
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::ng[i] x OcpQpDim::nx[i].
+  ///
+  std::vector<Eigen::MatrixXd> C;
+
+  ///
+  /// @brief Constraint matrix in lg[i] < C[i] x[i] + D[i] u[i] < ug[i].   
+  /// Size must be OcpQpDim::N. 
+  /// Size of each element must be OcpQpDim::ng[i] x OcpQpDim::nu[i].
+  ///
   std::vector<Eigen::MatrixXd> D;
+
+  ///
+  /// @brief Constraint vector in lg[i] < C[i] x[i] + D[i] u[i] < ug[i].   
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::ng[i].
+  ///
   std::vector<Eigen::VectorXd> lg; 
+
+  ///
+  /// @brief Constraint vector in lg[i] < C[i] x[i] + D[i] u[i] < ug[i].   
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::ng[i].
+  ///
   std::vector<Eigen::VectorXd> ug; 
-  std::vector<Eigen::VectorXd> lg_mask; // if this is set, each elemtn has to be 0.0 or 1.0
-  std::vector<Eigen::VectorXd> ug_mask; // if this is set, each elemtn has to be 0.0 or 1.0
-  std::vector<Eigen::MatrixXd> Zl; // penalty on the slacks of upper soft constraints
-  std::vector<Eigen::MatrixXd> Zu; // penalty on the slacks of lower soft constraints
-  std::vector<Eigen::VectorXd> zl; // lower bounds of the slacks of upper soft constraints
-  std::vector<Eigen::VectorXd> zu; // lower bounds of the slacks of lower soft constraints
-  std::vector<std::vector<int>> idxs; // TODO: what is this? 
-  std::vector<Eigen::VectorXd> lls; // TODO: what is this?
-  std::vector<Eigen::VectorXd> lus; // TODO: what is this?
+
+  ///
+  /// @brief Masks on lower bounds in lg[i] < C[i] x[i] + D[i] u[i] < ug[i].   
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be 0 or OcpQpDim::ng[i].
+  /// Each element must be composed only by 0 or 1.0.
+  ///
+  std::vector<Eigen::VectorXd> lg_mask;
+
+  ///
+  /// @brief Masks on upper bounds in lg[i] < C[i] x[i] + D[i] u[i] < ug[i].   
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be 0 or OcpQpDim::ng[i].
+  /// Each element must be composed only by 0 or 1.0.
+  ///
+  std::vector<Eigen::VectorXd> ug_mask;
+
+  ///
+  /// @brief Matrix in the slack penalty (1/2) sl^T Zl sl + zl^T sl + (1/2) su^T Zu su + zu^T su.
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
+  ///
+  std::vector<Eigen::MatrixXd> Zl;
+
+  ///
+  /// @brief Matrix in the slack penalty (1/2) sl^T Zl sl + zl^T sl + (1/2) su^T Zu su + zu^T su.
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
+  ///
+  std::vector<Eigen::MatrixXd> Zu;
+
+  ///
+  /// @brief Vector in the slack penalty (1/2) sl^T Zl sl + zl^T sl + (1/2) su^T Zu su + zu^T su.
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
+  ///
+  std::vector<Eigen::VectorXd> zl;
+
+  ///
+  /// @brief Vector in the slack penalty (1/2) sl^T Zl sl + zl^T sl + (1/2) su^T Zu su + zu^T su.
+  /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
+  ///
+  std::vector<Eigen::VectorXd> zu;
+
+  ///
+  /// @brief Indices of box constrainted elements of slack variables.
+  /// Size must be OcpQpDim::N+1. 
+  ///
+  std::vector<std::vector<int>> idxs;
+
+  ///
+  /// @brief Lower bounds of box constraints of slack variables.
+  /// Size must be OcpQpDim::N+1. 
+  ///
+  std::vector<Eigen::VectorXd> lls;
+
+  ///
+  /// @brief Upper bounds of box constraints of slack variables.
+  /// Size must be OcpQpDim::N+1. 
+  ///
+  std::vector<Eigen::VectorXd> lus;
 
   ///
   /// @brief Get the dimension of the OCP-QP problem.

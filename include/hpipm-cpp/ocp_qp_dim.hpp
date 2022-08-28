@@ -12,36 +12,104 @@ extern "C" {
 
 namespace hpipm {
 
-// Dimensions of OCP-QP.
+///
+/// @class OcpQpDim
+/// @brief Dimension of an OCP-QP problem.
+///
 class OcpQpDim {
 public:
+  ///
+  /// @brief Constructor. 
+  /// @param[in] N Horizon length.
+  ///
   OcpQpDim(const unsigned int N);
 
+  ///
+  /// @brief Default constructor. 
+  ///
   OcpQpDim() = default;
 
+  ///
+  /// @brief Destructor.
+  ///
   ~OcpQpDim() = default;
 
+  ///
+  /// @brief Default copy constructor.
+  ///
   OcpQpDim(const OcpQpDim&) = default;
 
+  ///
+  /// @brief Default copy assign operator.
+  ///
   OcpQpDim& operator=(const OcpQpDim&) = default;
 
+  ///
+  /// @brief Prohibit move constructor.
+  ///
   OcpQpDim(OcpQpDim&&) noexcept = delete;
 
+  ///
+  /// @brief Prohibit move assign operator.
+  ///
   OcpQpDim& operator=(OcpQpDim&&) noexcept = delete;
 
+  ///
+  /// @brief Resizes the dimension.
+  /// @param[in] N horizon length.
+  ///
   void resize(const unsigned int N);
 
+  ///
+  /// @brief Gets the wrapper of hpipm's resource. 
+  /// Throws exceptions when something wrongs in settings of N, nx, nu, etc.
+  ///
   d_ocp_qp_dim_wrapper& getHpipmWrapper();
 
-  unsigned int N; // horizon length
-  std::vector<int> nx;   // dimension of x
-  std::vector<int> nu;   // dimension of u
-  std::vector<int> nbx;  // number of box inequality constraints on x
-  std::vector<int> nbu;  // number of box inequality constraints on u
-  std::vector<int> ng;   // number of inequality constraints
-  std::vector<int> nsbx; // number of soft box inequality constraints on x in nbx
-  std::vector<int> nsbu; // number of soft box inequality constraints on u in nbu
-  std::vector<int> nsg;  // number of soft inequality constraints in ng
+  ///
+  /// @brief Horizon length.
+  ///
+  unsigned int N; 
+
+  ///
+  /// @brief Dimensions of x over the horizon. Size must be N+1. Each element must be positive.
+  ///
+  std::vector<int> nx;
+
+  ///
+  /// @brief Dimensions of u over the horizon. Size must be N. Each element must be non-negative.
+  ///
+  std::vector<int> nu;
+
+  ///
+  /// @brief Numbers of box inequality constraints on x over the horizon. Size must be N+1. Each element must be non-negative.
+  ///
+  std::vector<int> nbx;
+
+  ///
+  /// @brief Numbers of box inequality constraints on u over the horizon. Size must be N. Each element must be non-negative.
+  ///
+  std::vector<int> nbu;
+
+  ///
+  /// @brief Dimensions of inequality constraints over the horizon. Size must be N+1. Each element must be non-negative.
+  ///
+  std::vector<int> ng;
+
+  ///
+  /// @brief Numbers of soft box inequality constraints on x over the horizon. Size must be N+1. Each element must be non-negative.
+  ///
+  std::vector<int> nsbx;
+
+  ///
+  /// @brief Numbers of soft box inequality constraints on u over the horizon. Size must be N. Each element must be non-negative.
+  ///
+  std::vector<int> nsbu;
+
+  ///
+  /// @brief Dimensions of soft inequality constraints over the horizon. Size must be N+1. Each element must be non-negative.
+  ///
+  std::vector<int> nsg;
 
 private:
   d_ocp_qp_dim_wrapper ocp_qp_dim_wrapper_;

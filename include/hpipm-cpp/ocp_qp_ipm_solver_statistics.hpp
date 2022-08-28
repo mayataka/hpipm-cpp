@@ -9,7 +9,7 @@
 namespace hpipm {
 
 struct OcpQpIpmSolverStatistics {
-  int iter = 0;
+   int iter = 0;
   double max_res_stat = 0.0;
   double max_res_eq = 0.0;
   double max_res_ineq = 0.0;

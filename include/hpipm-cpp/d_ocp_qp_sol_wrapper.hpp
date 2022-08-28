@@ -43,14 +43,14 @@ public:
   d_ocp_qp_sol_wrapper& operator=(const d_ocp_qp_sol_wrapper&);
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Custom move constructor.
   ///
-  d_ocp_qp_sol_wrapper(d_ocp_qp_sol_wrapper&&) noexcept = delete;
+  d_ocp_qp_sol_wrapper(d_ocp_qp_sol_wrapper&&) noexcept;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Custom move assign operator.
   ///
-  d_ocp_qp_sol_wrapper& operator=(d_ocp_qp_sol_wrapper&&) noexcept = delete;
+  d_ocp_qp_sol_wrapper& operator=(d_ocp_qp_sol_wrapper&&) noexcept;
 
   ///
   /// @brief Gets the pointer to the hpipm resource. Throw an exception if the 

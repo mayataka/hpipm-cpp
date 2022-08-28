@@ -51,12 +51,12 @@ public:
   OcpQp& operator=(const OcpQp&) = default;
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Default move constructor.
   ///
   OcpQp(OcpQp&&) noexcept = delete;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Default move assign operator.
   ///
   OcpQp& operator=(OcpQp&&) noexcept = delete;
 

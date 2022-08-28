@@ -45,14 +45,14 @@ public:
   OcpQpDim& operator=(const OcpQpDim&) = default;
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Default move constructor.
   ///
-  OcpQpDim(OcpQpDim&&) noexcept = delete;
+  OcpQpDim(OcpQpDim&&) noexcept = default;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Default move assign operator.
   ///
-  OcpQpDim& operator=(OcpQpDim&&) noexcept = delete;
+  OcpQpDim& operator=(OcpQpDim&&) noexcept = default;
 
   ///
   /// @brief Resizes the dimension.

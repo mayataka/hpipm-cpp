@@ -16,33 +16,78 @@ extern "C" {
 
 namespace hpipm {
 
+///
+/// @class OcpQpSolution
+/// @brief Solution of the OCP-QP problem.
+///
 struct OcpQpSolution {
 public:
+  ///
+  /// @brief Constructor.
+  /// @param[in] dim Dimension of the OCP-QP problem.
+  ///
   OcpQpSolution(const OcpQpDim& dim);
 
+  ///
+  /// @brief Default constructor. 
+  ///
   OcpQpSolution() = default;
 
+  ///
+  /// @brief Destructor.
+  ///
   ~OcpQpSolution() = default;
 
+  ///
+  /// @brief Default copy constructor.
+  ///
   OcpQpSolution(const OcpQpSolution&) = default;
 
+  ///
+  /// @brief Default copy assign operator.
+  ///
   OcpQpSolution& operator=(const OcpQpSolution&) = default;
 
+  ///
+  /// @brief Prohibit move constructor.
+  ///
   OcpQpSolution(OcpQpSolution&&) noexcept = delete;
 
+  ///
+  /// @brief Prohibit move assign operator.
+  ///
   OcpQpSolution& operator=(OcpQpSolution&&) noexcept = delete;
 
-  std::vector<std::string> checkSize(const OcpQpDim& dim) const;
-
+  ///
+  /// @brief Resizes the solution.
+  /// @param[in] dim Dimension of the OCP-QP problem.
+  ///
   void resize(const OcpQpDim& dim);
 
+  ///
+  /// @brief Gets the wrapper of hpipm's resource. 
+  ///
   d_ocp_qp_sol_wrapper& getHpipmWrapper();
 
+  ///
+  /// @brief Retrive x, u, and pi from the hpipm's resource. 
+  ///
   void retriveSolution();
 
+  ///
+  /// @brief State. 
+  ///
   std::vector<Eigen::VectorXd> x;
+
+  ///
+  /// @brief Control input. 
+  ///
   std::vector<Eigen::VectorXd> u;
-  std::vector<Eigen::VectorXd> pi; // the Lagrange multiplier w.r.t. the state equation
+
+  ///
+  /// @brief Costate (the Lagrange multiplier w.r.t the state equation). 
+  ///
+  std::vector<Eigen::VectorXd> pi;
 
   // TODO: get the following variables from hpipm
   // std::vector<Eigen::VectorXd> sl; // slack lower 
@@ -54,9 +99,17 @@ public:
   // std::vector<Eigen::VectorXd> lam_ls; // the Lagrange multiplier w.r.t. the lower soft constraint
   // std::vector<Eigen::VectorXd> lam_us; // the Lagrange multiplier w.r.t. the upper soft constraint
 
+  ///
+  /// @brief Get the dimension of the OCP-QP problem.
+  /// @return const reference to the dimension of the OCP-QP problem.
+  ///
+  const OcpQpDim& dim() const;
+
 private:
   OcpQpDim dim_;
   d_ocp_qp_sol_wrapper ocp_qp_sol_wrapper_;
+
+  void resize();
 };
 
 } // namespace hpipm

@@ -54,7 +54,7 @@ d_ocp_qp_dim_wrapper& OcpQpDim::getHpipmWrapper() {
     throw std::runtime_error("OcpQpDim.nsg.size() must be the same as N+1: input value is " + std::to_string(nsg.size()));
   }
   for (unsigned int i=0; i<=N; ++i) {
-    if (nx[i] < 0) throw std::runtime_error("OcpQpDim.nx[" + std::to_string(i) + "] must be non-negative");
+    if (nx[i] <= 0) throw std::runtime_error("OcpQpDim.nx[" + std::to_string(i) + "] must be positive");
   }
   for (unsigned int i=0; i<N; ++i) {
     if (nu[i] < 0) throw std::runtime_error("OcpQpDim.nu[" + std::to_string(i) + "] must be non-negative");

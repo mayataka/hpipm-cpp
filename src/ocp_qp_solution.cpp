@@ -11,49 +11,9 @@ OcpQpSolution::OcpQpSolution(const OcpQpDim& dim) {
 }
 
 
-// std::vector<std::string> OcpQpSolution::checkSize(const OcpQpDim& dim) const {
-//   std::vector<std::string> err_mgs = dim.checkSize();
-//   if (!err_mgs.empty()) {
-//     err_mgs.push_back("Call ocp_qp_sol.checkSize() with correct ocp_qp_dim! Please check the above errors.");
-//     return err_mgs;
-//   }
-//   if (!x.empty()) {
-//     if (x.size() != dim.N+1) {
-//       err_mgs.push_back("ocp_qp_sol.x.size() must be the same as N+1 or 0!");
-//     }
-//     for (int i=0; i<=dim.N; ++i) {
-//       if (x[i].size() != dim.nx[i]) 
-//         err_mgs.push_back("ocp_qp_sol.x[" + std::to_string(i) + "].size() must be the same as ocp_qp_dim.nx[" + std::to_string(i) + "]!");
-//     }
-//   }
-//   if (!u.empty()) {
-//     if (u.size() != dim.N) {
-//       err_mgs.push_back("ocp_qp_sol.u.size() must be the same as N or 0!");
-//     }
-//     for (int i=0; i<dim.N; ++i) {
-//       if (u[i].size() != dim.nu[i]) 
-//         err_mgs.push_back("ocp_qp_sol.u[" + std::to_string(i) + "].size() must be the same as ocp_qp_dim.nu[" + std::to_string(i) + "]!");
-//     }
-//   }
-//   return err_mgs;
-// }
-
-
 void OcpQpSolution::resize(const OcpQpDim& dim) {
   dim_ = dim;
-  x.resize(dim_.N+1);
-  u.resize(dim_.N);
-  pi.resize(dim_.N);
-  for (int i=0; i<dim_.N+1; ++i) {
-    x[i].setZero(dim_.nx[i]);
-  }
-  for (int i=0; i<dim_.N; ++i) {
-    u[i].setZero(dim_.nu[i]);
-  }
-  for (int i=0; i<dim_.N; ++i) {
-    pi[i].setZero(dim_.nx[i]);
-  }
-  ocp_qp_sol_wrapper_.resize(dim_.getHpipmWrapper());
+  resize();
 }
 
 
@@ -75,19 +35,45 @@ d_ocp_qp_sol_wrapper& OcpQpSolution::getHpipmWrapper() {
 
 
 void OcpQpSolution::retriveSolution() {
-  x.resize(dim_.N+1);
-  u.resize(dim_.N);
-  pi.resize(dim_.N);
+  resize();
   for (int i=0; i<dim_.N; ++i) {
-    x[i].setZero(dim_.nx[i]);
-    u[i].setZero(dim_.nu[i]);
-    pi[i].setZero(dim_.nx[i]);
+    x[i].setZero();
+    u[i].setZero();
+    pi[i].setZero();
     d_ocp_qp_sol_get_x(i, ocp_qp_sol_wrapper_.get(), x[i].data());
     d_ocp_qp_sol_get_u(i, ocp_qp_sol_wrapper_.get(), u[i].data());
     d_ocp_qp_sol_get_pi(i, ocp_qp_sol_wrapper_.get(), pi[i].data());
   }
-  x[dim_.N].setZero(dim_.nx[dim_.N]);
+  x[dim_.N].setZero();
   d_ocp_qp_sol_get_x(dim_.N, ocp_qp_sol_wrapper_.get(), x[dim_.N].data());
+}
+
+
+const OcpQpDim& OcpQpSolution::dim() const {
+  return dim_;
+}
+
+
+void OcpQpSolution::resize() {
+  if (x.size() != dim_.N+1) {
+    x.resize(dim_.N+1);
+  }
+  if (u.size() != dim_.N) {
+    u.resize(dim_.N);
+  }
+  if (pi.size() != dim_.N) {
+    pi.resize(dim_.N);
+  }
+  for (int i=0; i<dim_.N+1; ++i) {
+    x[i].resize(dim_.nx[i]);
+  }
+  for (int i=0; i<dim_.N; ++i) {
+    u[i].resize(dim_.nu[i]);
+  }
+  for (int i=0; i<dim_.N; ++i) {
+    pi[i].resize(dim_.nx[i]);
+  }
+  ocp_qp_sol_wrapper_.resize(dim_.getHpipmWrapper());
 }
 
 } // namespace hpipm

@@ -21,6 +21,10 @@ extern "C" {
 
 namespace hpipm {
 
+///
+/// @class HpipmStatus
+/// @brief Solver status.
+///
 enum class HpipmStatus {
   Success = 0,
   MaxIterReached = 1,
@@ -33,29 +37,86 @@ std::string to_string(const HpipmStatus& hpipm_status);
 
 std::ostream& operator<<(std::ostream& os, const HpipmStatus& hpipm_status);
 
+///
+/// @class OcpQpIpmSolver
+/// @brief Ipm solver.
+///
 class OcpQpIpmSolver {
 public:
+  ///
+  /// @brief Constructor.
+  /// @param[in] dim Dimension of the OCP-QP problem.
+  /// @param[in] ipm_solver_settings Settings of Ipm solver.
+  ///
   OcpQpIpmSolver(const OcpQpDim& dim, 
                  const OcpQpIpmSolverSettings& ipm_solver_settings);
 
+  ///
+  /// @brief Default constructor. 
+  ///
   OcpQpIpmSolver() = default;
 
+  ///
+  /// @brief Destructor.
+  ///
   ~OcpQpIpmSolver() = default;
 
+  ///
+  /// @brief Prohibit copy constructor.
+  ///
   OcpQpIpmSolver(const OcpQpIpmSolver&) = delete;
 
+  ///
+  /// @brief Prohibit copy assign operator.
+  ///
   OcpQpIpmSolver& operator=(const OcpQpIpmSolver&) = delete;
 
+  ///
+  /// @brief Prohibit move constructor.
+  ///
+  OcpQpIpmSolver(OcpQpIpmSolver&&) noexcept = delete;
+
+  ///
+  /// @brief Prohibit move assign operator.
+  ///
+  OcpQpIpmSolver& operator=(OcpQpIpmSolver&&) noexcept = delete;
+
+  ///
+  /// @brief Resizes the solver.
+  /// @param[in] dim Dimension of the OCP-QP problem.
+  ///
   void resize(const OcpQpDim& dim);
 
+  ///
+  /// @brief Sets the Ipm solver settings.
+  /// @param[in] ipm_solver_settings Settings of Ipm solver.
+  ///
   void setSolverSettings(const OcpQpIpmSolverSettings& ipm_solver_settings);
 
+  ///
+  /// @brief Solves the OCP-QP.
+  /// @param[in, out] qp OCP-QP problem.
+  /// @param[in, out] qp_sol Solution of the OCP-QP problem.
+  /// @return Solver status.
+  ///
   HpipmStatus solve(OcpQp& qp, OcpQpSolution& qp_sol);
 
+  ///
+  /// @brief Get the dimension of the OCP-QP problem.
+  /// @return const reference to the dimension of the OCP-QP problem.
+  ///
   const OcpQpDim& dim() const;
 
+  ///
+  /// @brief Get the Ipm solver settings.
+  /// @return const reference to the Ipm solver settings.
+  ///
   const OcpQpIpmSolverSettings& ipmSolverSettings() const;
 
+  ///
+  /// @brief Get the solver statistics.
+  /// @return const reference to the solver statistics.
+  ///
   const OcpQpIpmSolverStatistics& getSolverStatistics() const;
 
 private:

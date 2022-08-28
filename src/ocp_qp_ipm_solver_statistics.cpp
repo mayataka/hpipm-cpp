@@ -5,6 +5,28 @@
 
 namespace hpipm {
 
+void OcpQpIpmSolverStatistics::resize(const size_t size) {
+  alpha_aff.resize(size);
+  mu_aff.resize(size);
+  sigma.resize(size);
+  alpha_prim.resize(size);
+  alpha_dual.resize(size);
+  mu.resize(size);
+  res_stat.resize(size);
+  res_eq.resize(size);
+  res_ineq.resize(size);
+  res_comp.resize(size);
+  obj.resize(size);
+  lq_fact.resize(size);
+  itref_pred.resize(size);
+  itref_corr.resize(size);
+  lin_res_stat.resize(size);
+  lin_res_eq.resize(size);
+  lin_res_ineq.resize(size);
+  lin_res_comp.resize(size);
+}
+
+
 void OcpQpIpmSolverStatistics::reserve(const size_t size) {
   alpha_aff.reserve(size);
   mu_aff.reserve(size);

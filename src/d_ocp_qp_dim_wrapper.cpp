@@ -30,7 +30,8 @@ d_ocp_qp_dim_wrapper::~d_ocp_qp_dim_wrapper() {
 }
 
 
-d_ocp_qp_dim_wrapper::d_ocp_qp_dim_wrapper(const d_ocp_qp_dim_wrapper& other) {
+d_ocp_qp_dim_wrapper::d_ocp_qp_dim_wrapper(const d_ocp_qp_dim_wrapper& other) 
+  : d_ocp_qp_dim_wrapper() {
   copy(other);
 }
 

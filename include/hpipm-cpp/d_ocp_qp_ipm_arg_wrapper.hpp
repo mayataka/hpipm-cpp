@@ -16,22 +16,52 @@ extern "C" {
 
 namespace hpipm {
 
+///
+/// @class d_ocp_qp_ipm_arg_wrapper
+/// @brief A wrapper of d_ocp_qp_ipm_arg with a memory management.
+///
 class d_ocp_qp_ipm_arg_wrapper {
 public:
+  ///
+  /// @brief Default constructor. Allocates the hpipm resource.
+  ///
   d_ocp_qp_ipm_arg_wrapper();
 
+  ///
+  /// @brief Destructor.
+  ///
   ~d_ocp_qp_ipm_arg_wrapper();
 
+  ///
+  /// @brief Custom copy constructor.
+  ///
   d_ocp_qp_ipm_arg_wrapper(const d_ocp_qp_ipm_arg_wrapper&);
 
+  ///
+  /// @brief Custom copy assign operator.
+  ///
   d_ocp_qp_ipm_arg_wrapper& operator=(const d_ocp_qp_ipm_arg_wrapper&);
 
+  ///
+  /// @brief Prohibit move constructor.
+  ///
   d_ocp_qp_ipm_arg_wrapper(d_ocp_qp_ipm_arg_wrapper&&) noexcept = delete;
 
+  ///
+  /// @brief Prohibit move assign operator.
+  ///
   d_ocp_qp_ipm_arg_wrapper& operator=(d_ocp_qp_ipm_arg_wrapper&&) noexcept = delete;
 
+  ///
+  /// @brief Gets the pointer to the hpipm resource. 
+  /// @return Pointer to the hpipm resource.
+  ///
   d_ocp_qp_ipm_arg* get();
 
+  ///
+  /// @brief Gets the const pointer to the hpipm instance.
+  /// @return const pointer to the hpipm resource.
+  ///
   const d_ocp_qp_ipm_arg* get() const;
 
 private:

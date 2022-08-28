@@ -72,14 +72,14 @@ public:
   OcpQpIpmSolver& operator=(const OcpQpIpmSolver&) = delete;
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Default move constructor.
   ///
-  OcpQpIpmSolver(OcpQpIpmSolver&&) noexcept = delete;
+  OcpQpIpmSolver(OcpQpIpmSolver&&) noexcept = default;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Default move assign operator.
   ///
-  OcpQpIpmSolver& operator=(OcpQpIpmSolver&&) noexcept = delete;
+  OcpQpIpmSolver& operator=(OcpQpIpmSolver&&) noexcept = default;
 
   ///
   /// @brief Resizes the solver.

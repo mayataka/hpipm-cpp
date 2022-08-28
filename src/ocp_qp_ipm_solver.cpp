@@ -40,6 +40,28 @@ OcpQpIpmSolver::OcpQpIpmSolver(const OcpQpDim& dim,
 }
 
 
+OcpQpIpmSolver::OcpQpIpmSolver(const OcpQpIpmSolver& other) 
+  : solver_statistics_(other.solver_statistics_),
+    dim_(other.dim_),
+    ipm_solver_settings_(other.ipm_solver_settings_),
+    ocp_qp_ipm_ws_wrapper_() {
+  ocp_qp_ipm_ws_wrapper_.resize(dim_.getHpipmWrapper(), 
+                                ipm_solver_settings_.getHpipmWrapper());
+}
+
+
+OcpQpIpmSolver& OcpQpIpmSolver::operator=(const OcpQpIpmSolver& other) {
+  if (this != &other) {
+    solver_statistics_ = other.solver_statistics_;
+    dim_ = other.dim_;
+    ipm_solver_settings_ = other.ipm_solver_settings_;
+    ocp_qp_ipm_ws_wrapper_.resize(dim_.getHpipmWrapper(), 
+                                  ipm_solver_settings_.getHpipmWrapper());
+  }
+  return *this;
+}
+
+
 void OcpQpIpmSolver::resize(const OcpQpDim& dim) {
   dim_ = dim;
   ocp_qp_ipm_ws_wrapper_.resize(dim_.getHpipmWrapper(), 

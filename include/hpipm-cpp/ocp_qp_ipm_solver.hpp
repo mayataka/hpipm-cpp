@@ -62,14 +62,14 @@ public:
   ~OcpQpIpmSolver() = default;
 
   ///
-  /// @brief Prohibit copy constructor.
+  /// @brief Custom copy constructor.
   ///
-  OcpQpIpmSolver(const OcpQpIpmSolver&) = delete;
+  OcpQpIpmSolver(const OcpQpIpmSolver&);
 
   ///
-  /// @brief Prohibit copy assign operator.
+  /// @brief Custom copy assign operator.
   ///
-  OcpQpIpmSolver& operator=(const OcpQpIpmSolver&) = delete;
+  OcpQpIpmSolver& operator=(const OcpQpIpmSolver&);
 
   ///
   /// @brief Default move constructor.

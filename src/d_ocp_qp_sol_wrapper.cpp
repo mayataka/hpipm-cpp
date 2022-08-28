@@ -25,6 +25,7 @@ d_ocp_qp_sol_wrapper::~d_ocp_qp_sol_wrapper() {
   if (memory_) {
     free(memory_);
     memory_ = nullptr;
+    memsize_ = 0;
   }
 }
 
@@ -39,6 +40,49 @@ d_ocp_qp_sol_wrapper& d_ocp_qp_sol_wrapper::operator=(const d_ocp_qp_sol_wrapper
   if (this != &other) {
     copy(other);
   }
+  return *this;
+}
+
+
+d_ocp_qp_sol_wrapper::d_ocp_qp_sol_wrapper(d_ocp_qp_sol_wrapper&& other) noexcept 
+  : dim_(std::move(other.dim_)),
+    ocp_qp_sol_hpipm_(other.ocp_qp_sol_hpipm_),
+    memory_(other.memory_),
+    memsize_(other.memsize_) {
+  other.ocp_qp_sol_hpipm_.dim  = nullptr;
+  other.ocp_qp_sol_hpipm_.ux   = nullptr;
+  other.ocp_qp_sol_hpipm_.pi   = nullptr;
+  other.ocp_qp_sol_hpipm_.lam  = nullptr;
+  other.ocp_qp_sol_hpipm_.t    = nullptr;
+  other.ocp_qp_sol_hpipm_.misc = nullptr;
+  other.ocp_qp_sol_hpipm_.memsize = 0;
+  other.memory_ = nullptr;
+  other.memsize_ = 0;
+}
+
+
+d_ocp_qp_sol_wrapper& d_ocp_qp_sol_wrapper::operator=(d_ocp_qp_sol_wrapper&& other) noexcept {
+  if (this == &other) return *this;
+
+  if (memory_) {
+    free(memory_);
+    memory_ = nullptr;
+    memsize_ = 0;
+  }
+  dim_ = std::move(other.dim_);
+  ocp_qp_sol_hpipm_ = other.ocp_qp_sol_hpipm_;
+  memory_ = other.memory_;
+  memsize_ = other.memsize_;
+
+  other.ocp_qp_sol_hpipm_.dim  = nullptr;
+  other.ocp_qp_sol_hpipm_.ux   = nullptr;
+  other.ocp_qp_sol_hpipm_.pi   = nullptr;
+  other.ocp_qp_sol_hpipm_.lam  = nullptr;
+  other.ocp_qp_sol_hpipm_.t    = nullptr;
+  other.ocp_qp_sol_hpipm_.misc = nullptr;
+  other.ocp_qp_sol_hpipm_.memsize = 0;
+  other.memory_ = nullptr;
+  other.memsize_ = 0;
   return *this;
 }
 

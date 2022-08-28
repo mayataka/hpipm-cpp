@@ -51,14 +51,14 @@ public:
   OcpQp& operator=(const OcpQp&) = default;
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Default move constructor.
   ///
-  OcpQp(OcpQp&&) noexcept = delete;
+  OcpQp(OcpQp&&) noexcept = default;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Default move assign operator.
   ///
-  OcpQp& operator=(OcpQp&&) noexcept = delete;
+  OcpQp& operator=(OcpQp&&) noexcept = default;
 
   ///
   /// @brief Resizes the OCP-QP problem.
@@ -282,18 +282,21 @@ public:
   ///
   /// @brief Indices of box constrainted elements of slack variables.
   /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
   ///
   std::vector<std::vector<int>> idxs;
 
   ///
   /// @brief Lower bounds of box constraints of slack variables.
   /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
   ///
   std::vector<Eigen::VectorXd> lls;
 
   ///
   /// @brief Upper bounds of box constraints of slack variables.
   /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
   ///
   std::vector<Eigen::VectorXd> lus;
 

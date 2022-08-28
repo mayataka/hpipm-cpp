@@ -49,14 +49,14 @@ public:
   OcpQpSolution& operator=(const OcpQpSolution&) = default;
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Default move constructor.
   ///
-  OcpQpSolution(OcpQpSolution&&) noexcept = delete;
+  OcpQpSolution(OcpQpSolution&&) noexcept = default;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Default move assign operator.
   ///
-  OcpQpSolution& operator=(OcpQpSolution&&) noexcept = delete;
+  OcpQpSolution& operator=(OcpQpSolution&&) noexcept = default;
 
   ///
   /// @brief Resizes the solution.

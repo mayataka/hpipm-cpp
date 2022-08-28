@@ -62,24 +62,24 @@ public:
   ~OcpQpIpmSolver() = default;
 
   ///
-  /// @brief Prohibit copy constructor.
+  /// @brief Custom copy constructor.
   ///
-  OcpQpIpmSolver(const OcpQpIpmSolver&) = delete;
+  OcpQpIpmSolver(const OcpQpIpmSolver&);
 
   ///
-  /// @brief Prohibit copy assign operator.
+  /// @brief Custom copy assign operator.
   ///
-  OcpQpIpmSolver& operator=(const OcpQpIpmSolver&) = delete;
+  OcpQpIpmSolver& operator=(const OcpQpIpmSolver&);
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Default move constructor.
   ///
-  OcpQpIpmSolver(OcpQpIpmSolver&&) noexcept = delete;
+  OcpQpIpmSolver(OcpQpIpmSolver&&) noexcept = default;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Default move assign operator.
   ///
-  OcpQpIpmSolver& operator=(OcpQpIpmSolver&&) noexcept = delete;
+  OcpQpIpmSolver& operator=(OcpQpIpmSolver&&) noexcept = default;
 
   ///
   /// @brief Resizes the solver.

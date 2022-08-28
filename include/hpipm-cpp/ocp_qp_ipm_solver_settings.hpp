@@ -48,14 +48,14 @@ public:
   OcpQpIpmSolverSettings& operator=(const OcpQpIpmSolverSettings&) = default;
 
   ///
-  /// @brief Prohibit move constructor.
+  /// @brief Default move constructor.
   ///
-  OcpQpIpmSolverSettings(OcpQpIpmSolverSettings&&) noexcept = delete;
+  OcpQpIpmSolverSettings(OcpQpIpmSolverSettings&&) noexcept = default;
 
   ///
-  /// @brief Prohibit move assign operator.
+  /// @brief Default move assign operator.
   ///
-  OcpQpIpmSolverSettings& operator=(OcpQpIpmSolverSettings&&) noexcept = delete;
+  OcpQpIpmSolverSettings& operator=(OcpQpIpmSolverSettings&&) noexcept = default;
 
   ///
   /// @brief Gets the wrapper of hpipm's resource. 

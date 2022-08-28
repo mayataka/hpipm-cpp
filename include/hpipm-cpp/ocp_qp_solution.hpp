@@ -99,6 +99,12 @@ public:
   // std::vector<Eigen::VectorXd> lam_ls; // the Lagrange multiplier w.r.t. the lower soft constraint
   // std::vector<Eigen::VectorXd> lam_us; // the Lagrange multiplier w.r.t. the upper soft constraint
 
+  ///
+  /// @brief Get the dimension of the OCP-QP problem.
+  /// @return const reference to the dimension of the OCP-QP problem.
+  ///
+  const OcpQpDim& dim() const;
+
 private:
   OcpQpDim dim_;
   d_ocp_qp_sol_wrapper ocp_qp_sol_wrapper_;

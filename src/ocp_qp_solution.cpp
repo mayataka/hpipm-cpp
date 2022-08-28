@@ -49,6 +49,11 @@ void OcpQpSolution::retriveSolution() {
 }
 
 
+const OcpQpDim& OcpQpSolution::dim() const {
+  return dim_;
+}
+
+
 void OcpQpSolution::resize() {
   if (x.size() != dim_.N+1) {
     x.resize(dim_.N+1);

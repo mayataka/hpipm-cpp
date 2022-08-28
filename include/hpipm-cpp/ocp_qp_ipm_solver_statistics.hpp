@@ -8,13 +8,36 @@
 
 namespace hpipm {
 
+///
+/// @class OcpQpIpmSolverStatistics
+/// @brief Ipm solver statistics.
+///
 struct OcpQpIpmSolverStatistics {
-   int iter = 0;
+  ///
+  /// @brief Number of iterations.
+  ///
+  int iter = 0;
+
+  ///
+  /// @brief Maximum residual in statistics.
+  ///
   double max_res_stat = 0.0;
+
+  ///
+  /// @brief Maximum residual in equality constraints.
+  ///
   double max_res_eq = 0.0;
+
+  ///
+  /// @brief Maximum residual in inequality constraints.
+  ///
   double max_res_ineq = 0.0;
+
+  ///
+  /// @brief Maximum residual in complementary slackness.
+  ///
   double max_res_comp = 0.0;
-  // stat
+
   std::vector<double> alpha_aff;
   std::vector<double> mu_aff;
   std::vector<double> sigma;
@@ -34,8 +57,21 @@ struct OcpQpIpmSolverStatistics {
   std::vector<double> lin_res_ineq;
   std::vector<double> lin_res_comp;
 
+  ///
+  /// @brief Resizes std::vector member variables.
+  /// @param[in] size Size of std::vector member variables.
+  ///
+  void resize(const size_t size);
+
+  ///
+  /// @brief Reserve std::vector member variables.
+  /// @param[in] size Size of std::vector member variables.
+  ///
   void reserve(const size_t size);
 
+  ///
+  /// @brief Clears std::vector member variables.
+  ///
   void clear();
 
   void disp(std::ostream& os) const;

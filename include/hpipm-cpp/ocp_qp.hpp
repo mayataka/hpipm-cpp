@@ -282,18 +282,21 @@ public:
   ///
   /// @brief Indices of box constrainted elements of slack variables.
   /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
   ///
   std::vector<std::vector<int>> idxs;
 
   ///
   /// @brief Lower bounds of box constraints of slack variables.
   /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
   ///
   std::vector<Eigen::VectorXd> lls;
 
   ///
   /// @brief Upper bounds of box constraints of slack variables.
   /// Size must be OcpQpDim::N+1. 
+  /// Size of each element must be OcpQpDim::nsg[i].
   ///
   std::vector<Eigen::VectorXd> lus;
 

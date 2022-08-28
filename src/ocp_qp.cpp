@@ -298,9 +298,9 @@ void OcpQp::resize() {
   lls.resize(dim_.N+1);
   lus.resize(dim_.N+1);
   for (int i=0; i<=dim_.N; ++i) {
-    idxs[i].resize(dim_.nsbx[i]);
-    lls[i].resize(dim_.nsbx[i]);
-    lus[i].resize(dim_.nsbx[i]);
+    idxs[i].resize(dim_.nsg[i]);
+    lls[i].resize(dim_.nsg[i]);
+    lus[i].resize(dim_.nsg[i]);
   }
 }
 
@@ -557,6 +557,17 @@ void OcpQp::checkSize() const {
   }
   if (lus.size() != dim_.N+1) {
     throw std::runtime_error("lus.size() must be OcpQpDim::N+1");
+  }
+  for (unsigned int i=0; i<=dim_.N; ++i) {
+    if (idxs[i].size() != dim_.nsg[i]) {
+      throw std::runtime_error("idxs[" + std::to_string(i) + "].size() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+    if (lls[i].size() != dim_.nsg[i]) {
+      throw std::runtime_error("lls[" + std::to_string(i) + "].size() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
+    if (lus[i].size() != dim_.nsg[i]) {
+      throw std::runtime_error("lus[" + std::to_string(i) + "].size() must be OcpQpDim::nsg[" + std::to_string(i) + "]");
+    }
   }
 }
 

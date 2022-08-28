@@ -15,6 +15,7 @@ d_ocp_qp_ipm_arg_wrapper::~d_ocp_qp_ipm_arg_wrapper() {
   if (memory_) {
     free(memory_);
     memory_ = nullptr;
+    memsize_ = 0;
   }
 }
 
@@ -29,6 +30,33 @@ d_ocp_qp_ipm_arg_wrapper& d_ocp_qp_ipm_arg_wrapper::operator=(const d_ocp_qp_ipm
   if (this != &other) {
     copy(other);
   }
+  return *this;
+}
+
+
+d_ocp_qp_ipm_arg_wrapper::d_ocp_qp_ipm_arg_wrapper(d_ocp_qp_ipm_arg_wrapper&& other) noexcept 
+  : ocp_qp_ipm_arg_hpipm_(other.ocp_qp_ipm_arg_hpipm_),
+    memory_(other.memory_),
+    memsize_(other.memsize_) {
+  memory_ = nullptr;
+  memsize_ = 0;
+}
+
+
+d_ocp_qp_ipm_arg_wrapper& d_ocp_qp_ipm_arg_wrapper::operator=(d_ocp_qp_ipm_arg_wrapper&& other) noexcept {
+  if (this == &other) return *this;
+
+  if (memory_) {
+    free(memory_);
+    memory_ = nullptr;
+    memsize_ = 0;
+  }
+  ocp_qp_ipm_arg_hpipm_ = other.ocp_qp_ipm_arg_hpipm_;
+  memory_ = other.memory_;
+  memsize_ = other.memsize_;
+
+  other.memory_ = nullptr;
+  other.memsize_ = 0;
   return *this;
 }
 

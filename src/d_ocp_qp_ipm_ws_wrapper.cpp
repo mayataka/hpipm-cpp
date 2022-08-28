@@ -33,12 +33,11 @@ d_ocp_qp_ipm_ws_wrapper::~d_ocp_qp_ipm_ws_wrapper() {
 
 
 d_ocp_qp_ipm_ws_wrapper::d_ocp_qp_ipm_ws_wrapper(d_ocp_qp_ipm_ws_wrapper&& other) noexcept 
-  : dim_(other.dim_),
-    ipm_arg_(other.ipm_arg_),
+  : dim_(std::move(other.dim_)),
+    ipm_arg_(std::move(other.ipm_arg_)),
     ocp_qp_ipm_ws_hpipm_(other.ocp_qp_ipm_ws_hpipm_),
     memory_(other.memory_),
     memsize_(other.memsize_) {
-
   other.ocp_qp_ipm_ws_hpipm_.core_workspace = nullptr;
   other.ocp_qp_ipm_ws_hpipm_.dim = nullptr;
   other.ocp_qp_ipm_ws_hpipm_.res_workspace = nullptr;
@@ -68,6 +67,8 @@ d_ocp_qp_ipm_ws_wrapper::d_ocp_qp_ipm_ws_wrapper(d_ocp_qp_ipm_ws_wrapper&& other
   other.ocp_qp_ipm_ws_hpipm_.use_hess_fact = nullptr;
   other.ocp_qp_ipm_ws_hpipm_.lq_work0 = nullptr;
   other.ocp_qp_ipm_ws_hpipm_.memsize = 0;
+  other.memory_ = nullptr;
+  other.memsize_ = 0;
 }
 
 
@@ -79,8 +80,8 @@ d_ocp_qp_ipm_ws_wrapper& d_ocp_qp_ipm_ws_wrapper::operator=(d_ocp_qp_ipm_ws_wrap
     memory_ = nullptr;
     memsize_ = 0;
   }
-  dim_ = other.dim_;
-  ipm_arg_ = other.ipm_arg_;
+  dim_ = std::move(other.dim_);
+  ipm_arg_ = std::move(other.ipm_arg_);
   ocp_qp_ipm_ws_hpipm_ = other.ocp_qp_ipm_ws_hpipm_;
   memory_ = other.memory_;
   memsize_ = other.memsize_;
@@ -114,7 +115,8 @@ d_ocp_qp_ipm_ws_wrapper& d_ocp_qp_ipm_ws_wrapper::operator=(d_ocp_qp_ipm_ws_wrap
   other.ocp_qp_ipm_ws_hpipm_.use_hess_fact = nullptr;
   other.ocp_qp_ipm_ws_hpipm_.lq_work0 = nullptr;
   other.ocp_qp_ipm_ws_hpipm_.memsize = 0;
-
+  other.memory_ = nullptr;
+  other.memsize_ = 0;
   return *this;
 }
 

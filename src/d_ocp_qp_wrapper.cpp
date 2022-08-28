@@ -45,7 +45,7 @@ d_ocp_qp_wrapper& d_ocp_qp_wrapper::operator=(const d_ocp_qp_wrapper& other) {
 
 
 d_ocp_qp_wrapper::d_ocp_qp_wrapper(d_ocp_qp_wrapper&& other) noexcept
-  : dim_(other.dim_),
+  : dim_(std::move(other.dim_)),
     ocp_qp_hpipm_(other.ocp_qp_hpipm_),
     memory_(other.memory_),
     memsize_(other.memsize_) {
@@ -64,6 +64,8 @@ d_ocp_qp_wrapper::d_ocp_qp_wrapper(d_ocp_qp_wrapper&& other) noexcept
   other.ocp_qp_hpipm_.idxe = nullptr;
   other.ocp_qp_hpipm_.diag_H_flag = nullptr;
   other.ocp_qp_hpipm_.memsize = 0;
+  other.memory_ = nullptr;
+  other.memsize_ = 0;
 }
 
 
@@ -75,7 +77,7 @@ d_ocp_qp_wrapper& d_ocp_qp_wrapper::operator=(d_ocp_qp_wrapper&& other) noexcept
     memory_ = nullptr;
     memsize_ = 0;
   }
-  dim_ = other.dim_;
+  dim_ = std::move(other.dim_);
   ocp_qp_hpipm_ = other.ocp_qp_hpipm_;
   memory_ = other.memory_;
   memsize_ = other.memsize_;
@@ -95,6 +97,8 @@ d_ocp_qp_wrapper& d_ocp_qp_wrapper::operator=(d_ocp_qp_wrapper&& other) noexcept
   other.ocp_qp_hpipm_.idxe = nullptr;
   other.ocp_qp_hpipm_.diag_H_flag = nullptr;
   other.ocp_qp_hpipm_.memsize = 0;
+  other.memory_ = nullptr;
+  other.memsize_ = 0;
   return *this;
 }
 

@@ -53,12 +53,12 @@ public:
   ///
   /// @brief Default move constructor.
   ///
-  OcpQp(OcpQp&&) noexcept = delete;
+  OcpQp(OcpQp&&) noexcept = default;
 
   ///
   /// @brief Default move assign operator.
   ///
-  OcpQp& operator=(OcpQp&&) noexcept = delete;
+  OcpQp& operator=(OcpQp&&) noexcept = default;
 
   ///
   /// @brief Resizes the OCP-QP problem.

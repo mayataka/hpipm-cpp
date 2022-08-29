@@ -66,6 +66,31 @@ endif()
 add_dependencies(${PROJECT_NAME} external_hpipm external_blasfeo)
 
 #############
+## Testing ##
+#############
+# Add testing directory
+if (BUILD_TESTS)
+  enable_testing()
+  # coverage options
+  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} --coverage")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  add_library(coverage_config INTERFACE)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(coverage_config INTERFACE
+      -O0        
+      -g         
+      --coverage 
+    )
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+      target_link_options(coverage_config INTERFACE --coverage)
+    else()
+      target_link_libraries(coverage_config INTERFACE --coverage)
+    endif()
+  endif()
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
+endif() # end if (BUILD_TESTS)
+
+#############
 ## Install ##
 #############
 include(GNUInstallDirs)

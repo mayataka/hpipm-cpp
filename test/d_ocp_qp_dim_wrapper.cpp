@@ -15,17 +15,108 @@ protected:
   }
 };
 
+bool hasNullptr(const d_ocp_qp_dim_wrapper& dim) {
+  return dim.get()->nx == nullptr
+      || dim.get()->nu == nullptr
+      || dim.get()->nb == nullptr
+      || dim.get()->nbx == nullptr
+      || dim.get()->nbu == nullptr
+      || dim.get()->ng == nullptr
+      || dim.get()->ns == nullptr
+      || dim.get()->nsbx == nullptr
+      || dim.get()->nsbu == nullptr
+      || dim.get()->nsg == nullptr
+      || dim.get()->nbxe == nullptr
+      || dim.get()->nbue == nullptr
+      || dim.get()->nge == nullptr;
+}
+
+bool hasOnlyNullptr(const d_ocp_qp_dim_wrapper& dim) {
+  return dim.get()->nx == nullptr
+      && dim.get()->nu == nullptr
+      && dim.get()->nb == nullptr
+      && dim.get()->nbx == nullptr
+      && dim.get()->nbu == nullptr
+      && dim.get()->ng == nullptr
+      && dim.get()->ns == nullptr
+      && dim.get()->nsbx == nullptr
+      && dim.get()->nsbu == nullptr
+      && dim.get()->nsg == nullptr
+      && dim.get()->nbxe == nullptr
+      && dim.get()->nbue == nullptr
+      && dim.get()->nge == nullptr;
+}
+
+bool hasSameSize(const d_ocp_qp_dim_wrapper& dim1, 
+                 const d_ocp_qp_dim_wrapper& dim2) {
+  if (dim1.get()->memsize != dim2.get()->memsize) return false;
+  if (dim1.get()->N != dim2.get()->N) return false;
+  for (unsigned int i=0; i<=dim1.get()->N; ++i) {
+    if (dim1.get()->nx[i] != dim2.get()->nx[i]) return false;
+    if (dim1.get()->nu[i] != dim2.get()->nu[i]) return false;
+    if (dim1.get()->nb[i] != dim2.get()->nb[i]) return false;
+    if (dim1.get()->nbx[i] != dim2.get()->nbx[i]) return false;
+    if (dim1.get()->nbu[i] != dim2.get()->nbu[i]) return false;
+    if (dim1.get()->ng[i] != dim2.get()->ng[i]) return false;
+    if (dim1.get()->ns[i] != dim2.get()->ns[i]) return false;
+    if (dim1.get()->nsbx[i] != dim2.get()->nsbx[i]) return false;
+    if (dim1.get()->nsbu[i] != dim2.get()->nsbu[i]) return false;
+    if (dim1.get()->nsg[i] != dim2.get()->nsg[i]) return false;
+    if (dim1.get()->nbxe[i] != dim2.get()->nbxe[i]) return false;
+    if (dim1.get()->nbue[i] != dim2.get()->nbue[i]) return false;
+    if (dim1.get()->nge[i] != dim2.get()->nge[i]) return false;
+  }
+  return true;
+}
+
+bool areSamePtr(const d_ocp_qp_dim_wrapper& dim1, 
+                const d_ocp_qp_dim_wrapper& dim2) {
+  return dim1.get() == dim2.get()
+      && dim1.get()->nx == dim2.get()->nx
+      && dim1.get()->nu == dim2.get()->nu
+      && dim1.get()->nb == dim2.get()->nb
+      && dim1.get()->nbx == dim2.get()->nbx
+      && dim1.get()->nbu == dim2.get()->nbu
+      && dim1.get()->ng == dim2.get()->ng
+      && dim1.get()->ns == dim2.get()->ns
+      && dim1.get()->nsbx == dim2.get()->nsbx
+      && dim1.get()->nsbu == dim2.get()->nsbu
+      && dim1.get()->nsg == dim2.get()->nsg
+      && dim1.get()->nbxe == dim2.get()->nbxe
+      && dim1.get()->nbue == dim2.get()->nbue
+      && dim1.get()->nge == dim2.get()->nge;
+}
+
+bool hasSamePtr(const d_ocp_qp_dim_wrapper& dim1, 
+                const d_ocp_qp_dim_wrapper& dim2) {
+  return dim1.get() == dim2.get()
+      || dim1.get()->nx == dim2.get()->nx
+      || dim1.get()->nu == dim2.get()->nu
+      || dim1.get()->nb == dim2.get()->nb
+      || dim1.get()->nbx == dim2.get()->nbx
+      || dim1.get()->nbu == dim2.get()->nbu
+      || dim1.get()->ng == dim2.get()->ng
+      || dim1.get()->ns == dim2.get()->ns
+      || dim1.get()->nsbx == dim2.get()->nsbx
+      || dim1.get()->nsbu == dim2.get()->nsbu
+      || dim1.get()->nsg == dim2.get()->nsg
+      || dim1.get()->nbxe == dim2.get()->nbxe
+      || dim1.get()->nbue == dim2.get()->nbue
+      || dim1.get()->nge == dim2.get()->nge;
+}
+
 
 TEST_F(d_ocp_qp_dim_wrapper_test, copy) {
   std::random_device rd;
   std::default_random_engine eng(rd());
   std::uniform_int_distribution<int> distr(0, 10);
 
-  const unsigned int N = 10;
+  const unsigned int N = 10 + distr(eng);
   d_ocp_qp_dim_wrapper dim(N);
-  EXPECT_EQ(dim.get()->N, 10);
+  EXPECT_FALSE(hasNullptr(dim));
+  EXPECT_EQ(dim.get()->N, N);
 
-  for (unsigned int i=0; i<=10; ++i) {
+  for (unsigned int i=0; i<=N; ++i) {
     dim.get()->nx[i]   = distr(eng);
     dim.get()->nu[i]   = distr(eng);
     dim.get()->nb[i]   = distr(eng);
@@ -42,69 +133,16 @@ TEST_F(d_ocp_qp_dim_wrapper_test, copy) {
   }
 
   d_ocp_qp_dim_wrapper dim2(dim);
-  EXPECT_EQ(dim2.get()->N, dim.get()->N);
-  for (unsigned int i=0; i<=10; ++i) {
-    EXPECT_EQ(dim2.get()->nx[i],   dim.get()->nx[i]);
-    EXPECT_EQ(dim2.get()->nu[i],   dim.get()->nu[i]);
-    EXPECT_EQ(dim2.get()->nbx[i],  dim.get()->nbx[i]);
-    EXPECT_EQ(dim2.get()->nbu[i],  dim.get()->nbu[i]);
-    EXPECT_EQ(dim2.get()->ng[i],   dim.get()->ng[i]);
-    EXPECT_EQ(dim2.get()->ns[i],   dim.get()->ns[i]);
-    EXPECT_EQ(dim2.get()->nsbx[i], dim.get()->nsbx[i]);
-    EXPECT_EQ(dim2.get()->nsbu[i], dim.get()->nsbu[i]);
-    EXPECT_EQ(dim2.get()->nsg[i],  dim.get()->nsg[i]);
-    EXPECT_EQ(dim2.get()->nbxe[i], dim.get()->nbxe[i]);
-    EXPECT_EQ(dim2.get()->nbue[i], dim.get()->nbue[i]);
-    EXPECT_EQ(dim2.get()->ng[i],   dim.get()->ng[i]);
-  }
-  EXPECT_EQ(dim2.get()->memsize, dim.get()->memsize);
-  EXPECT_TRUE(dim2.get() != dim.get());
-  EXPECT_TRUE(dim2.get()->nx != dim.get()->nx);
-  EXPECT_TRUE(dim2.get()->nu != dim.get()->nu);
-  EXPECT_TRUE(dim2.get()->nb != dim.get()->nb);
-  EXPECT_TRUE(dim2.get()->nbx != dim.get()->nbx);
-  EXPECT_TRUE(dim2.get()->nbu != dim.get()->nbu);
-  EXPECT_TRUE(dim2.get()->ng != dim.get()->ng);
-  EXPECT_TRUE(dim2.get()->ns != dim.get()->ns);
-  EXPECT_TRUE(dim2.get()->nsbx != dim.get()->nsbx);
-  EXPECT_TRUE(dim2.get()->nsbu != dim.get()->nsbu);
-  EXPECT_TRUE(dim2.get()->nsg != dim.get()->nsg);
-  EXPECT_TRUE(dim2.get()->nbxe != dim.get()->nbxe);
-  EXPECT_TRUE(dim2.get()->nbue != dim.get()->nbue);
-  EXPECT_TRUE(dim2.get()->nge != dim.get()->nge);
+  EXPECT_FALSE(hasNullptr(dim2));
+  EXPECT_TRUE(hasSameSize(dim2, dim));
+  EXPECT_FALSE(hasSamePtr(dim2, dim));
 
   d_ocp_qp_dim_wrapper dim3;
   dim3 = dim;
-  EXPECT_EQ(dim3.get()->N, dim.get()->N);
-  for (unsigned int i=0; i<=10; ++i) {
-    EXPECT_EQ(dim3.get()->nx[i],   dim.get()->nx[i]);
-    EXPECT_EQ(dim3.get()->nu[i],   dim.get()->nu[i]);
-    EXPECT_EQ(dim3.get()->nbx[i],  dim.get()->nbx[i]);
-    EXPECT_EQ(dim3.get()->nbu[i],  dim.get()->nbu[i]);
-    EXPECT_EQ(dim3.get()->ng[i],   dim.get()->ng[i]);
-    EXPECT_EQ(dim3.get()->ns[i],   dim.get()->ns[i]);
-    EXPECT_EQ(dim3.get()->nsbx[i], dim.get()->nsbx[i]);
-    EXPECT_EQ(dim3.get()->nsbu[i], dim.get()->nsbu[i]);
-    EXPECT_EQ(dim3.get()->nsg[i],  dim.get()->nsg[i]);
-    EXPECT_EQ(dim3.get()->nbxe[i], dim.get()->nbxe[i]);
-    EXPECT_EQ(dim3.get()->nbue[i], dim.get()->nbue[i]);
-    EXPECT_EQ(dim3.get()->ng[i],   dim.get()->ng[i]);
-  }
-  EXPECT_EQ(dim3.get()->memsize, dim.get()->memsize);
-  EXPECT_TRUE(dim3.get() != dim.get());
-  EXPECT_TRUE(dim3.get()->nx != dim.get()->nx);
-  EXPECT_TRUE(dim3.get()->nu != dim.get()->nu);
-  EXPECT_TRUE(dim3.get()->nb != dim.get()->nb);
-  EXPECT_TRUE(dim3.get()->nbx != dim.get()->nbx);
-  EXPECT_TRUE(dim3.get()->nbu != dim.get()->nbu);
-  EXPECT_TRUE(dim3.get()->ng != dim.get()->ng);
-  EXPECT_TRUE(dim3.get()->ns != dim.get()->ns);
-  EXPECT_TRUE(dim3.get()->nsbx != dim.get()->nsbx);
-  EXPECT_TRUE(dim3.get()->nsbu != dim.get()->nsbu);
-  EXPECT_TRUE(dim3.get()->nsg != dim.get()->nsg);
-  EXPECT_TRUE(dim3.get()->nbxe != dim.get()->nbxe);
-  EXPECT_TRUE(dim3.get()->nbue != dim.get()->nbue);
-  EXPECT_TRUE(dim3.get()->nge != dim.get()->nge);
+  EXPECT_FALSE(hasNullptr(dim3));
+  EXPECT_TRUE(hasSameSize(dim3, dim));
+  EXPECT_FALSE(hasSamePtr(dim3, dim));
+  EXPECT_FALSE(hasSamePtr(dim3, dim2));
 }
 
 
@@ -113,11 +151,11 @@ TEST_F(d_ocp_qp_dim_wrapper_test, move) {
   std::default_random_engine eng(rd());
   std::uniform_int_distribution<int> distr(0, 10);
 
-  const unsigned int N = 10;
+  const unsigned int N = 10 + distr(eng);
   d_ocp_qp_dim_wrapper dim(N);
-  EXPECT_EQ(dim.get()->N, 10);
+  EXPECT_EQ(dim.get()->N, N);
 
-  for (unsigned int i=0; i<=10; ++i) {
+  for (unsigned int i=0; i<=N; ++i) {
     dim.get()->nx[i]   = distr(eng);
     dim.get()->nu[i]   = distr(eng);
     dim.get()->nb[i]   = distr(eng);
@@ -136,70 +174,18 @@ TEST_F(d_ocp_qp_dim_wrapper_test, move) {
   d_ocp_qp_dim_wrapper dim2(dim);
 
   d_ocp_qp_dim_wrapper dim3(std::move(dim2));
-  EXPECT_EQ(dim3.get()->N, dim.get()->N);
-  for (unsigned int i=0; i<=10; ++i) {
-    EXPECT_EQ(dim3.get()->nx[i],   dim.get()->nx[i]);
-    EXPECT_EQ(dim3.get()->nu[i],   dim.get()->nu[i]);
-    EXPECT_EQ(dim3.get()->nbx[i],  dim.get()->nbx[i]);
-    EXPECT_EQ(dim3.get()->nbu[i],  dim.get()->nbu[i]);
-    EXPECT_EQ(dim3.get()->ng[i],   dim.get()->ng[i]);
-    EXPECT_EQ(dim3.get()->ns[i],   dim.get()->ns[i]);
-    EXPECT_EQ(dim3.get()->nsbx[i], dim.get()->nsbx[i]);
-    EXPECT_EQ(dim3.get()->nsbu[i], dim.get()->nsbu[i]);
-    EXPECT_EQ(dim3.get()->nsg[i],  dim.get()->nsg[i]);
-    EXPECT_EQ(dim3.get()->nbxe[i], dim.get()->nbxe[i]);
-    EXPECT_EQ(dim3.get()->nbue[i], dim.get()->nbue[i]);
-    EXPECT_EQ(dim3.get()->ng[i],   dim.get()->ng[i]);
-  }
-  EXPECT_EQ(dim3.get()->memsize, dim.get()->memsize);
-  EXPECT_TRUE(dim3.get() != dim.get());
-  EXPECT_TRUE(dim3.get()->nx != dim.get()->nx);
-  EXPECT_TRUE(dim3.get()->nu != dim.get()->nu);
-  EXPECT_TRUE(dim3.get()->nb != dim.get()->nb);
-  EXPECT_TRUE(dim3.get()->nbx != dim.get()->nbx);
-  EXPECT_TRUE(dim3.get()->nbu != dim.get()->nbu);
-  EXPECT_TRUE(dim3.get()->ng != dim.get()->ng);
-  EXPECT_TRUE(dim3.get()->ns != dim.get()->ns);
-  EXPECT_TRUE(dim3.get()->nsbx != dim.get()->nsbx);
-  EXPECT_TRUE(dim3.get()->nsbu != dim.get()->nsbu);
-  EXPECT_TRUE(dim3.get()->nsg != dim.get()->nsg);
-  EXPECT_TRUE(dim3.get()->nbxe != dim.get()->nbxe);
-  EXPECT_TRUE(dim3.get()->nbue != dim.get()->nbue);
-  EXPECT_TRUE(dim3.get()->nge != dim.get()->nge);
+  EXPECT_FALSE(hasNullptr(dim3));
+  EXPECT_TRUE(hasSameSize(dim3, dim));
+  EXPECT_FALSE(hasSamePtr(dim3, dim));
+  EXPECT_TRUE(hasOnlyNullptr(dim2));
 
   d_ocp_qp_dim_wrapper dim4(dim);
   d_ocp_qp_dim_wrapper dim5;
   dim5 = std::move(dim4);
-  EXPECT_EQ(dim5.get()->N, dim.get()->N);
-  for (unsigned int i=0; i<=10; ++i) {
-    EXPECT_EQ(dim5.get()->nx[i],   dim.get()->nx[i]);
-    EXPECT_EQ(dim5.get()->nu[i],   dim.get()->nu[i]);
-    EXPECT_EQ(dim5.get()->nbx[i],  dim.get()->nbx[i]);
-    EXPECT_EQ(dim5.get()->nbu[i],  dim.get()->nbu[i]);
-    EXPECT_EQ(dim5.get()->ng[i],   dim.get()->ng[i]);
-    EXPECT_EQ(dim5.get()->ns[i],   dim.get()->ns[i]);
-    EXPECT_EQ(dim5.get()->nsbx[i], dim.get()->nsbx[i]);
-    EXPECT_EQ(dim5.get()->nsbu[i], dim.get()->nsbu[i]);
-    EXPECT_EQ(dim5.get()->nsg[i],  dim.get()->nsg[i]);
-    EXPECT_EQ(dim5.get()->nbxe[i], dim.get()->nbxe[i]);
-    EXPECT_EQ(dim5.get()->nbue[i], dim.get()->nbue[i]);
-    EXPECT_EQ(dim5.get()->ng[i],   dim.get()->ng[i]);
-  }
-  EXPECT_EQ(dim5.get()->memsize, dim.get()->memsize);
-  EXPECT_TRUE(dim5.get() != dim.get());
-  EXPECT_TRUE(dim5.get()->nx != dim.get()->nx);
-  EXPECT_TRUE(dim5.get()->nu != dim.get()->nu);
-  EXPECT_TRUE(dim5.get()->nb != dim.get()->nb);
-  EXPECT_TRUE(dim5.get()->nbx != dim.get()->nbx);
-  EXPECT_TRUE(dim5.get()->nbu != dim.get()->nbu);
-  EXPECT_TRUE(dim5.get()->ng != dim.get()->ng);
-  EXPECT_TRUE(dim5.get()->ns != dim.get()->ns);
-  EXPECT_TRUE(dim5.get()->nsbx != dim.get()->nsbx);
-  EXPECT_TRUE(dim5.get()->nsbu != dim.get()->nsbu);
-  EXPECT_TRUE(dim5.get()->nsg != dim.get()->nsg);
-  EXPECT_TRUE(dim5.get()->nbxe != dim.get()->nbxe);
-  EXPECT_TRUE(dim5.get()->nbue != dim.get()->nbue);
-  EXPECT_TRUE(dim5.get()->nge != dim.get()->nge);
+  EXPECT_FALSE(hasNullptr(dim5));
+  EXPECT_TRUE(hasSameSize(dim5, dim));
+  EXPECT_FALSE(hasSamePtr(dim5, dim));
+  EXPECT_TRUE(hasOnlyNullptr(dim4));
 }
 
 } // namespace hpipm

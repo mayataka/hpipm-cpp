@@ -69,18 +69,6 @@ public:
   const d_ocp_qp_ipm_ws* get() const;
 
   ///
-  /// @brief Gets the dimension.
-  /// @return const reference to the dimension.
-  ///
-  const d_ocp_qp_dim_wrapper& dim() const;
-
-  ///
-  /// @brief Gets the Ipm solver argument.
-  /// @return const reference to the Ipm solver argument.
-  ///
-  const d_ocp_qp_ipm_arg_wrapper& ipm_arg() const;
-
-  ///
   /// @brief Resizes the hpipm resource.
   /// @param[in] dim Dimension.
   /// @param[in] ipm_arg Ipm solver argument.

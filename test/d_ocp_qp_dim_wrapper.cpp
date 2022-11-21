@@ -69,24 +69,6 @@ bool hasSameSize(const d_ocp_qp_dim_wrapper& dim1,
   return true;
 }
 
-bool areSamePtr(const d_ocp_qp_dim_wrapper& dim1, 
-                const d_ocp_qp_dim_wrapper& dim2) {
-  return dim1.get() == dim2.get()
-      && dim1.get()->nx == dim2.get()->nx
-      && dim1.get()->nu == dim2.get()->nu
-      && dim1.get()->nb == dim2.get()->nb
-      && dim1.get()->nbx == dim2.get()->nbx
-      && dim1.get()->nbu == dim2.get()->nbu
-      && dim1.get()->ng == dim2.get()->ng
-      && dim1.get()->ns == dim2.get()->ns
-      && dim1.get()->nsbx == dim2.get()->nsbx
-      && dim1.get()->nsbu == dim2.get()->nsbu
-      && dim1.get()->nsg == dim2.get()->nsg
-      && dim1.get()->nbxe == dim2.get()->nbxe
-      && dim1.get()->nbue == dim2.get()->nbue
-      && dim1.get()->nge == dim2.get()->nge;
-}
-
 bool hasSamePtr(const d_ocp_qp_dim_wrapper& dim1, 
                 const d_ocp_qp_dim_wrapper& dim2) {
   return dim1.get() == dim2.get()
@@ -186,6 +168,28 @@ TEST_F(d_ocp_qp_dim_wrapper_test, move) {
   EXPECT_TRUE(hasSameSize(dim5, dim));
   EXPECT_FALSE(hasSamePtr(dim5, dim));
   EXPECT_THROW(EXPECT_TRUE(hasOnlyNullptr(dim4)), std::runtime_error);
+}
+
+
+TEST_F(d_ocp_qp_dim_wrapper_test, resize) {
+  std::random_device rd;
+  std::default_random_engine eng(rd());
+  std::uniform_int_distribution<int> distr(0, 10);
+
+  const unsigned int N = 10 + distr(eng);
+  d_ocp_qp_dim_wrapper dim(N);
+  EXPECT_FALSE(hasNullptr(dim));
+  EXPECT_EQ(dim.get()->N, N);
+
+  const unsigned int N_large = N + distr(eng);
+  dim.resize(N_large);
+  EXPECT_FALSE(hasNullptr(dim));
+  EXPECT_EQ(dim.get()->N, N_large);
+
+  const unsigned int N_small = N - distr(eng);
+  dim.resize(N_small);
+  EXPECT_FALSE(hasNullptr(dim));
+  EXPECT_EQ(dim.get()->N, N_small);
 }
 
 } // namespace hpipm

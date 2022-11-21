@@ -124,15 +124,15 @@ const d_ocp_qp_dim_wrapper& d_ocp_qp_wrapper::dim() const {
 void d_ocp_qp_wrapper::resize(const d_ocp_qp_dim_wrapper& dim) {
   dim_ = dim;
   const hpipm_size_t new_memsize = d_ocp_qp_memsize(dim_.get());
-  if (memory_ && new_memsize > memsize_) {
+  if (memory_ != nullptr && new_memsize > memsize_) {
     free(memory_);
     memory_ = nullptr;
   }
   memsize_ = std::max(memsize_, new_memsize);
-  if (!memory_) {
+  if (memory_ == nullptr) {
     memory_ = malloc(memsize_);
-    d_ocp_qp_create(dim_.get(), &ocp_qp_hpipm_, memory_);
   }
+  d_ocp_qp_create(dim_.get(), &ocp_qp_hpipm_, memory_);
 }
 
 

@@ -66,12 +66,6 @@ public:
   const d_ocp_qp_sol* get() const;
 
   ///
-  /// @brief Gets the dimension.
-  /// @return const reference to the dimension.
-  ///
-  const d_ocp_qp_dim_wrapper& dim() const;
-
-  ///
   /// @brief Resizes the hpipm resource.
   /// @param[in] dim Dimension.
   ///

@@ -111,6 +111,9 @@ d_ocp_qp_dim* d_ocp_qp_dim_wrapper::get() {
 
 
 const d_ocp_qp_dim* d_ocp_qp_dim_wrapper::get() const { 
+  if (memory_ == nullptr) {
+    throw std::runtime_error("[d_ocp_qp_dim_wrapper] hpipm memory is not created. Call resize() first.");
+  }
   return &ocp_qp_dim_hpipm_; 
 }
 

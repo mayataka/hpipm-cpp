@@ -177,7 +177,7 @@ TEST_F(d_ocp_qp_dim_wrapper_test, move) {
   EXPECT_FALSE(hasNullptr(dim3));
   EXPECT_TRUE(hasSameSize(dim3, dim));
   EXPECT_FALSE(hasSamePtr(dim3, dim));
-  EXPECT_TRUE(hasOnlyNullptr(dim2));
+  EXPECT_THROW(EXPECT_TRUE(hasOnlyNullptr(dim2)), std::runtime_error);
 
   d_ocp_qp_dim_wrapper dim4(dim);
   d_ocp_qp_dim_wrapper dim5;
@@ -185,7 +185,7 @@ TEST_F(d_ocp_qp_dim_wrapper_test, move) {
   EXPECT_FALSE(hasNullptr(dim5));
   EXPECT_TRUE(hasSameSize(dim5, dim));
   EXPECT_FALSE(hasSamePtr(dim5, dim));
-  EXPECT_TRUE(hasOnlyNullptr(dim4));
+  EXPECT_THROW(EXPECT_TRUE(hasOnlyNullptr(dim4)), std::runtime_error);
 }
 
 } // namespace hpipm

@@ -34,5 +34,7 @@ macro(add_hpipm_test TESTNAME)
 endmacro()
 
 add_hpipm_test(d_ocp_qp_dim_wrapper)
-add_hpipm_test(d_ocp_qp_ipm_arg_wrapper)
 add_hpipm_test(d_ocp_qp_sol_wrapper)
+add_hpipm_test(d_ocp_qp_wrapper)
+add_hpipm_test(d_ocp_qp_ipm_arg_wrapper)
+add_hpipm_test(d_ocp_qp_ipm_ws_wrapper)

@@ -7,7 +7,7 @@
 
 namespace hpipm {
 
-d_ocp_qp_wrapper::d_ocp_qp_wrapper(const d_ocp_qp_dim_wrapper& dim) 
+d_ocp_qp_wrapper::d_ocp_qp_wrapper(const std::shared_ptr<d_ocp_qp_dim_wrapper>& dim) 
   : d_ocp_qp_wrapper() {
   resize(dim);
 }
@@ -112,18 +112,16 @@ d_ocp_qp* d_ocp_qp_wrapper::get() {
 
 
 const d_ocp_qp* d_ocp_qp_wrapper::get() const { 
+  if (memory_ == nullptr) {
+    throw std::runtime_error("[d_ocp_qp_wrapper] hpipm memory is not created. Call resize() first.");
+  }
   return &ocp_qp_hpipm_; 
 }
 
 
-const d_ocp_qp_dim_wrapper& d_ocp_qp_wrapper::dim() const {
-  return dim_;
-}
-
-
-void d_ocp_qp_wrapper::resize(const d_ocp_qp_dim_wrapper& dim) {
+void d_ocp_qp_wrapper::resize(const std::shared_ptr<d_ocp_qp_dim_wrapper>& dim) {
   dim_ = dim;
-  const hpipm_size_t new_memsize = d_ocp_qp_memsize(dim_.get());
+  const hpipm_size_t new_memsize = d_ocp_qp_memsize(dim_->get());
   if (memory_ != nullptr && new_memsize > memsize_) {
     free(memory_);
     memory_ = nullptr;
@@ -132,7 +130,7 @@ void d_ocp_qp_wrapper::resize(const d_ocp_qp_dim_wrapper& dim) {
   if (memory_ == nullptr) {
     memory_ = malloc(memsize_);
   }
-  d_ocp_qp_create(dim_.get(), &ocp_qp_hpipm_, memory_);
+  d_ocp_qp_create(dim_->get(), &ocp_qp_hpipm_, memory_);
 }
 
 
@@ -142,7 +140,7 @@ void d_ocp_qp_wrapper::copy(const d_ocp_qp_wrapper& other) {
     memory_ = nullptr;
   }
   memsize_ = 0;
-  resize(other.dim());
+  resize(other.dim_);
 
   d_ocp_qp_copy_all(const_cast<d_ocp_qp*>(other.get()), &ocp_qp_hpipm_); 
 }

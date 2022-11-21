@@ -7,7 +7,8 @@
 
 namespace hpipm {
 
-d_ocp_qp_sol_wrapper::d_ocp_qp_sol_wrapper(const d_ocp_qp_dim_wrapper& dim) 
+d_ocp_qp_sol_wrapper::d_ocp_qp_sol_wrapper(
+    const std::shared_ptr<d_ocp_qp_dim_wrapper>& dim) 
   : d_ocp_qp_sol_wrapper() {
   resize(dim);
 }
@@ -103,9 +104,9 @@ const d_ocp_qp_sol* d_ocp_qp_sol_wrapper::get() const {
 }
 
 
-void d_ocp_qp_sol_wrapper::resize(const d_ocp_qp_dim_wrapper& dim) {
+void d_ocp_qp_sol_wrapper::resize(const std::shared_ptr<d_ocp_qp_dim_wrapper>& dim) {
   dim_ = dim;
-  const hpipm_size_t new_memsize = d_ocp_qp_sol_memsize(dim_.get());
+  const hpipm_size_t new_memsize = d_ocp_qp_sol_memsize(dim_->get());
   if (memory_ != nullptr && new_memsize > memsize_) {
     free(memory_);
     memory_ = nullptr;
@@ -114,7 +115,7 @@ void d_ocp_qp_sol_wrapper::resize(const d_ocp_qp_dim_wrapper& dim) {
   if (memory_ == nullptr) {
     memory_ = malloc(memsize_);
   }
-  d_ocp_qp_sol_create(dim_.get(), &ocp_qp_sol_hpipm_, memory_);
+  d_ocp_qp_sol_create(dim_->get(), &ocp_qp_sol_hpipm_, memory_);
 }
 
 

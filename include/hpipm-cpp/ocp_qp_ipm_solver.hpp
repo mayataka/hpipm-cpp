@@ -7,15 +7,16 @@
 
 #include "Eigen/Core"
 
-extern "C" {
-#include "hpipm_d_ocp_qp_ipm.h"
-}
-
-#include "hpipm-cpp/ocp_qp_dim.hpp"
 #include "hpipm-cpp/ocp_qp.hpp"
+#include "hpipm-cpp/ocp_qp_dim.hpp"
 #include "hpipm-cpp/ocp_qp_solution.hpp"
 #include "hpipm-cpp/ocp_qp_ipm_solver_settings.hpp"
 #include "hpipm-cpp/ocp_qp_ipm_solver_statistics.hpp"
+
+#include "hpipm-cpp/d_ocp_qp_wrapper.hpp"
+#include "hpipm-cpp/d_ocp_qp_dim_wrapper.hpp"
+#include "hpipm-cpp/d_ocp_qp_ipm_arg_wrapper.hpp"
+#include "hpipm-cpp/d_ocp_qp_sol_wrapper.hpp"
 #include "hpipm-cpp/d_ocp_qp_ipm_ws_wrapper.hpp"
 
 
@@ -45,16 +46,16 @@ class OcpQpIpmSolver {
 public:
   ///
   /// @brief Constructor.
-  /// @param[in] dim Dimension of the OCP-QP problem.
-  /// @param[in] ipm_solver_settings Settings of Ipm solver.
+  /// @param[in] ocp_qp OCP-QP problem.
+  /// @param[in] solver_settings Solver settings.
   ///
-  OcpQpIpmSolver(const OcpQpDim& dim, 
-                 const OcpQpIpmSolverSettings& ipm_solver_settings);
+  OcpQpIpmSolver(const std::vector<OcpQp>& ocp_qp, 
+                 const OcpQpIpmSolverSettings& solver_settings=OcpQpIpmSolverSettings());
 
   ///
   /// @brief Default constructor. 
   ///
-  OcpQpIpmSolver() = default;
+  OcpQpIpmSolver();
 
   ///
   /// @brief Destructor.
@@ -62,14 +63,14 @@ public:
   ~OcpQpIpmSolver() = default;
 
   ///
-  /// @brief Custom copy constructor.
+  /// @brief Prohibit copy constructor.
   ///
-  OcpQpIpmSolver(const OcpQpIpmSolver&);
+  OcpQpIpmSolver(const OcpQpIpmSolver&) = delete;
 
   ///
-  /// @brief Custom copy assign operator.
+  /// @brief Prohibit copy assign operator.
   ///
-  OcpQpIpmSolver& operator=(const OcpQpIpmSolver&);
+  OcpQpIpmSolver& operator=(const OcpQpIpmSolver&) = delete;
 
   ///
   /// @brief Default move constructor.
@@ -82,36 +83,32 @@ public:
   OcpQpIpmSolver& operator=(OcpQpIpmSolver&&) noexcept = default;
 
   ///
-  /// @brief Resizes the solver.
-  /// @param[in] dim Dimension of the OCP-QP problem.
-  ///
-  void resize(const OcpQpDim& dim);
-
-  ///
   /// @brief Sets the Ipm solver settings.
-  /// @param[in] ipm_solver_settings Settings of Ipm solver.
+  /// @param[in] solver_settings Solver settings.
   ///
-  void setSolverSettings(const OcpQpIpmSolverSettings& ipm_solver_settings);
+  void setSolverSettings(const OcpQpIpmSolverSettings& solver_settings);
 
   ///
-  /// @brief Solves the OCP-QP.
-  /// @param[in, out] qp OCP-QP problem.
-  /// @param[in, out] qp_sol Solution of the OCP-QP problem.
+  /// @brief Resizes the solver.
+  /// @param[in] ocp_qp OCP-QP problem.
+  ///
+  void resize(const std::vector<OcpQp>& ocp_qp);
+
+  ///
+  /// @brief Solves the OCP-QP problem.
+  /// @param[in] x0 Initial state.
+  /// @param[in] ocp_qp OCP-QP problem.
+  /// @param[out] qp_sol Solution of the OCP-QP problem.
   /// @return Solver status.
   ///
-  HpipmStatus solve(OcpQp& qp, OcpQpSolution& qp_sol);
-
-  ///
-  /// @brief Get the dimension of the OCP-QP problem.
-  /// @return const reference to the dimension of the OCP-QP problem.
-  ///
-  const OcpQpDim& dim() const;
+  HpipmStatus solve(const Eigen::VectorXd& x0, std::vector<OcpQp>& ocp_qp, 
+                    std::vector<OcpQpSolution>& qp_sol);
 
   ///
   /// @brief Get the Ipm solver settings.
   /// @return const reference to the Ipm solver settings.
   ///
-  const OcpQpIpmSolverSettings& ipmSolverSettings() const;
+  const OcpQpIpmSolverSettings& getIpmSolverSettings() const;
 
   ///
   /// @brief Get the solver statistics.
@@ -120,10 +117,51 @@ public:
   const OcpQpIpmSolverStatistics& getSolverStatistics() const;
 
 private:
+  OcpQpIpmSolverSettings solver_settings_;
   OcpQpIpmSolverStatistics solver_statistics_;
   OcpQpDim dim_;
-  OcpQpIpmSolverSettings ipm_solver_settings_;
+  std::shared_ptr<d_ocp_qp_dim_wrapper> ocp_qp_dim_wrapper_;
+  std::shared_ptr<d_ocp_qp_ipm_arg_wrapper> ocp_qp_ipm_arg_wrapper_;
+  d_ocp_qp_wrapper ocp_qp_wrapper_;
+  d_ocp_qp_sol_wrapper ocp_qp_sol_wrapper_;
   d_ocp_qp_ipm_ws_wrapper ocp_qp_ipm_ws_wrapper_;
+
+  // raw pointer storage
+  std::vector<double*> A_ptr_; 
+  std::vector<double*> B_ptr_;
+  std::vector<double*> b_ptr_;
+  std::vector<double*> Q_ptr_; 
+  std::vector<double*> S_ptr_; 
+  std::vector<double*> R_ptr_; 
+  std::vector<double*> q_ptr_; 
+  std::vector<double*> r_ptr_; 
+  std::vector<int*> idxbx_ptr_; 
+  std::vector<double*> lbx_ptr_; 
+  std::vector<double*> ubx_ptr_; 
+  std::vector<double*> lbx_mask_ptr_; 
+  std::vector<double*> ubx_mask_ptr_; 
+  std::vector<int*> idxbu_ptr_; 
+  std::vector<double*> lbu_ptr_; 
+  std::vector<double*> ubu_ptr_; 
+  std::vector<double*> lbu_mask_ptr_; 
+  std::vector<double*> ubu_mask_ptr_; 
+  std::vector<double*> C_ptr_; 
+  std::vector<double*> D_ptr_;
+  std::vector<double*> lg_ptr_; 
+  std::vector<double*> ug_ptr_; 
+  std::vector<double*> lg_mask_ptr_; 
+  std::vector<double*> ug_mask_ptr_; 
+  std::vector<double*> Zl_ptr_; 
+  std::vector<double*> Zu_ptr_; 
+  std::vector<double*> zl_ptr_; 
+  std::vector<double*> zu_ptr_; 
+  std::vector<int*> idxs_ptr_; 
+  std::vector<double*> lls_ptr_; 
+  std::vector<double*> lus_ptr_; 
+
+  // initial state embedding
+  std::vector<int> idxbx0_;
+  Eigen::VectorXd x0_;
 };
 
 } // namespace hpipm

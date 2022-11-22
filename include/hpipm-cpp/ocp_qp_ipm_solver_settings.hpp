@@ -5,9 +5,6 @@ extern "C" {
 #include "hpipm_d_ocp_qp_ipm.h"
 }
 
-#include "hpipm-cpp/d_ocp_qp_ipm_arg_wrapper.hpp"
-
-
 namespace hpipm {
 
 ///
@@ -27,42 +24,6 @@ enum class HpipmMode {
 ///
 struct OcpQpIpmSolverSettings {
 public:
-  ///
-  /// @brief Default constructor. 
-  ///
-  OcpQpIpmSolverSettings() = default;
-
-  ///
-  /// @brief Default destructor.
-  ///
-  ~OcpQpIpmSolverSettings() = default;
-
-  ///
-  /// @brief Default copy constructor.
-  ///
-  OcpQpIpmSolverSettings(const OcpQpIpmSolverSettings&) = default;
-
-  ///
-  /// @brief Default copy assign operator.
-  ///
-  OcpQpIpmSolverSettings& operator=(const OcpQpIpmSolverSettings&) = default;
-
-  ///
-  /// @brief Default move constructor.
-  ///
-  OcpQpIpmSolverSettings(OcpQpIpmSolverSettings&&) noexcept = default;
-
-  ///
-  /// @brief Default move assign operator.
-  ///
-  OcpQpIpmSolverSettings& operator=(OcpQpIpmSolverSettings&&) noexcept = default;
-
-  ///
-  /// @brief Gets the wrapper of hpipm's resource. 
-  /// Throws exceptions when something wrongs in settings of iter_max, alpha_min, etc.
-  ///
-  d_ocp_qp_ipm_arg_wrapper& getHpipmWrapper();
-
   ///
   /// @brief Solver mode. Default is HpipmMode::Speed.
   ///
@@ -128,8 +89,10 @@ public:
   ///
   int split_step = 0;
 
-private:
-  d_ocp_qp_ipm_arg_wrapper ocp_qp_ipm_arg_wrapper_;
+  ///
+  /// @brief Check the settings. If something is wrong, throws an exception.
+  ///
+  void checkSettings() const;
 };
 
 } // namespace hpipm

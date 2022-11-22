@@ -3,11 +3,7 @@
 
 #include <vector>
 
-extern "C" {
-#include "hpipm_d_ocp_qp_dim.h"
-}
-
-#include "d_ocp_qp_dim_wrapper.hpp"
+#include "ocp_qp.hpp"
 
 
 namespace hpipm {
@@ -16,13 +12,19 @@ namespace hpipm {
 /// @class OcpQpDim
 /// @brief Dimension of an OCP-QP problem.
 ///
-class OcpQpDim {
+struct OcpQpDim {
 public:
   ///
   /// @brief Constructor. 
   /// @param[in] N Horizon length.
   ///
   OcpQpDim(const unsigned int N);
+
+  ///
+  /// @brief Constructor. 
+  /// @param[in] ocp_qp OCP-QP data.
+  ///
+  OcpQpDim(const std::vector<OcpQp>& ocp_qp);
 
   ///
   /// @brief Default constructor. 
@@ -53,18 +55,6 @@ public:
   /// @brief Default move assign operator.
   ///
   OcpQpDim& operator=(OcpQpDim&&) noexcept = default;
-
-  ///
-  /// @brief Resizes the dimension.
-  /// @param[in] N horizon length.
-  ///
-  void resize(const unsigned int N);
-
-  ///
-  /// @brief Gets the wrapper of hpipm's resource. 
-  /// Throws exceptions when something wrongs in settings of N, nx, nu, etc.
-  ///
-  d_ocp_qp_dim_wrapper& getHpipmWrapper();
 
   ///
   /// @brief Horizon length.
@@ -111,8 +101,23 @@ public:
   ///
   std::vector<int> nsg;
 
-private:
-  d_ocp_qp_dim_wrapper ocp_qp_dim_wrapper_;
+  ///
+  /// @brief Resizes the dimension.
+  /// @param[in] N horizon length.
+  ///
+  void resize(const unsigned int N);
+
+  ///
+  /// @brief Resizes the dimension.
+  /// @param[in] ocp_qp OCP-QP data.
+  ///
+  void resize(const std::vector<OcpQp>& ocp_qp);
+
+  ///
+  /// @brief Check the sizes of OCP-QP data. If something is wrong, throws an exception.
+  /// @param[in] ocp_qp OCP-QP data.
+  ///
+  void checkSize(const std::vector<OcpQp>& ocp_qp) const;
 };
 
 } // namespace hpipm

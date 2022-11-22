@@ -30,12 +30,10 @@ add_library(
   src/d_ocp_qp_sol_wrapper.cpp
   src/d_ocp_qp_ipm_arg_wrapper.cpp
   src/d_ocp_qp_ipm_ws_wrapper.cpp
-  # src/ocp_qp_dim.cpp
-  # src/ocp_qp.cpp
-  # src/ocp_qp_solution.cpp
-  # src/ocp_qp_ipm_solver_settings.cpp
-  # src/ocp_qp_ipm_solver_statistics.cpp
-  # src/ocp_qp_ipm_solver.cpp
+  src/ocp_qp_dim.cpp
+  src/ocp_qp_ipm_solver_settings.cpp
+  src/ocp_qp_ipm_solver_statistics.cpp
+  src/ocp_qp_ipm_solver.cpp
 )
 target_link_libraries(
   ${PROJECT_NAME} 

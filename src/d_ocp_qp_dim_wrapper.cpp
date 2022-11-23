@@ -111,20 +111,25 @@ d_ocp_qp_dim* d_ocp_qp_dim_wrapper::get() {
 
 
 const d_ocp_qp_dim* d_ocp_qp_dim_wrapper::get() const { 
+  if (memory_ == nullptr) {
+    throw std::runtime_error("[d_ocp_qp_dim_wrapper] hpipm memory is not created. Call resize() first.");
+  }
   return &ocp_qp_dim_hpipm_; 
 }
 
 
 void d_ocp_qp_dim_wrapper::resize(const unsigned int N) {
   const hpipm_size_t new_memsize = d_ocp_qp_dim_memsize(N);
-  if (memory_ && new_memsize > memsize_) {
+  if (memory_ != nullptr && new_memsize > memsize_) {
     free(memory_);
     memory_ = nullptr;
   }
   memsize_ = std::max(memsize_, new_memsize);
-  if (!memory_) {
+  if (memory_ == nullptr) {
     memory_ = malloc(memsize_);
-	  d_ocp_qp_dim_create(N, &ocp_qp_dim_hpipm_, memory_);
+  }
+  if (ocp_qp_dim_hpipm_.N != N) {
+    d_ocp_qp_dim_create(N, &ocp_qp_dim_hpipm_, memory_);
   }
 }
 

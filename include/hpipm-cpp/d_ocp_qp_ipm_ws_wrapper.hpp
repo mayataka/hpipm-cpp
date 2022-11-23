@@ -1,6 +1,8 @@
 #ifndef HPIPM_CPP_D_OCP_QP_IPM_WS_WRAPPER_HPP_
 #define HPIPM_CPP_D_OCP_QP_IPM_WS_WRAPPER_HPP_
 
+#include <memory>
+
 extern "C" {
 #include "hpipm_d_ocp_qp_ipm.h"
 }
@@ -22,8 +24,8 @@ public:
   /// @param[in] dim Dimension.
   /// @param[in] ipm_arg Ipm solver argument.
   ///
-  d_ocp_qp_ipm_ws_wrapper(const d_ocp_qp_dim_wrapper& dim, 
-                          const d_ocp_qp_ipm_arg_wrapper& ipm_arg);
+  d_ocp_qp_ipm_ws_wrapper(const std::shared_ptr<d_ocp_qp_dim_wrapper>& dim, 
+                          const std::shared_ptr<d_ocp_qp_ipm_arg_wrapper>& ipm_arg);
 
   ///
   /// @brief Default constructor. Does not allocate the hpipm resource.
@@ -69,28 +71,16 @@ public:
   const d_ocp_qp_ipm_ws* get() const;
 
   ///
-  /// @brief Gets the dimension.
-  /// @return const reference to the dimension.
-  ///
-  const d_ocp_qp_dim_wrapper& dim() const;
-
-  ///
-  /// @brief Gets the Ipm solver argument.
-  /// @return const reference to the Ipm solver argument.
-  ///
-  const d_ocp_qp_ipm_arg_wrapper& ipm_arg() const;
-
-  ///
   /// @brief Resizes the hpipm resource.
   /// @param[in] dim Dimension.
   /// @param[in] ipm_arg Ipm solver argument.
   ///
-  void resize(const d_ocp_qp_dim_wrapper& dim,
-              const d_ocp_qp_ipm_arg_wrapper& ipm_arg);
+  void resize(const std::shared_ptr<d_ocp_qp_dim_wrapper>& dim,
+              const std::shared_ptr<d_ocp_qp_ipm_arg_wrapper>& ipm_arg);
 
 private:
-  d_ocp_qp_dim_wrapper dim_;
-  d_ocp_qp_ipm_arg_wrapper ipm_arg_;
+  std::shared_ptr<d_ocp_qp_dim_wrapper> dim_;
+  std::shared_ptr<d_ocp_qp_ipm_arg_wrapper> ipm_arg_;
   d_ocp_qp_ipm_ws ocp_qp_ipm_ws_hpipm_;
   void *memory_ = nullptr;
   hpipm_size_t memsize_ = 0;

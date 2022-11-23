@@ -1,83 +1,76 @@
 #include "hpipm-cpp/hpipm-cpp.hpp"
 
-#include "getting_started_data.hpp"
-
 #include <iostream>
 #include <vector>
 #include "Eigen/Core"
 
 
 int main() {
-  QPSize qp_size;
-  hpipm::OcpQpDim dim(qp_size.N);
-  dim.nx   = qp_size.nx;
-  dim.nu   = qp_size.nu;
-  dim.nbx  = qp_size.nbx;
-  dim.nbu  = qp_size.nbu;
-  dim.ng   = qp_size.ng;
-  dim.nsbx = qp_size.nsbx;
-  dim.nsbu = qp_size.nsbu;
-  dim.nsg  = qp_size.nsg;
+  int N = 5; // horizon lenght
 
-  QPData qp_data;
-  hpipm::OcpQp qp(dim);
-  // initial state
-  qp.x0 = qp_data.x0;
-  // dynamics
-  for (int i=0; i<dim.N; ++i) {
-    qp.A[i] = qp_data.A;
-    qp.B[i] = qp_data.B;
-    qp.b[i] = qp_data.b;
+  const Eigen::MatrixXd A = (Eigen::MatrixXd(2, 2) << 1.0, 1.0, 
+                                                      0.0, 1.0).finished();
+  const Eigen::MatrixXd B = (Eigen::MatrixXd(2, 1) << 0.0, 1.0).finished();
+  const Eigen::VectorXd b = (Eigen::VectorXd(2) << 0.0, 0.0).finished();
+
+  const Eigen::MatrixXd Q = (Eigen::MatrixXd(2, 2) << 1.0, 0.0, 
+                                                      0.0, 1.0).finished();
+  const Eigen::MatrixXd R = (Eigen::MatrixXd(1, 1) << 1.0).finished();
+  const Eigen::MatrixXd S = (Eigen::MatrixXd(1, 2) << 0.0, 0.0).finished();
+  const Eigen::VectorXd q = (Eigen::VectorXd(2) << 1.0, 1.0).finished();
+  const Eigen::VectorXd r = (Eigen::VectorXd(1) << 0.0).finished();
+
+  const Eigen::VectorXd x0 = (Eigen::VectorXd(2) << 1.0, 1.0).finished();
+
+  std::vector<hpipm::OcpQp> qp(N+1);
+  for (int i=0; i<N; ++i) {
+    qp[i].A = A;
+    qp[i].B = B;
+    qp[i].b = b;
   }
   // cost
-  for (int i=0; i<dim.N; ++i) {
-    qp.Q[i] = qp_data.Q;
-    qp.R[i] = qp_data.R;
-    qp.S[i] = qp_data.S;
-    qp.q[i] = qp_data.q;
-    qp.r[i] = qp_data.r;
+  for (int i=0; i<N; ++i) {
+    qp[i].Q = Q;
+    qp[i].R = R;
+    qp[i].S = S;
+    qp[i].q = q;
+    qp[i].r = r;
   }
-  qp.Q[dim.N] = qp_data.Q;
-  qp.q[dim.N] = qp_data.q;
-  // constraints on the state
-  for (int i=1; i<=dim.N; ++i) {
-    qp.idxbx[i] = qp_data.idxbx;
-    qp.lbx[i]   = qp_data.lbx;
-    qp.ubx[i]   = qp_data.ubx;
-  }
+  qp[N].Q = Q;
+  qp[N].q = q;
 
-  IPMArg ipm_arg;
-  hpipm::OcpQpIpmSolverSettings ipm_solver_settings;
-  ipm_solver_settings.mode       = static_cast<hpipm::HpipmMode>(ipm_arg.mode);
-  ipm_solver_settings.iter_max   = ipm_arg.iter_max;
-  ipm_solver_settings.alpha_min  = ipm_arg.alpha_min;
-  ipm_solver_settings.mu0        = ipm_arg.mu0;
-  ipm_solver_settings.tol_stat   = ipm_arg.tol_stat;
-  ipm_solver_settings.tol_eq     = ipm_arg.tol_eq;
-  ipm_solver_settings.tol_ineq   = ipm_arg.tol_ineq;
-  ipm_solver_settings.tol_comp   = ipm_arg.tol_comp;
-  ipm_solver_settings.reg_prim   = ipm_arg.reg_prim;
-  ipm_solver_settings.warm_start = ipm_arg.warm_start;
-  ipm_solver_settings.pred_corr  = ipm_arg.pred_corr;
-  ipm_solver_settings.ric_alg    = ipm_arg.ric_alg;
-  ipm_solver_settings.split_step = ipm_arg.split_step;
+  hpipm::OcpQpIpmSolverSettings solver_settings;
+  solver_settings.mode = hpipm::HpipmMode::Balance;
+  solver_settings.iter_max = 30;
+  solver_settings.alpha_min = 1e-8;
+  solver_settings.mu0 = 1e2;
+  solver_settings.tol_stat = 1e-04;
+  solver_settings.tol_eq = 1e-04;
+  solver_settings.tol_ineq = 1e-04;
+  solver_settings.tol_comp = 1e-04;
+  solver_settings.reg_prim = 1e-12;
+  solver_settings.warm_start = 1;
+  solver_settings.pred_corr = 1;
+  solver_settings.ric_alg = 0;
+  solver_settings.split_step = 1;
 
-  hpipm::OcpQpSolution solution(dim);
-  hpipm::OcpQpIpmSolver solver(dim, ipm_solver_settings);
-  const auto res = solver.solve(qp, solution);
+  std::vector<hpipm::OcpQpSolution> solution(N+1);
+  hpipm::OcpQpIpmSolver solver(qp, solver_settings);
+
+  const auto res = solver.solve(x0, qp, solution);
   std::cout << "QP result: " << res << std::endl;
 
   std::cout << "OCP QP primal solution: " << std::endl;
-  for (int i=0; i<=dim.N; ++i) {
-    std::cout << "x[" << i << "]: " << solution.x[i].transpose() << std::endl;
+  for (int i=0; i<=N; ++i) {
+    std::cout << "x[" << i << "]: " << solution[i].x.transpose() << std::endl;
   }
-  for (int i=0; i<dim.N; ++i) {
-    std::cout << "u[" << i << "]: " << solution.u[i].transpose() << std::endl;
+  for (int i=0; i<N; ++i) {
+    std::cout << "u[" << i << "]: " << solution[i].u.transpose() << std::endl;
   }
 
   std::cout << "OCP QP dual solution (Lagrange multipliers): " << std::endl;
-  for (int i=0; i<dim.N; ++i) {
-    std::cout << "pi[" << i << "]: " << solution.pi[i].transpose() << std::endl;
+  for (int i=0; i<=N; ++i) {
+    std::cout << "pi[" << i << "]: " << solution[i].pi.transpose() << std::endl;
   }
 
   const auto& stat = solver.getSolverStatistics();

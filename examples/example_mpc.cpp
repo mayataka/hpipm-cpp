@@ -9,21 +9,9 @@
 
 int main() {
   // setup QP
-  const int N = 20;
-  hpipm::OcpQpDim dim(N);
-  dim.nx   = std::vector<int>(N+1, 12);
-  dim.nu   = std::vector<int>(N, 4);
-  dim.nbx  = std::vector<int>(N+1, 3);
-  dim.nbx[0] = 12;
-  dim.nbu  = std::vector<int>(N, 4);
-  dim.ng   = std::vector<int>(N+1, 0);
-  dim.nsbx = std::vector<int>(N+1, 0);
-  dim.nsbu = std::vector<int>(N, 0);
-  dim.nsg  = std::vector<int>(N+1, 0);
+  const unsigned int N = 20;
 
-  hpipm::OcpQp qp(dim);
-  // initial state
-  qp.x0 << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  std::vector<hpipm::OcpQp> qp(N+1);
   // dynamics
   Eigen::MatrixXd A(12, 12), B(12, 4);
   A << 1.,      0.,     0., 0., 0., 0., 0.1,     0.,     0.,  0.,     0.,     0.    ,
@@ -52,9 +40,9 @@ int main() {
        0.2107,   0.2107,  0.2107, 0.2107;
   const Eigen::VectorXd b = Eigen::VectorXd::Zero(12);
   for (int i=0; i<N; ++i) {
-    qp.A[i] = A;
-    qp.B[i] = B;
-    qp.b[i] = b;
+    qp[i].A = A;
+    qp[i].B = B;
+    qp[i].b = b;
   }
   // cost
   Eigen::MatrixXd Q(12, 12), S(4, 12), R(4, 4);
@@ -66,59 +54,62 @@ int main() {
   const Eigen::VectorXd q = - Q * x_ref;
   const Eigen::VectorXd r = Eigen::VectorXd::Zero(4);
   for (int i=0; i<N; ++i) {
-    qp.Q[i] = Q;
-    qp.R[i] = R;
-    qp.S[i] = S;
-    qp.q[i] = q;
-    qp.r[i] = r;
+    qp[i].Q = Q;
+    qp[i].R = R;
+    qp[i].S = S;
+    qp[i].q = q;
+    qp[i].r = r;
   }
-  qp.Q[N] = Q;
-  qp.q[N] = q;
+  qp[N].Q = Q;
+  qp[N].q = q;
   // constraints
   const bool use_mask_for_one_sided_constraints = true;
   for (int i=1; i<=N; ++i) {
     constexpr double soft_inf = 1.0e10;
-    qp.idxbx[i] = {0, 1, 5};
-    qp.lbx[i] = (Eigen::VectorXd(3) << -M_PI/6.0, -M_PI/6.0, -1.0).finished();
-    qp.ubx[i] = (Eigen::VectorXd(3) << M_PI/6.0, M_PI/6.0, soft_inf).finished();
+    qp[i].idxbx = {0, 1, 5};
+    qp[i].lbx = (Eigen::VectorXd(3) << -M_PI/6.0, -M_PI/6.0, -1.0).finished();
+    qp[i].ubx = (Eigen::VectorXd(3) << M_PI/6.0, M_PI/6.0, soft_inf).finished();
     if (use_mask_for_one_sided_constraints) {
-      qp.ubx_mask[i] = (Eigen::VectorXd(3) << 1.0, 1.0, 0.0).finished(); // this mask disables upper bound by ubx[2]
+      qp[i].ubx_mask = (Eigen::VectorXd(3) << 1.0, 1.0, 0.0).finished(); // this mask disables upper bound by ubx[2]
     }
   }
   for (int i=0; i<N; ++i) {
     constexpr double u0 = 10.5916;
-    qp.idxbu[i] = {0, 1, 2, 3};
-    qp.lbu[i] = (Eigen::VectorXd(4) << 9.6-u0, 9.6-u0, 9.6-u0, 9.6-u0).finished();
-    qp.ubu[i] = (Eigen::VectorXd(4) << 13.0-u0, 13.0-u0, 13.0-u0, 13.0-u0).finished();
+    qp[i].idxbu = {0, 1, 2, 3};
+    qp[i].lbu = (Eigen::VectorXd(4) << 9.6-u0, 9.6-u0, 9.6-u0, 9.6-u0).finished();
+    qp[i].ubu = (Eigen::VectorXd(4) << 13.0-u0, 13.0-u0, 13.0-u0, 13.0-u0).finished();
   }
 
-  hpipm::OcpQpIpmSolverSettings ipm_solver_settings;
-  ipm_solver_settings.iter_max = 30;
-  ipm_solver_settings.alpha_min = 1e-8;
-  ipm_solver_settings.mu0 = 1e2;
-  ipm_solver_settings.tol_stat = 1e-04;
-  ipm_solver_settings.tol_eq = 1e-04;
-  ipm_solver_settings.tol_ineq = 1e-04;
-  ipm_solver_settings.tol_comp = 1e-04;
-  ipm_solver_settings.reg_prim = 1e-12;
-  ipm_solver_settings.warm_start = 1;
-  ipm_solver_settings.pred_corr = 1;
-  ipm_solver_settings.ric_alg = 0;
-  ipm_solver_settings.split_step = 1;
+  hpipm::OcpQpIpmSolverSettings solver_settings;
+  solver_settings.mode = hpipm::HpipmMode::Balance;
+  solver_settings.iter_max = 30;
+  solver_settings.alpha_min = 1e-8;
+  solver_settings.mu0 = 1e2;
+  solver_settings.tol_stat = 1e-04;
+  solver_settings.tol_eq = 1e-04;
+  solver_settings.tol_ineq = 1e-04;
+  solver_settings.tol_comp = 1e-04;
+  solver_settings.reg_prim = 1e-12;
+  solver_settings.warm_start = 1;
+  solver_settings.pred_corr = 1;
+  solver_settings.ric_alg = 0;
+  solver_settings.split_step = 1;
 
-  hpipm::OcpQpSolution solution(dim);
-  hpipm::OcpQpIpmSolver solver(dim, ipm_solver_settings);
+  std::vector<hpipm::OcpQpSolution> solution(N+1);
+  hpipm::OcpQpIpmSolver solver(qp, solver_settings);
 
   Eigen::VectorXd u0(4);
   Eigen::VectorXd x(12);
   x << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
 
+  Eigen::VectorXd x0 = x;
+
   const int sim_steps = 50;
   for (int t=0; t<sim_steps; ++t) {
     std::cout << "t: " << t << ", x: " << x.transpose() << std::endl;
-    qp.x0 = x;
-    if (solver.solve(qp, solution) != hpipm::HpipmStatus::Success) return 1;
-    u0 = solution.u[0];
+    x0 = x;
+    if (solver.solve(x0, qp, solution) != hpipm::HpipmStatus::Success) return 1;
+    u0 = solution[0].u;
     x = A * x + B * u0 + b;
   }
 

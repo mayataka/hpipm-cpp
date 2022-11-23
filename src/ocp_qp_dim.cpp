@@ -35,23 +35,23 @@ void OcpQpDim::resize(const std::vector<OcpQp>& ocp_qp) {
   }
   resize(ocp_qp.size()-1);
   for (unsigned int i=0; i<N; ++i) {
-    nx[i] = ocp_qp[i].q.size();
-    nu[i] = ocp_qp[i].r.size();
-    nbx[i] = ocp_qp[i].idxbx.size();
-    nbu[i] = ocp_qp[i].idxbu.size();
-    ng[i] = ocp_qp[i].lg.size();
+    nx[i]   = ocp_qp[i].q.size();
+    nu[i]   = ocp_qp[i].r.size();
+    nbx[i]  = ocp_qp[i].idxbx.size();
+    nbu[i]  = ocp_qp[i].idxbu.size();
+    ng[i]   = ocp_qp[i].lg.size();
     nsbx[i] = ocp_qp[i].idxs.size();
     nsbu[i] = 0;
-    nsg[i] = 0;
+    nsg[i]  = 0;
   }
-  nx[N] = ocp_qp[N].q.size();
-  nu[N] = 0;
-  nbx[N] = ocp_qp[N].idxbx.size();
-  nbu[N] = 0;
-  ng[N] = ocp_qp[N].lg.size();
+  nx[N]   = ocp_qp[N].q.size();
+  nu[N]   = 0;
+  nbx[N]  = ocp_qp[N].idxbx.size();
+  nbu[N]  = 0;
+  ng[N]   = ocp_qp[N].lg.size();
   nsbx[N] = ocp_qp[N].idxs.size();
   nsbu[N] = 0;
-  nsg[N] = 0;
+  nsg[N]  = 0;
   checkSize(ocp_qp);
 }
 

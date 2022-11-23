@@ -25,6 +25,26 @@ public:
   /// @brief Costate (the Lagrange multiplier w.r.t the state equation). 
   ///
   Eigen::VectorXd pi;
+
+  ///
+  /// @brief Riccati matrix P. 
+  ///
+  Eigen::MatrixXd P;
+
+  ///
+  /// @brief Riccati vector s. 
+  ///
+  Eigen::VectorXd p;
+
+  ///
+  /// @brief Feedback gain. 
+  ///
+  Eigen::MatrixXd K;
+
+  ///
+  /// @brief Feedforward term. 
+  ///
+  Eigen::VectorXd k;
 };
 
 } // namespace hpipm

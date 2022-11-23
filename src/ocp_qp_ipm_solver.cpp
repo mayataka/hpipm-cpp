@@ -48,7 +48,7 @@ OcpQpIpmSolver::OcpQpIpmSolver(const std::vector<OcpQp>& ocp_qp,
 }
 
 
-OcpQpIpmSolver::OcpQpIpmSolver() 
+OcpQpIpmSolver::OcpQpIpmSolver(const OcpQpIpmSolverSettings& solver_settings) 
   : solver_settings_(),
     solver_statistics_(),
     dim_(),
@@ -57,7 +57,7 @@ OcpQpIpmSolver::OcpQpIpmSolver()
     ocp_qp_wrapper_(),
     ocp_qp_sol_wrapper_(),
     ocp_qp_ipm_ws_wrapper_() {
-  setSolverSettings(OcpQpIpmSolverSettings());
+  setSolverSettings(solver_settings);
 }
 
 
@@ -83,13 +83,30 @@ void OcpQpIpmSolver::setSolverSettings(const OcpQpIpmSolverSettings& solver_sett
 
 void OcpQpIpmSolver::resize(const std::vector<OcpQp>& ocp_qp) {
   dim_.resize(ocp_qp);
-  dim_.nbx[0] = dim_.nbx[0];
   ocp_qp_dim_wrapper_->resize(dim_.N);
   d_ocp_qp_dim_set_all(dim_.nx.data(), dim_.nu.data(), 
                        dim_.nbx.data(), dim_.nbu.data(), dim_.ng.data(), 
                        dim_.nsbx.data(), dim_.nsbu.data(), dim_.nsg.data(), 
                        ocp_qp_dim_wrapper_->get());
+  // for initial state embedding
+  d_ocp_qp_dim_set_nx(0, 0, ocp_qp_dim_wrapper_->get());
+  d_ocp_qp_dim_set_nbx(0, 0, ocp_qp_dim_wrapper_->get());
+  d_ocp_qp_dim_set_nsbx(0, 0, ocp_qp_dim_wrapper_->get());
+  b0_.resize(dim_.nx[0]);
+  r0_.resize(dim_.nu[0]);
+  Lr0_.resize(dim_.nu[0], dim_.nu[0]);
+  Lr0_inv_.resize(dim_.nu[0], dim_.nu[0]);
+  G0_inv_.resize(dim_.nu[0], dim_.nu[0]);
+  H0_.resize(dim_.nu[0], dim_.nx[0]);
+  B0t_P1_.resize(dim_.nu[0], dim_.nx[0]);
+  A0t_P1_.resize(dim_.nx[0], dim_.nx[0]);
 
+  // resize hpipm data
+  ocp_qp_wrapper_.resize(ocp_qp_dim_wrapper_);
+  ocp_qp_sol_wrapper_.resize(ocp_qp_dim_wrapper_);
+  ocp_qp_ipm_ws_wrapper_.resize(ocp_qp_dim_wrapper_, ocp_qp_ipm_arg_wrapper_);
+
+  // resize ptr vecotrs
   A_ptr_.resize(dim_.N+1);
   B_ptr_.resize(dim_.N+1);
   b_ptr_.resize(dim_.N+1);
@@ -121,16 +138,6 @@ void OcpQpIpmSolver::resize(const std::vector<OcpQp>& ocp_qp) {
   idxs_ptr_.resize(dim_.N+1);
   lls_ptr_.resize(dim_.N+1);
   lus_ptr_.resize(dim_.N+1);
-
-  idxbx0_.resize(dim_.nx[0]);
-  for (int i=0; i<dim_.nx[0]; ++i) {
-    idxbx0_[i] = i;
-  }
-  x0_.resize(dim_.nx[0]);
-
-  ocp_qp_wrapper_.resize(ocp_qp_dim_wrapper_);
-  ocp_qp_sol_wrapper_.resize(ocp_qp_dim_wrapper_);
-  ocp_qp_ipm_ws_wrapper_.resize(ocp_qp_dim_wrapper_, ocp_qp_ipm_arg_wrapper_);
 }
 
 
@@ -151,26 +158,47 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
   for (int i=0; i<=dim_.N; ++i) {
     qp_sol[i].pi.resize(dim_.nx[i]);
   }
+  for (int i=0; i<=dim_.N; ++i) {
+    qp_sol[i].P.resize(dim_.nx[i], dim_.nx[i]);
+  }
+  for (int i=0; i<=dim_.N; ++i) {
+    qp_sol[i].p.resize(dim_.nx[i]);
+  }
+  for (int i=0; i<dim_.N; ++i) {
+    qp_sol[i].K.resize(dim_.nu[i], dim_.nx[i]);
+  }
+  for (int i=0; i<=dim_.N; ++i) {
+    qp_sol[i].k.resize(dim_.nu[i]);
+  }
   // set QP data
+  b0_.noalias() = ocp_qp[0].A * x0 + ocp_qp[0].b;
   for (int i=0; i<dim_.N; ++i) {
     A_ptr_[i] = ocp_qp[i].A.data();
     B_ptr_[i] = ocp_qp[i].B.data();
-    b_ptr_[i] = ocp_qp[i].b.data();
+    if (i == 0) {
+      b_ptr_[i] = b0_.data();
+    }
+    else {
+      b_ptr_[i] = ocp_qp[i].b.data();
+    }
   }
+  r0_.noalias() = ocp_qp[0].S * x0 + ocp_qp[0].r;
   for (int i=0; i<dim_.N; ++i) {
     Q_ptr_[i] = ocp_qp[i].Q.data();
     S_ptr_[i] = ocp_qp[i].S.data();
     R_ptr_[i] = ocp_qp[i].R.data();
     q_ptr_[i] = ocp_qp[i].q.data();
     r_ptr_[i] = ocp_qp[i].r.data();
+    if (i == 0) {
+      r_ptr_[i] = r0_.data();
+    }
+    else {
+      r_ptr_[i] = ocp_qp[i].r.data();
+    }
   }
   Q_ptr_[dim_.N] = ocp_qp[dim_.N].Q.data();
   q_ptr_[dim_.N] = ocp_qp[dim_.N].q.data();
-  x0_ = x0;
-  idxbx_ptr_[0] = idxbx0_.data();
-  lbx_ptr_[0] = x0_.data();
-  ubx_ptr_[0] = x0_.data();
-  for (int i=1; i<=dim_.N; ++i) {
+  for (int i=0; i<=dim_.N; ++i) {
     idxbx_ptr_[i] = ocp_qp[i].idxbx.data();
     lbx_ptr_[i]   = ocp_qp[i].lbx.data();
     ubx_ptr_[i]   = ocp_qp[i].ubx.data();
@@ -209,18 +237,12 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
                    Zl_ptr_.data(), Zu_ptr_.data(), zl_ptr_.data(), zu_ptr_.data(), 
                    idxs_ptr_.data(), lls_ptr_.data(), lus_ptr_.data(), ocp_qp_ptr);
 
-  // initial state embedding
-  d_ocp_qp_set_lbx(0, x0_.data(), ocp_qp_ptr);
-  d_ocp_qp_set_ubx(0, x0_.data(), ocp_qp_ptr);
-  d_ocp_qp_set_idxe(0, idxbx0_.data(), ocp_qp_ptr);
   // masks
   for (int i=1; i<=dim_.N; ++i) {
     if (ocp_qp[i].lbx_mask.size() == dim_.nbx[i]) {
       lbx_mask_ptr_[i] = ocp_qp[i].lbx_mask.data();
       d_ocp_qp_set_lbx_mask(i, lbx_mask_ptr_[i], ocp_qp_ptr);
     }
-  }
-  for (int i=1; i<=dim_.N; ++i) {
     if (ocp_qp[i].ubx_mask.size() == dim_.nbx[i]) {
       ubx_mask_ptr_[i] = ocp_qp[i].ubx_mask.data();
       d_ocp_qp_set_ubx_mask(i, ubx_mask_ptr_[i], ocp_qp_ptr);
@@ -231,8 +253,6 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
       lbu_mask_ptr_[i] = ocp_qp[i].lbu_mask.data();
       d_ocp_qp_set_lbu_mask(i, lbu_mask_ptr_[i], ocp_qp_ptr);
     }
-  }
-  for (int i=0; i<dim_.N; ++i) {
     if (ocp_qp[i].ubu_mask.size() == dim_.nbu[i]) {
       ubu_mask_ptr_[i] = ocp_qp[i].ubu_mask.data();
       d_ocp_qp_set_ubu_mask(i, ubu_mask_ptr_[i], ocp_qp_ptr);
@@ -243,8 +263,6 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
       lg_mask_ptr_[i] = ocp_qp[i].lg_mask.data();
       d_ocp_qp_set_lg_mask(i, lg_mask_ptr_[i], ocp_qp_ptr);
     }
-  }
-  for (int i=0; i<=dim_.N; ++i) {
     if (ocp_qp[i].ug_mask.size() == dim_.ng[i]) {
       ug_mask_ptr_[i] = ocp_qp[i].ug_mask.data();
       d_ocp_qp_set_ug_mask(i, ug_mask_ptr_[i], ocp_qp_ptr);
@@ -259,13 +277,43 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
   d_ocp_qp_ipm_solve(ocp_qp_ptr, ocp_qp_sol_ptr, ocp_qp_ipm_arg_ptr, ocp_qp_ipm_ws_ptr);
 
   // get solution
-  d_ocp_qp_sol_get_lam_ubx(0, ocp_qp_sol_ptr, qp_sol[0].pi.data());
+  qp_sol[0].x = x0;
   for (int i=0; i<dim_.N; ++i) {
-    d_ocp_qp_sol_get_x(i, ocp_qp_sol_ptr, qp_sol[i].x.data());
+    d_ocp_qp_sol_get_x(i+1, ocp_qp_sol_ptr, qp_sol[i+1].x.data());
     d_ocp_qp_sol_get_u(i, ocp_qp_sol_ptr, qp_sol[i].u.data());
     d_ocp_qp_sol_get_pi(i, ocp_qp_sol_ptr, qp_sol[i+1].pi.data());
+    d_ocp_qp_ipm_get_ric_P(ocp_qp_ptr, ocp_qp_ipm_arg_ptr, ocp_qp_ipm_ws_ptr, i+1, qp_sol[i+1].P.data());
+    d_ocp_qp_ipm_get_ric_p(ocp_qp_ptr, ocp_qp_ipm_arg_ptr, ocp_qp_ipm_ws_ptr, i+1, qp_sol[i+1].p.data());
+    d_ocp_qp_ipm_get_ric_K(ocp_qp_ptr, ocp_qp_ipm_arg_ptr, ocp_qp_ipm_ws_ptr, i, qp_sol[i].K.data());
+    d_ocp_qp_ipm_get_ric_k(ocp_qp_ptr, ocp_qp_ipm_arg_ptr, ocp_qp_ipm_ws_ptr, i, qp_sol[i].k.data());
   }
-  d_ocp_qp_sol_get_x(dim_.N, ocp_qp_sol_ptr, qp_sol[dim_.N].x.data());
+  // Reconstruct Riccati-related terms and costate at stage 0
+  // Feedback gain 
+  Lr0_.setZero();
+  d_ocp_qp_ipm_get_ric_Lr(ocp_qp_ptr, ocp_qp_ipm_arg_ptr, ocp_qp_ipm_ws_ptr, 0, Lr0_.data());
+  Lr0_inv_.noalias() = (Lr0_.template triangularView<Eigen::Lower>()).solve(Eigen::MatrixXd::Identity(dim_.nu[0], dim_.nu[0]));
+  G0_inv_.noalias() = Lr0_inv_.transpose() * Lr0_inv_;
+  B0t_P1_.noalias() = ocp_qp[0].B.transpose() * qp_sol[1].P;
+  H0_ = ocp_qp[0].S;
+  H0_.noalias() += B0t_P1_ * ocp_qp[0].A;
+  qp_sol[0].K.noalias() = - G0_inv_ * H0_;
+  // Feedforward
+  qp_sol[0].k = qp_sol[0].u;
+  qp_sol[0].k.noalias() -= qp_sol[0].K * qp_sol[0].x;
+  // Riccati P matrix
+  qp_sol[0].P = ocp_qp[0].Q;
+  B0t_P1_.noalias() = G0_inv_ * H0_;
+  qp_sol[0].P.noalias() -= H0_.transpose() * B0t_P1_;
+  A0t_P1_.noalias() = ocp_qp[0].A.transpose() * qp_sol[1].P;
+  qp_sol[0].P.noalias() += A0t_P1_ * ocp_qp[0].A;
+  // Riccati p vector
+  qp_sol[0].p = ocp_qp[0].q;
+  qp_sol[0].p.noalias() += ocp_qp[0].A.transpose() * qp_sol[1].p;
+  qp_sol[0].p.noalias() += A0t_P1_ * ocp_qp[0].b;
+  qp_sol[0].p.noalias() += H0_.transpose() * qp_sol[0].k;
+  // costate
+  qp_sol[0].pi = qp_sol[0].p;
+  qp_sol[0].pi.noalias() += qp_sol[0].P * qp_sol[0].x;
 
   // get solver statistics
   d_ocp_qp_ipm_get_iter(ocp_qp_ipm_ws_ptr, &solver_statistics_.iter);

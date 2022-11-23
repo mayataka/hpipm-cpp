@@ -53,9 +53,10 @@ public:
                  const OcpQpIpmSolverSettings& solver_settings=OcpQpIpmSolverSettings());
 
   ///
-  /// @brief Default constructor. 
+  /// @brief Constructor.
+  /// @param[in] solver_settings Solver settings.
   ///
-  OcpQpIpmSolver();
+  OcpQpIpmSolver(const OcpQpIpmSolverSettings& solver_settings=OcpQpIpmSolverSettings());
 
   ///
   /// @brief Destructor.
@@ -160,8 +161,8 @@ private:
   std::vector<double*> lus_ptr_; 
 
   // initial state embedding
-  std::vector<int> idxbx0_;
-  Eigen::VectorXd x0_;
+  Eigen::VectorXd b0_, r0_;
+  Eigen::MatrixXd Lr0_, Lr0_inv_, G0_inv_, H0_, B0t_P1_, A0t_P1_;
 };
 
 } // namespace hpipm

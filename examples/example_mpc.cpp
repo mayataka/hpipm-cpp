@@ -102,14 +102,13 @@ int main() {
   Eigen::VectorXd x(12);
   x << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
 
-  Eigen::VectorXd x = x0;
+  Eigen::VectorXd x0 = x;
 
   const int sim_steps = 50;
   for (int t=0; t<sim_steps; ++t) {
     std::cout << "t: " << t << ", x: " << x.transpose() << std::endl;
     x0 = x;
     if (solver.solve(x0, qp, solution) != hpipm::HpipmStatus::Success) return 1;
-    std::cout << solver.getSolverStatistics() << std::endl;
     u0 = solution[0].u;
     x = A * x + B * u0 + b;
   }

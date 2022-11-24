@@ -98,9 +98,14 @@ int main() {
   std::vector<hpipm::OcpQpSolution> solution(N+1);
   hpipm::OcpQpIpmSolver solver(qp, solver_settings);
 
-  Eigen::VectorXd u0(4);
-  Eigen::VectorXd x(12);
-  x << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  Eigen::VectorXd x = Eigen::VectorXd::Zero(12);
+  for (int i=0; i<N; ++i) {
+    constexpr double u0 = 10.5916;
+    solution[i].x = x;
+    solution[i].u.resize(4);
+    solution[i].u.fill(u0);
+  }
+  solution[N].x = x;
 
   Eigen::VectorXd x0 = x;
 
@@ -109,7 +114,7 @@ int main() {
     std::cout << "t: " << t << ", x: " << x.transpose() << std::endl;
     x0 = x;
     if (solver.solve(x0, qp, solution) != hpipm::HpipmStatus::Success) return 1;
-    u0 = solution[0].u;
+    const auto u0 = solution[0].u;
     x = A * x + B * u0 + b;
   }
 

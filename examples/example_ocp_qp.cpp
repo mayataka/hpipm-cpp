@@ -49,7 +49,7 @@ int main() {
   solver_settings.tol_ineq = 1e-04;
   solver_settings.tol_comp = 1e-04;
   solver_settings.reg_prim = 1e-12;
-  solver_settings.warm_start = 1;
+  solver_settings.warm_start = 0;
   solver_settings.pred_corr = 1;
   solver_settings.ric_alg = 0;
   solver_settings.split_step = 1;

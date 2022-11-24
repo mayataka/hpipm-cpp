@@ -150,10 +150,24 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
     qp_sol.resize(dim_.N+1);
   }
   for (int i=0; i<=dim_.N; ++i) {
-    qp_sol[i].x.resize(dim_.nx[i]);
+    if (solver_settings_.warm_start) {
+      if (qp_sol[i].x.size() != dim_.nx[i]) {
+        throw std::runtime_error("qp_sol[" + std::to_string(i) + "].x.size() must be " + std::to_string(dim_.nx[i]));
+      }
+    }
+    else {
+      qp_sol[i].x.resize(dim_.nx[i]);
+    }
   }
   for (int i=0; i<dim_.N; ++i) {
-    qp_sol[i].u.resize(dim_.nu[i]);
+    if (solver_settings_.warm_start) {
+      if (qp_sol[i].u.size() != dim_.nu[i]) {
+        throw std::runtime_error("qp_sol[" + std::to_string(i) + "].u.size() must be " + std::to_string(dim_.nu[i]));
+      }
+    }
+    else {
+      qp_sol[i].u.resize(dim_.nu[i]);
+    }
   }
   for (int i=0; i<=dim_.N; ++i) {
     qp_sol[i].pi.resize(dim_.nx[i]);
@@ -274,6 +288,12 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
   d_ocp_qp_sol* ocp_qp_sol_ptr = ocp_qp_sol_wrapper_.get();
   d_ocp_qp_ipm_arg* ocp_qp_ipm_arg_ptr = ocp_qp_ipm_arg_wrapper_->get();
   d_ocp_qp_ipm_ws* ocp_qp_ipm_ws_ptr = ocp_qp_ipm_ws_wrapper_.get();
+  if (solver_settings_.warm_start) {
+    for (int i=0; i<dim_.N; ++i) {
+      d_ocp_qp_sol_set_x(i+1, qp_sol[i+1].x.data(), ocp_qp_sol_ptr);
+      d_ocp_qp_sol_set_u(i, qp_sol[i].u.data(), ocp_qp_sol_ptr);
+    }
+  }
   d_ocp_qp_ipm_solve(ocp_qp_ptr, ocp_qp_sol_ptr, ocp_qp_ipm_arg_ptr, ocp_qp_ipm_ws_ptr);
 
   // get solution

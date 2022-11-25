@@ -1,0 +1,41 @@
+name: CI of hpipm-cpp
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-18.04]
+        build-type: [Debug, RelWithDebInfo]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+        with:
+          path: hpipm-cpp
+          submodules: recursive
+      - name: Build
+        run: |
+          set -e
+          set -x
+          cd ${GITHUB_WORKSPACE}/hpipm-cpp
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_TESTS=ON
+          make -j4
+          make install
+      - name: Test
+        run: |
+          cd ${GITHUB_WORKSPACE}/hpipm-cpp/build
+          ctest --output-on-failure -j

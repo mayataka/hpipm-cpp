@@ -20,6 +20,10 @@ jobs:
         build-type: [Debug, RelWithDebInfo]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install libeigen3-dev
       - name: Checkout repository code
         uses: actions/checkout@v3
         with:
@@ -34,7 +38,7 @@ jobs:
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_TESTS=ON
           make -j4
-          make install
+          sudo make install
       - name: Test
         run: |
           cd ${GITHUB_WORKSPACE}/hpipm-cpp/build

@@ -41,5 +41,7 @@ jobs:
           sudo make install
       - name: Test
         run: |
+          set -e
+          set -x
           cd ${GITHUB_WORKSPACE}/hpipm-cpp/build
           ctest --output-on-failure -j

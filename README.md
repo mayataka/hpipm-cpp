@@ -11,7 +11,42 @@ Eigen3 can be installed by the following command:
 sudo apt install libeigen3-dev
 ```
 
-Other external libraries, i.e., [blasfeo](https://github.com/giaf/blasfeo) and [hpipm](https://github.com/giaf/hpipm) are automatically installed with `hpipm-cpp`.
+- [blasfeo](https://github.com/giaf/blasfeo) and [hpipm](https://github.com/giaf/hpipm)  
+
+blasfeo and hpipm can be installed, e.g., via
+```
+git clone https://github.com/giaf/blasfeo
+git clone https://github.com/giaf/hpipm
+cd blasfeo && mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBLASFEO_EXAMPLES=OFF 
+make -j8
+sudo make install -j
+cd ../../hpipm && mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF 
+make -j8
+sudo make install -j
+```
+
+Further, you need to set `LD_LIBRARY_PATH` as 
+```
+export LD_LIBRARY_PATH=/opt/blasfeo/lib:/opt/hpipm/lib:$LD_LIBRARY_PATH
+```
+
+`/opt` is the default install destination of `blasfeo` and `hpipm`. If you change it to `YOUR_DESTINATIon`, change the above scripts as
+```
+git clone https://github.com/giaf/blasfeo
+git clone https://github.com/giaf/hpipm
+cd blasfeo && mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBLASFEO_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX=YOUR_DESTINATION
+make -j8
+sudo make install -j
+cd ../../hpipm && mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF -DCMAKE_INSTALL_PREFIX=YOUR_DESTINATION
+make -j8
+sudo make install -j
+export LD_LIBRARY_PATH=YOUR_DESTINATION/blasfeo/lib:YOUR_DESTINATION/hpipm/lib:$LD_LIBRARY_PATH
+```
+
 
 ## Build hpipm-cpp
 ```
@@ -19,7 +54,7 @@ git clone https://github.com/mayataka/hpipm-cpp
 cd hpipm-cpp
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release 
-make -j4
+make -j8
 sudo make install -j
 ```
 

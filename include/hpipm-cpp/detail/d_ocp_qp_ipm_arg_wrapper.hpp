@@ -11,7 +11,7 @@ extern "C" {
 #include "hpipm_d_ocp_qp_ipm.h"
 }
 
-#include "hpipm-cpp/d_ocp_qp_dim_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_dim_wrapper.hpp"
 
 
 namespace hpipm {

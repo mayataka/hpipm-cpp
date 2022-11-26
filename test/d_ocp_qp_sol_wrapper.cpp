@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <random>
 
-#include "hpipm-cpp/d_ocp_qp_sol_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_sol_wrapper.hpp"
 
 
 namespace hpipm {

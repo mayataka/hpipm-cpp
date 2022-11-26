@@ -1,10 +1,6 @@
 #ifndef HPIPM_CPP_OCP_QP_IPM_SOLVER_SETTINGS_HPP_
 #define HPIPM_CPP_OCP_QP_IPM_SOLVER_SETTINGS_HPP_
 
-extern "C" {
-#include "hpipm_d_ocp_qp_ipm.h"
-}
-
 namespace hpipm {
 
 ///
@@ -12,10 +8,10 @@ namespace hpipm {
 /// @brief Solver mode.
 ///
 enum class HpipmMode {
-  SpeedAbs = hpipm_mode::SPEED_ABS,
-  Speed    = hpipm_mode::SPEED,
-  Balance  = hpipm_mode::BALANCE,
-  Robust   = hpipm_mode::ROBUST,
+  SpeedAbs,
+  Speed,
+  Balance,
+  Robust
 };
 
 ///

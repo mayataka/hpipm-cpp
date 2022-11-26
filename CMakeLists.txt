@@ -13,8 +13,8 @@ option(BUILD_TESTS "Build unit tests" OFF)
 ## Build blasfeo and hpipm ##
 #############################
 add_subdirectory(external)
-set(BLASFEO_INSTALL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/blasfeo-install)
-set(HPIPM_INSTALL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/hpipm-install)
+set(BLASFEO_INSTALL_PATH ${PROJECT_SOURCE_DIR}/external/blasfeo-install)
+set(HPIPM_INSTALL_PATH ${PROJECT_SOURCE_DIR}/external/hpipm-install)
 
 #####################
 ## Build hpipm-cpp ##
@@ -25,6 +25,7 @@ find_package(Eigen3 REQUIRED)
 
 add_library(
   ${PROJECT_NAME} 
+  SHARED
   src/d_ocp_qp_dim_wrapper.cpp
   src/d_ocp_qp_wrapper.cpp
   src/d_ocp_qp_sol_wrapper.cpp
@@ -38,10 +39,8 @@ add_library(
 target_link_libraries(
   ${PROJECT_NAME} 
   PUBLIC
-  $<BUILD_INTERFACE:${BLASFEO_INSTALL_PATH}/lib/libblasfeo.so>
-  $<BUILD_INTERFACE:${HPIPM_INSTALL_PATH}/lib/libhpipm.so>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_RPATH}/hpipm-cpp/libblasfeo.so>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_RPATH}/hpipm-cpp/libhpipm.so>
+  ${BLASFEO_INSTALL_PATH}/lib/libblasfeo.so
+  ${HPIPM_INSTALL_PATH}/lib/libhpipm.so
 )
 target_include_directories(
   ${PROJECT_NAME} 

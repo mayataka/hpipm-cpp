@@ -1,5 +1,11 @@
 #include "hpipm-cpp/ocp_qp_ipm_solver.hpp"
 
+#include "hpipm-cpp/detail/d_ocp_qp_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_dim_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_ipm_arg_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_sol_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_ipm_ws_wrapper.hpp"
+
 #include <algorithm>
 #include <cstdlib>
 
@@ -33,16 +39,30 @@ std::ostream& operator<<(std::ostream& os, const HpipmStatus& hpipm_status) {
 }
 
 
+struct OcpQpIpmSolver::WrapperHolder {
+  WrapperHolder() 
+    : ocp_qp_dim_wrapper(std::make_shared<d_ocp_qp_dim_wrapper>()),
+      ocp_qp_ipm_arg_wrapper(std::make_shared<d_ocp_qp_ipm_arg_wrapper>()),
+      ocp_qp_wrapper(),
+      ocp_qp_sol_wrapper(),
+      ocp_qp_ipm_ws_wrapper() {}
+  ~WrapperHolder() = default;
+
+  std::shared_ptr<d_ocp_qp_dim_wrapper> ocp_qp_dim_wrapper;
+  std::shared_ptr<d_ocp_qp_ipm_arg_wrapper> ocp_qp_ipm_arg_wrapper;
+  d_ocp_qp_wrapper ocp_qp_wrapper;
+  d_ocp_qp_sol_wrapper ocp_qp_sol_wrapper;
+  d_ocp_qp_ipm_ws_wrapper ocp_qp_ipm_ws_wrapper;
+};
+
+
+
 OcpQpIpmSolver::OcpQpIpmSolver(const std::vector<OcpQp>& ocp_qp, 
                                const OcpQpIpmSolverSettings& solver_settings) 
   : solver_settings_(),
     solver_statistics_(),
     dim_(),
-    ocp_qp_dim_wrapper_(std::make_shared<d_ocp_qp_dim_wrapper>()),
-    ocp_qp_ipm_arg_wrapper_(std::make_shared<d_ocp_qp_ipm_arg_wrapper>()),
-    ocp_qp_wrapper_(),
-    ocp_qp_sol_wrapper_(),
-    ocp_qp_ipm_ws_wrapper_() {
+    wrapper_holder_(new WrapperHolder()) {
   setSolverSettings(solver_settings);
   resize(ocp_qp);
 }
@@ -52,19 +72,35 @@ OcpQpIpmSolver::OcpQpIpmSolver(const OcpQpIpmSolverSettings& solver_settings)
   : solver_settings_(),
     solver_statistics_(),
     dim_(),
-    ocp_qp_dim_wrapper_(std::make_shared<d_ocp_qp_dim_wrapper>()),
-    ocp_qp_ipm_arg_wrapper_(std::make_shared<d_ocp_qp_ipm_arg_wrapper>()),
-    ocp_qp_wrapper_(),
-    ocp_qp_sol_wrapper_(),
-    ocp_qp_ipm_ws_wrapper_() {
+    wrapper_holder_(new WrapperHolder()) {
   setSolverSettings(solver_settings);
 }
 
 
+OcpQpIpmSolver::~OcpQpIpmSolver() {} 
+
+
 void OcpQpIpmSolver::setSolverSettings(const OcpQpIpmSolverSettings& solver_settings) {
-  d_ocp_qp_ipm_arg* ocp_qp_ipm_arg_ptr = ocp_qp_ipm_arg_wrapper_->get();
+  d_ocp_qp_ipm_arg* ocp_qp_ipm_arg_ptr = wrapper_holder_->ocp_qp_ipm_arg_wrapper->get();
   solver_settings_ = solver_settings;
-  d_ocp_qp_ipm_arg_set_default(static_cast<hpipm_mode>(solver_settings_.mode), ocp_qp_ipm_arg_ptr);
+  auto convertHpipmMode = [](const HpipmMode mode) {
+    switch (mode) {
+    case HpipmMode::SpeedAbs:
+      return hpipm_mode::SPEED_ABS;
+      break;
+    case HpipmMode::Speed:
+      return hpipm_mode::SPEED;
+    case HpipmMode::Balance:
+      return hpipm_mode::BALANCE;
+    case HpipmMode::Robust:
+      return hpipm_mode::ROBUST;
+    default:
+      return hpipm_mode::SPEED;
+      break;
+    }
+  };
+  auto hpipm_mode = convertHpipmMode(solver_settings_.mode);
+  d_ocp_qp_ipm_arg_set_default(hpipm_mode, ocp_qp_ipm_arg_ptr);
   d_ocp_qp_ipm_arg_set_mu0(&solver_settings_.mu0, ocp_qp_ipm_arg_ptr);
   d_ocp_qp_ipm_arg_set_iter_max(&solver_settings_.iter_max, ocp_qp_ipm_arg_ptr);
   d_ocp_qp_ipm_arg_set_alpha_min(&solver_settings_.alpha_min, ocp_qp_ipm_arg_ptr);
@@ -83,15 +119,15 @@ void OcpQpIpmSolver::setSolverSettings(const OcpQpIpmSolverSettings& solver_sett
 
 void OcpQpIpmSolver::resize(const std::vector<OcpQp>& ocp_qp) {
   dim_.resize(ocp_qp);
-  ocp_qp_dim_wrapper_->resize(dim_.N);
+  wrapper_holder_->ocp_qp_dim_wrapper->resize(dim_.N);
   d_ocp_qp_dim_set_all(dim_.nx.data(), dim_.nu.data(), 
                        dim_.nbx.data(), dim_.nbu.data(), dim_.ng.data(), 
                        dim_.nsbx.data(), dim_.nsbu.data(), dim_.nsg.data(), 
-                       ocp_qp_dim_wrapper_->get());
+                       wrapper_holder_->ocp_qp_dim_wrapper->get());
   // for initial state embedding
-  d_ocp_qp_dim_set_nx(0, 0, ocp_qp_dim_wrapper_->get());
-  d_ocp_qp_dim_set_nbx(0, 0, ocp_qp_dim_wrapper_->get());
-  d_ocp_qp_dim_set_nsbx(0, 0, ocp_qp_dim_wrapper_->get());
+  d_ocp_qp_dim_set_nx(0, 0, wrapper_holder_->ocp_qp_dim_wrapper->get());
+  d_ocp_qp_dim_set_nbx(0, 0, wrapper_holder_->ocp_qp_dim_wrapper->get());
+  d_ocp_qp_dim_set_nsbx(0, 0, wrapper_holder_->ocp_qp_dim_wrapper->get());
   b0_.resize(dim_.nx[0]);
   r0_.resize(dim_.nu[0]);
   Lr0_.resize(dim_.nu[0], dim_.nu[0]);
@@ -102,9 +138,10 @@ void OcpQpIpmSolver::resize(const std::vector<OcpQp>& ocp_qp) {
   A0t_P1_.resize(dim_.nx[0], dim_.nx[0]);
 
   // resize hpipm data
-  ocp_qp_wrapper_.resize(ocp_qp_dim_wrapper_);
-  ocp_qp_sol_wrapper_.resize(ocp_qp_dim_wrapper_);
-  ocp_qp_ipm_ws_wrapper_.resize(ocp_qp_dim_wrapper_, ocp_qp_ipm_arg_wrapper_);
+  wrapper_holder_->ocp_qp_wrapper.resize(wrapper_holder_->ocp_qp_dim_wrapper);
+  wrapper_holder_->ocp_qp_sol_wrapper.resize(wrapper_holder_->ocp_qp_dim_wrapper);
+  wrapper_holder_->ocp_qp_ipm_ws_wrapper.resize(wrapper_holder_->ocp_qp_dim_wrapper, 
+                                                wrapper_holder_->ocp_qp_ipm_arg_wrapper);
 
   // resize ptr vecotrs
   A_ptr_.resize(dim_.N+1);
@@ -242,7 +279,7 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
     lls_ptr_[i]  = ocp_qp[i].lls.data();
     lus_ptr_[i]  = ocp_qp[i].lus.data();
   }
-  d_ocp_qp* ocp_qp_ptr = ocp_qp_wrapper_.get();
+  d_ocp_qp* ocp_qp_ptr = wrapper_holder_->ocp_qp_wrapper.get();
   d_ocp_qp_set_all(A_ptr_.data(), B_ptr_.data(), b_ptr_.data(), 
                    Q_ptr_.data(), S_ptr_.data(), R_ptr_.data(), q_ptr_.data(), r_ptr_.data(), 
                    idxbx_ptr_.data(), lbx_ptr_.data(), ubx_ptr_.data(),
@@ -284,10 +321,10 @@ HpipmStatus OcpQpIpmSolver::solve(const Eigen::VectorXd& x0,
   }
 
   // solve QP
-  d_ocp_qp_dim* ocp_qp_dim_ptr = ocp_qp_dim_wrapper_->get();
-  d_ocp_qp_sol* ocp_qp_sol_ptr = ocp_qp_sol_wrapper_.get();
-  d_ocp_qp_ipm_arg* ocp_qp_ipm_arg_ptr = ocp_qp_ipm_arg_wrapper_->get();
-  d_ocp_qp_ipm_ws* ocp_qp_ipm_ws_ptr = ocp_qp_ipm_ws_wrapper_.get();
+  d_ocp_qp_dim* ocp_qp_dim_ptr = wrapper_holder_->ocp_qp_dim_wrapper->get();
+  d_ocp_qp_sol* ocp_qp_sol_ptr = wrapper_holder_->ocp_qp_sol_wrapper.get();
+  d_ocp_qp_ipm_arg* ocp_qp_ipm_arg_ptr = wrapper_holder_->ocp_qp_ipm_arg_wrapper->get();
+  d_ocp_qp_ipm_ws* ocp_qp_ipm_ws_ptr = wrapper_holder_->ocp_qp_ipm_ws_wrapper.get();
   if (solver_settings_.warm_start) {
     for (int i=0; i<dim_.N; ++i) {
       d_ocp_qp_sol_set_x(i+1, qp_sol[i+1].x.data(), ocp_qp_sol_ptr);

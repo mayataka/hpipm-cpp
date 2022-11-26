@@ -11,7 +11,21 @@ Eigen3 can be installed by the following command:
 sudo apt install libeigen3-dev
 ```
 
-Other external libraries, i.e., [blasfeo](https://github.com/giaf/blasfeo) and [hpipm](https://github.com/giaf/hpipm) are automatically installed with `hpipm-cpp`.
+- [blasfeo](https://github.com/giaf/blasfeo) and [hpipm](https://github.com/giaf/hpipm)
+blasfeo and hpipm can be installed, e.g., via
+```
+git clone https://github.com/giaf/blasfeo
+git clone https://github.com/giaf/hpipm
+cd blasfeo && mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBLASFEO_EXAMPLES=OFF 
+make install -j8
+sudo make install -j
+cd ../../hpipm && mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF 
+make install -j8
+sudo make install -j
+```
+
 
 ## Build hpipm-cpp
 ```

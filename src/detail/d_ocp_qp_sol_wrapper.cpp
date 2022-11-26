@@ -1,4 +1,4 @@
-#include "hpipm-cpp/d_ocp_qp_sol_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_sol_wrapper.hpp"
 
 #include <cstdlib>
 #include <stdexcept>

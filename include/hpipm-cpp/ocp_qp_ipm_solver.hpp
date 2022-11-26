@@ -2,6 +2,7 @@
 #define HPIPM_CPP_OCP_QP_IPM_SOLVER_HPP_
 
 #include <vector>
+#include <memory>
 #include <string>
 #include <iostream>
 
@@ -12,12 +13,6 @@
 #include "hpipm-cpp/ocp_qp_solution.hpp"
 #include "hpipm-cpp/ocp_qp_ipm_solver_settings.hpp"
 #include "hpipm-cpp/ocp_qp_ipm_solver_statistics.hpp"
-
-#include "hpipm-cpp/d_ocp_qp_wrapper.hpp"
-#include "hpipm-cpp/d_ocp_qp_dim_wrapper.hpp"
-#include "hpipm-cpp/d_ocp_qp_ipm_arg_wrapper.hpp"
-#include "hpipm-cpp/d_ocp_qp_sol_wrapper.hpp"
-#include "hpipm-cpp/d_ocp_qp_ipm_ws_wrapper.hpp"
 
 
 namespace hpipm {
@@ -61,7 +56,7 @@ public:
   ///
   /// @brief Destructor.
   ///
-  ~OcpQpIpmSolver() = default;
+  ~OcpQpIpmSolver();
 
   ///
   /// @brief Prohibit copy constructor.
@@ -121,11 +116,9 @@ private:
   OcpQpIpmSolverSettings solver_settings_;
   OcpQpIpmSolverStatistics solver_statistics_;
   OcpQpDim dim_;
-  std::shared_ptr<d_ocp_qp_dim_wrapper> ocp_qp_dim_wrapper_;
-  std::shared_ptr<d_ocp_qp_ipm_arg_wrapper> ocp_qp_ipm_arg_wrapper_;
-  d_ocp_qp_wrapper ocp_qp_wrapper_;
-  d_ocp_qp_sol_wrapper ocp_qp_sol_wrapper_;
-  d_ocp_qp_ipm_ws_wrapper ocp_qp_ipm_ws_wrapper_;
+
+  struct WrapperHolder; // Pimpl
+  std::unique_ptr<WrapperHolder> wrapper_holder_;
 
   // raw pointer storage
   std::vector<double*> A_ptr_; 

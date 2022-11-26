@@ -1,4 +1,4 @@
-#include "hpipm-cpp/d_ocp_qp_ipm_arg_wrapper.hpp"
+#include "hpipm-cpp/detail/d_ocp_qp_ipm_arg_wrapper.hpp"
 
 
 namespace hpipm {

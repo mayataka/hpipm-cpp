@@ -1,4 +1,5 @@
 # hpipm-cpp: A C++ wrapper for [hpipm](https://github.com/giaf/hpipm)
+[![CI](https://github.com/mayataka/hpipm-cpp/actions/workflows/ci.yaml/badge.svg)](https://github.com/mayataka/hpipm-cpp/actions/workflows/ci.yaml)
 
 A C++ wrapper for [hpipm](https://github.com/giaf/hpipm), a high-performance interior-point method (IPM) solver for structured quadratic programming (QP) arising in optimal control (OC) and model predictive control (MPC).
 This wrapper provides an interface of hpipm using STL and Eigen and inspired by [control-toolbox](https://github.com/ethz-adrl/control-toolbox) and [ocs2](https://github.com/leggedrobotics/ocs2). 

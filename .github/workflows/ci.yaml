@@ -17,31 +17,72 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-18.04]
-        build-type: [Debug, RelWithDebInfo]
+        build-type: [Debug, RelWithDebInfo, Release]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get -qq update
-          sudo apt-get -qq install libeigen3-dev
-      - name: Checkout repository code
+          sudo apt update
+          sudo apt install git cmake g++ libeigen3-dev -y
+      - name: Checkout blasfeo
+        uses: actions/checkout@v3
+        with:
+          repository: giaf/blasfeo
+          path: blasfeo
+          submodules: recursive
+      - name: Build blasfeo
+        run: |
+          set -e
+          set -x
+          mkdir ${GITHUB_WORKSPACE}/blasfeo/build
+          cd ${GITHUB_WORKSPACE}/blasfeo/build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_SHARED_LIBS=ON -DBLASFEO_EXAMPLES=OFF
+          make -j4
+          sudo make install
+      - name: Checkout hpipm
+        uses: actions/checkout@v3
+        with:
+          repository: giaf/hpipm
+          path: hpipm
+          submodules: recursive
+      - name: Build hpipm
+        run: |
+          set -e
+          set -x
+          mkdir ${GITHUB_WORKSPACE}/hpipm/build
+          cd ${GITHUB_WORKSPACE}/hpipm/build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_SHARED_LIBS=ON -DHPIPM_TESTING=OFF
+          make -j4
+          sudo make install
+          echo "LD_LIBRARY_PATH=/opt/blasfeo/lib:/opt/hpipm/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          echo $LD_LIBRARY_PATH
+      - name: Checkout hpipm-cpp
         uses: actions/checkout@v3
         with:
           path: hpipm-cpp
           submodules: recursive
-      - name: Build
+      - name: Build hpipm-cpp
         run: |
           set -e
           set -x
-          cd ${GITHUB_WORKSPACE}/hpipm-cpp
-          mkdir build
-          cd build
+          mkdir ${GITHUB_WORKSPACE}/hpipm-cpp/build
+          cd ${GITHUB_WORKSPACE}/hpipm-cpp/build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DBUILD_TESTS=ON
           make -j4
           sudo make install
-      - name: Test
+      - name: Test hpipm-cpp
         run: |
           set -e
           set -x
           cd ${GITHUB_WORKSPACE}/hpipm-cpp/build
-          ctest --output-on-failure -j
+          ctest --output-on-failure
+      - name: Example hpipm-cpp
+        run: |
+          set -e
+          set -x
+          mkdir ${GITHUB_WORKSPACE}/hpipm-cpp/examples/build
+          cd ${GITHUB_WORKSPACE}/hpipm-cpp/examples/build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+          make -j4
+          ./example_ocp_qp
+          ./example_mpc

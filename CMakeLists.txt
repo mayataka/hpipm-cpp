@@ -32,11 +32,20 @@ add_library(
   src/ocp_qp_ipm_solver_statistics.cpp
   src/ocp_qp_ipm_solver.cpp
 )
+
+if(NOT DEFINED blasfeo_LIBRARY)
+  set(blasfeo_LIBRARY ${blasfeo_DIR}/../lib/libblasfeo.so)
+endif()
+
+if(NOT DEFINED hpipm_LIBRARY)
+  set(hpipm_LIBRARY ${hpipm_DIR}/../lib/libhpipm.so)
+endif()
+
 target_link_libraries(
-  ${PROJECT_NAME} 
+  ${PROJECT_NAME}
   PUBLIC
-  ${blasfeo_DIR}/../lib/libblasfeo.so
-  ${hpipm_DIR}/../lib/libhpipm.so
+  ${blasfeo_LIBRARY}
+  ${hpipm_LIBRARY}
 )
 target_include_directories(
   ${PROJECT_NAME} 
